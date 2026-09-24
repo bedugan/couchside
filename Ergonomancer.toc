@@ -2,6 +2,8 @@
 ## Title: Ergonomancer
 ## Notes: Fixes UX gaps for every input method, controller first.
 ## Author: Brian Dugan
-## Version: 0.0.1-spike
+## Version: 0.1.0
 
+QuestAreaMarker.lua
+# Spike.lua stays until the overlap test is done; remove it after.
 Spike.lua
