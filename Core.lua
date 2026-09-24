@@ -29,6 +29,7 @@ end
 
 local function ShowHelp()
 	ns.Print("%s", C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or "")
+	print("  /ergo help - show this list")
 	for _, name in ipairs(commandOrder) do
 		print(("  /ergo %s %s"):format(name, commands[name].usage))
 	end
@@ -45,10 +46,14 @@ SLASH_ERGONOMANCER1 = "/ergo"
 SLASH_ERGONOMANCER2 = "/ergonomancer"
 SlashCmdList.ERGONOMANCER = function(input)
 	local name, arg = input:match("^%s*(%S*)%s*(.-)%s*$")
-	local command = commands[name:lower()]
+	name = name:lower()
+	local command = commands[name]
 	if command then
 		command.run(arg:lower())
+	elseif name == "" or name == "help" then
+		ShowHelp()
 	else
+		ns.Print("Unknown command \"%s\".", name)
 		ShowHelp()
 	end
 end
