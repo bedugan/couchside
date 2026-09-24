@@ -95,3 +95,7 @@ Everything here was confirmed in-game on 12.1.x. The features depend on it, and 
 | `Settings.lua` | The settings panel. |
 
 Blizzard's UI source, mirrored at [Gethe/wow-ui-source](https://github.com/Gethe/wow-ui-source), is the reference for API names and behaviour. Before building on an API we haven't used yet, we add a debug report that checks it in-game, and keep the report afterwards for bug reports.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
