@@ -1,0 +1,7 @@
+## Interface: 120100, 120105
+## Title: Ergonomancer
+## Notes: Fixes UX gaps for every input method, controller first.
+## Author: Brian Dugan
+## Version: 0.0.1-spike
+
+Spike.lua
