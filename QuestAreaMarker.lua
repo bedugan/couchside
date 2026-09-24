@@ -5,6 +5,8 @@
 -- shows. We never move or reorder Blizzard's frames: each marker is our own frame
 -- parented to a tracker block and drawn beneath it.
 
+local _, ns = ...
+
 local BLUE = CreateColor(0.29, 0.64, 1.0)
 
 -- Tracker modules whose blocks are keyed by questID.
@@ -103,6 +105,56 @@ local function Rescan()
 	Refresh()
 end
 
+local function Describe(questID)
+	local title = C_QuestLog.GetTitleForQuestID(questID) or "?"
+	local state
+	if not C_QuestLog.GetLogIndexForQuestID(questID) then
+		state = "not in quest log"
+	elseif C_SuperTrack.GetSuperTrackedQuestID() == questID then
+		state = "super-tracked"
+	elseif C_QuestLog.GetQuestWatchType(questID) ~= nil then
+		state = "tracked"
+	else
+		state = "untracked"
+	end
+	return ("%s (%d) [%s]"):format(title, questID, state)
+end
+
+local function YesNo(value)
+	return value and "|cff00ff00yes|r" or "no"
+end
+
+-- Full state for every tracked quest. Always prints: the player asked for it.
+ns.RegisterCommand("areas", "- show which quest areas you're in and whether each is marked", function()
+	local mapID = C_Map.GetBestMapForUnit("player")
+	local mapInfo = mapID and C_Map.GetMapInfo(mapID)
+	local numWatches = C_QuestLog.GetNumQuestWatches()
+	ns.Print("%d tracked quest(s) on %s (%s)", numWatches, mapInfo and mapInfo.name or "unknown map", tostring(mapID))
+
+	local watched = {}
+	for index = 1, numWatches do
+		local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(index)
+		if questID then
+			watched[questID] = true
+			local block = FindBlock(questID)
+			local marker = block and markers[block]
+			print(("  %s: game says inside %s, addon says inside %s, tracker entry %s, marker %s"):format(
+				Describe(questID),
+				YesNo(C_Minimap.IsInsideQuestBlob(questID)),
+				YesNo(insideQuests[questID]),
+				YesNo(block),
+				YesNo(marker and marker:IsShown())))
+		end
+	end
+
+	-- Anything the addon believes that the tracked list can't explain is a bug worth reporting.
+	for questID in pairs(insideQuests) do
+		if not watched[questID] then
+			print(("  |cffffcc00unexpected|r %s: addon says inside but it isn't tracked"):format(Describe(questID)))
+		end
+	end
+end)
+
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -113,6 +165,10 @@ frame:SetScript("OnEvent", function(_, event, ...)
 		local questID, isInside = ...
 		insideQuests[questID] = isInside or nil
 		Refresh()
+		ns.Debug("%s %s", isInside and "|cff00ff00entered|r" or "|cffff6666left|r", Describe(questID))
+		if isInside and not FindBlock(questID) then
+			ns.Debug("no tracker entry found for %d, so nothing is marked", questID)
+		end
 	elseif event == "PLAYER_LOGIN" then
 		-- The tracker rebuilds blocks on every layout pass; re-mark afterwards.
 		for _, name in ipairs(TRACKER_MODULES) do
@@ -123,5 +179,10 @@ frame:SetScript("OnEvent", function(_, event, ...)
 		end
 	else
 		Rescan()
+		local count = 0
+		for _ in pairs(insideQuests) do
+			count = count + 1
+		end
+		ns.Debug("rescan after %s: inside %d quest area(s)", event, count)
 	end
 end)

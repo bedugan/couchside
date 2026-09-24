@@ -2,9 +2,9 @@
 ## Title: Ergonomancer
 ## Notes: Fixes UX gaps for every input method, controller first.
 ## Author: Brian Dugan
-## Version: 0.1.0
+## Version: 0.2.0
 ## IconTexture: Interface\Icons\INV_Misc_Map_01
+## SavedVariables: ErgonomancerDB
 
+Core.lua
 QuestAreaMarker.lua
-# Spike.lua stays until the overlap test is done; remove it after.
-Spike.lua
