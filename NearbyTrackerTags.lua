@@ -16,8 +16,9 @@ local ICON_GUTTER = 32
 
 local tags = setmetatable({}, { __mode = "k" }) -- keyed by Blizzard block frame
 
-local function CreateTag(block)
-	local tag = CreateFrame("Frame", nil, block)
+-- Shared with the Nearby section so both draw identical tags.
+function ns.CreateNearbyTag(parent)
+	local tag = CreateFrame("Frame", nil, parent)
 	tag:SetHeight(TAG_HEIGHT)
 
 	local background = tag:CreateTexture(nil, "BACKGROUND")
@@ -44,13 +45,23 @@ local function CreateTag(block)
 	tag.distance = tag:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	tag.distance:SetPoint("LEFT", tag.arrow, "RIGHT", GAP, 0)
 	tag.distance:SetTextColor(TEAL:GetRGB())
-
-	tags[block] = tag
 	return tag
 end
 
+function ns.SetNearbyTag(tag, spot)
+	tag.letter:SetText(spot.letter)
+	tag.distance:SetText(("%.0f yd"):format(spot.yards))
+	tag.arrow:SetRotation(-math.rad(spot.angle))
+	tag:SetWidth(1 + DISC_SIZE + GAP + ARROW_SIZE + GAP + tag.distance:GetStringWidth() + 5)
+	tag:Show()
+end
+
 local function ShowTag(block, spot)
-	local tag = tags[block] or CreateTag(block)
+	local tag = tags[block]
+	if not tag then
+		tag = ns.CreateNearbyTag(block)
+		tags[block] = tag
+	end
 
 	tag:ClearAllPoints()
 	local icon = block.poiButton
@@ -60,11 +71,7 @@ local function ShowTag(block, spot)
 		tag:SetPoint("TOPRIGHT", block, "TOPLEFT", -ICON_GUTTER, 2)
 	end
 
-	tag.letter:SetText(spot.letter)
-	tag.distance:SetText(("%.0f yd"):format(spot.yards))
-	tag.arrow:SetRotation(-math.rad(spot.angle))
-	tag:SetWidth(1 + DISC_SIZE + GAP + ARROW_SIZE + GAP + tag.distance:GetStringWidth() + 5)
-	tag:Show()
+	ns.SetNearbyTag(tag, spot)
 end
 
 local function Refresh()

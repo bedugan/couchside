@@ -9,8 +9,13 @@ local _, ns = ...
 
 local TEAL = CreateColor(0.25, 0.85, 0.77)
 local BADGE_SIZE = 13
--- Nudge up and right so the badge sits beside Blizzard's icon rather than covering it.
-local OFFSET_X, OFFSET_Y = 8, 8
+-- Badges sit this far from their icon's centre, beside it rather than on top of it.
+local NUDGE = 11
+-- Positions tried around the icon, in degrees clockwise from up. Up-right first; the rest
+-- spread badges apart when icons are close together.
+local NUDGE_ANGLES = { 45, 105, 345, 165, 285, 225 }
+-- Keep this much clearance (px) from other turn-in icons so badges don't cover them.
+local ICON_CLEARANCE = BADGE_SIZE / 2 + 5
 
 local badges = {}
 
@@ -44,19 +49,54 @@ local function GetBadge(index)
 	return badge
 end
 
+local function IsClear(x, y, own, icons, placed)
+	for _, icon in ipairs(icons) do
+		if icon ~= own and math.sqrt((x - icon.x) ^ 2 + (y - icon.y) ^ 2) < ICON_CLEARANCE then
+			return false
+		end
+	end
+	for _, other in ipairs(placed) do
+		if math.sqrt((x - other.x) ^ 2 + (y - other.y) ^ 2) < BADGE_SIZE then
+			return false
+		end
+	end
+	return true
+end
+
+-- First clear position around the icon; if none is clear, the first choice.
+local function BadgePosition(icon, icons, placed)
+	for _, degrees in ipairs(NUDGE_ANGLES) do
+		local angle = math.rad(degrees)
+		local x, y = icon.x + math.sin(angle) * NUDGE, icon.y + math.cos(angle) * NUDGE
+		if IsClear(x, y, icon, icons, placed) then
+			return x, y
+		end
+	end
+	local angle = math.rad(NUDGE_ANGLES[1])
+	return icon.x + math.sin(angle) * NUDGE, icon.y + math.cos(angle) * NUDGE
+end
+
 local function Refresh()
 	local spots = ns.Nearby.spots
 	local halfWidth = Minimap:GetWidth() / 2
 	local radius = C_Minimap.GetViewRadius()
 
+	-- Where each turn-in icon sits, relative to the minimap's centre (y up).
+	local icons = {}
 	for index, spot in ipairs(spots) do
-		local badge = GetBadge(index)
 		local distance = math.min(spot.yards / radius, 1) * halfWidth
 		local angle = math.rad(spot.angle)
+		icons[index] = { x = math.sin(angle) * distance, y = math.cos(angle) * distance }
+	end
+
+	-- Nearest first, so the closest icon's badge gets the best spot.
+	local placed = {}
+	for index, spot in ipairs(spots) do
+		local x, y = BadgePosition(icons[index], icons, placed)
+		table.insert(placed, { x = x, y = y })
+		local badge = GetBadge(index)
 		badge:ClearAllPoints()
-		badge:SetPoint("CENTER", Minimap, "CENTER",
-			math.sin(angle) * distance + OFFSET_X,
-			math.cos(angle) * distance + OFFSET_Y)
+		badge:SetPoint("CENTER", Minimap, "CENTER", x, y)
 		badge.letter:SetText(spot.letter)
 		badge:Show()
 	end

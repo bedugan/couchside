@@ -2,7 +2,7 @@
 ## Title: Ergonomancer
 ## Notes: Fixes UX gaps for every input method, controller first.
 ## Author: Brian Dugan
-## Version: 0.3.0
+## Version: 0.4.0
 ## IconTexture: Interface\Icons\INV_Misc_Map_01
 ## SavedVariables: ErgonomancerDB
 
@@ -12,3 +12,4 @@ QuestAreaMarker.lua
 QuestNearby.lua
 NearbyTrackerTags.lua
 MinimapBadges.lua
+NearbySection.lua
