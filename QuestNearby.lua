@@ -153,11 +153,16 @@ end
 
 local lastSignature = ""
 
+-- The model only does work while something displays it.
+local function AnyConsumerEnabled()
+	return ns.IsEnabled("nearbyTags") or ns.IsEnabled("minimapBadges") or ns.IsEnabled("nearbyTurnIns")
+end
+
 local function Update()
 	local spots = {}
 	local mapID = C_Map.GetBestMapForUnit("player")
 	-- No position inside instances; the feature simply goes quiet there.
-	local playerWorld = PlayerWorldPos(mapID)
+	local playerWorld = AnyConsumerEnabled() and PlayerWorldPos(mapID)
 
 	if playerWorld then
 		if candidatesDirty or mapID ~= candidatesMapID then

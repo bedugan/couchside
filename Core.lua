@@ -1,4 +1,4 @@
--- Shared plumbing: chat output, the debug switch, saved settings, and /ergo commands.
+-- Shared plumbing: chat output, options (saved in ErgonomancerDB), and /ergo commands.
 -- Debug tooling is a supported feature, not a leftover: anyone filing a ticket should be
 -- able to see what the addon sees without editing files.
 
@@ -11,6 +11,51 @@ ns.Colors = {
 	nearby = CreateColor(0.25, 0.85, 0.77),
 }
 
+-- Every option, with its default. Settings.lua builds the settings panel from these keys;
+-- features read them through ns.IsEnabled.
+ns.OptionDefaults = {
+	areaMarker = true,
+	untrackedAreas = true,
+	nearbyTags = true,
+	minimapBadges = true,
+	nearbyTurnIns = true,
+	debug = false,
+}
+
+function ns.IsEnabled(key)
+	local value = ErgonomancerDB and ErgonomancerDB[key]
+	if value == nil then
+		return ns.OptionDefaults[key]
+	end
+	return value
+end
+
+local optionListeners = {}
+
+-- callback(key, value) after any option changes, from the settings panel or a command.
+function ns.OnOptionChanged(callback)
+	table.insert(optionListeners, callback)
+end
+
+function ns.NotifyOptionChanged(key, value)
+	for _, callback in ipairs(optionListeners) do
+		callback(key, value)
+	end
+end
+
+-- Settings.lua replaces this once the panel exists, so commands and the panel stay in sync.
+function ns.SetOption(key, value)
+	ErgonomancerDB[key] = value
+	ns.NotifyOptionChanged(key, value)
+end
+
+local readyCallbacks = {}
+
+-- callback() once saved variables are loaded.
+function ns.OnReady(callback)
+	table.insert(readyCallbacks, callback)
+end
+
 local PREFIX = "|cff66ccffErgonomancer|r "
 local DEBUG_PREFIX = "|cff66ccffErgonomancer|r |cffffcc00debug|r "
 
@@ -20,7 +65,7 @@ function ns.Print(fmt, ...)
 end
 
 function ns.Debug(fmt, ...)
-	if ErgonomancerDB and ErgonomancerDB.debug then
+	if ns.IsEnabled("debug") then
 		print(DEBUG_PREFIX .. fmt:format(...))
 	end
 end
@@ -60,9 +105,9 @@ end
 
 ns.RegisterCommand("debug", "[on|off] - print what Ergonomancer sees; stays on across sessions", function(arg)
 	if arg == "on" or arg == "off" then
-		ErgonomancerDB.debug = arg == "on"
+		ns.SetOption("debug", arg == "on")
 	end
-	ns.Print("Debug output is %s.", ErgonomancerDB.debug and "|cff00ff00on|r" or "off")
+	ns.Print("Debug output is %s.", ns.IsEnabled("debug") and "|cff00ff00on|r" or "off")
 end)
 
 SLASH_ERGONOMANCER1 = "/ergo"
@@ -81,15 +126,12 @@ SlashCmdList.ERGONOMANCER = function(input)
 	end
 end
 
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("ADDON_LOADED")
-frame:SetScript("OnEvent", function(self, _, loadedName)
-	if loadedName ~= ADDON_NAME then
-		return
-	end
-	self:UnregisterEvent("ADDON_LOADED")
+EventUtil.ContinueOnAddOnLoaded(ADDON_NAME, function()
 	ErgonomancerDB = ErgonomancerDB or {}
-	if ErgonomancerDB.debug then
+	for _, callback in ipairs(readyCallbacks) do
+		callback()
+	end
+	if ns.IsEnabled("debug") then
 		ns.Print("Debug output is on. /ergo debug off to stop it.")
 	end
 end)

@@ -77,7 +77,7 @@ local function BadgePosition(icon, icons, placed)
 end
 
 local function Refresh()
-	local spots = ns.Nearby.spots
+	local spots = ns.IsEnabled("minimapBadges") and ns.Nearby.spots or {}
 	local halfWidth = Minimap:GetWidth() / 2
 	local radius = C_Minimap.GetViewRadius()
 

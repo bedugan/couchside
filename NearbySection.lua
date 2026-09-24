@@ -120,6 +120,7 @@ local function Refresh()
 	end
 
 	local areaQuests = {}
+	-- UntrackedAreas stops probing (and empties this set) when its option is off.
 	for questID in pairs(ns.UntrackedAreas.inside) do
 		table.insert(areaQuests, questID)
 	end
@@ -131,7 +132,8 @@ local function Refresh()
 		row.area:Show()
 	end
 
-	for _, spot in ipairs(ns.Nearby.spots) do
+	local turnInSpots = ns.IsEnabled("nearbyTurnIns") and ns.Nearby.spots or {}
+	for _, spot in ipairs(turnInSpots) do
 		for _, questID in ipairs(spot.questIDs) do
 			if not ns.Tracker.FindBlock(questID) then
 				local row = AddRow(questID)

@@ -68,7 +68,7 @@ local function Poll()
 	local inside = {}
 	local mapID = C_Map.GetBestMapForUnit("player")
 	local pos = mapID and C_Map.GetPlayerMapPosition(mapID, "player")
-	if pos then
+	if pos and ns.IsEnabled("untrackedAreas") then
 		local x, y = pos:GetXY()
 		local index = 0
 		while true do

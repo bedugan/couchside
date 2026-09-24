@@ -78,6 +78,9 @@ local function Refresh()
 	for _, tag in pairs(tags) do
 		tag:Hide()
 	end
+	if not ns.IsEnabled("nearbyTags") then
+		return
+	end
 	for _, spot in ipairs(ns.Nearby.spots) do
 		for _, questID in ipairs(spot.questIDs) do
 			local block = ns.Tracker.FindBlock(questID)

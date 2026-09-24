@@ -66,6 +66,9 @@ local function Refresh()
 	for _, marker in pairs(markers) do
 		marker:Hide()
 	end
+	if not ns.IsEnabled("areaMarker") then
+		return
+	end
 	for questID in pairs(insideQuests) do
 		local block = ns.Tracker.FindBlock(questID)
 		if block then
@@ -123,6 +126,7 @@ ns.RegisterCommand("areas", "- show which quest areas you're in and whether each
 end)
 
 ns.Tracker.OnLayout(Refresh)
+ns.OnOptionChanged(Refresh)
 
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
