@@ -18,6 +18,22 @@ function ns.Debug(fmt, ...)
 	end
 end
 
+-- "Title (id) [state]" for chat output, so reports read the same across features.
+function ns.DescribeQuest(questID)
+	local title = C_QuestLog.GetTitleForQuestID(questID) or "?"
+	local state
+	if not C_QuestLog.GetLogIndexForQuestID(questID) then
+		state = "not in quest log"
+	elseif C_SuperTrack.GetSuperTrackedQuestID() == questID then
+		state = "super-tracked"
+	elseif C_QuestLog.GetQuestWatchType(questID) ~= nil then
+		state = "tracked"
+	else
+		state = "untracked"
+	end
+	return ("%s (%d) [%s]"):format(title, questID, state)
+end
+
 -- Registered in order so /ergo help lists them the way modules add them.
 local commands = {}
 local commandOrder = {}

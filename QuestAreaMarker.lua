@@ -105,21 +105,6 @@ local function Rescan()
 	Refresh()
 end
 
-local function Describe(questID)
-	local title = C_QuestLog.GetTitleForQuestID(questID) or "?"
-	local state
-	if not C_QuestLog.GetLogIndexForQuestID(questID) then
-		state = "not in quest log"
-	elseif C_SuperTrack.GetSuperTrackedQuestID() == questID then
-		state = "super-tracked"
-	elseif C_QuestLog.GetQuestWatchType(questID) ~= nil then
-		state = "tracked"
-	else
-		state = "untracked"
-	end
-	return ("%s (%d) [%s]"):format(title, questID, state)
-end
-
 local function YesNo(value)
 	return value and "|cff00ff00yes|r" or "no"
 end
@@ -139,7 +124,7 @@ ns.RegisterCommand("areas", "- show which quest areas you're in and whether each
 			local block = FindBlock(questID)
 			local marker = block and markers[block]
 			print(("  %s: game says inside %s, addon says inside %s, tracker entry %s, marker %s"):format(
-				Describe(questID),
+				ns.DescribeQuest(questID),
 				YesNo(C_Minimap.IsInsideQuestBlob(questID)),
 				YesNo(insideQuests[questID]),
 				YesNo(block),
@@ -150,7 +135,7 @@ ns.RegisterCommand("areas", "- show which quest areas you're in and whether each
 	-- Anything the addon believes that the tracked list can't explain is a bug worth reporting.
 	for questID in pairs(insideQuests) do
 		if not watched[questID] then
-			print(("  |cffffcc00unexpected|r %s: addon says inside but it isn't tracked"):format(Describe(questID)))
+			print(("  |cffffcc00unexpected|r %s: addon says inside but it isn't tracked"):format(ns.DescribeQuest(questID)))
 		end
 	end
 end)
@@ -165,7 +150,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
 		local questID, isInside = ...
 		insideQuests[questID] = isInside or nil
 		Refresh()
-		ns.Debug("%s %s", isInside and "|cff00ff00entered|r" or "|cffff6666left|r", Describe(questID))
+		ns.Debug("%s %s", isInside and "|cff00ff00entered|r" or "|cffff6666left|r", ns.DescribeQuest(questID))
 		if isInside and not FindBlock(questID) then
 			ns.Debug("no tracker entry found for %d, so nothing is marked", questID)
 		end
