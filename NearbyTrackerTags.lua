@@ -6,7 +6,7 @@
 
 local _, ns = ...
 
-local TEAL = CreateColor(0.25, 0.85, 0.77)
+local TEAL = ns.Colors.nearby
 local TAG_HEIGHT = 16
 local DISC_SIZE = 14
 local ARROW_SIZE = 13

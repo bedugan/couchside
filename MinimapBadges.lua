@@ -7,7 +7,7 @@
 
 local _, ns = ...
 
-local TEAL = CreateColor(0.25, 0.85, 0.77)
+local TEAL = ns.Colors.nearby
 local BADGE_SIZE = 13
 -- Badges sit this far from their icon's centre, beside it rather than on top of it.
 local NUDGE = 11

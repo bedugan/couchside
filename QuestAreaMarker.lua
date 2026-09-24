@@ -7,7 +7,7 @@
 
 local _, ns = ...
 
-local BLUE = CreateColor(0.29, 0.64, 1.0)
+local BLUE = ns.Colors.inside
 
 -- Blizzard hangs the quest icon left of the block (icon TOPRIGHT at HeaderText TOPLEFT -7, +5);
 -- the wash reaches back this far to sit behind it.

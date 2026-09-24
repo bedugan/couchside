@@ -1,5 +1,8 @@
--- Nearby (Untracked) section: lists nearby quest turn-ins that have no tracker entry, each with
--- the same letter tag as its minimap badge. It only appears when there is something to list.
+-- Nearby (Untracked) section: lists what's around the player that the tracker doesn't show.
+--   - Untracked quests whose area the player is inside (blue "in area", like the tracker
+--     marker). Listed first: they're about where the player is right now.
+--   - Nearby turn-ins with no tracker entry, with the same letter tag as their minimap badge.
+-- It only appears when there is something to list.
 --
 -- Our own frame, placed just below the tracker's last visible section. It is not parented to
 -- the tracker: the tracker hides itself when nothing is tracked, which is exactly when this
@@ -7,7 +10,8 @@
 
 local _, ns = ...
 
-local TEAL = CreateColor(0.25, 0.85, 0.77)
+local TEAL = ns.Colors.nearby
+local BLUE = ns.Colors.inside
 -- Match Blizzard's tracker spacing (moduleSpacing 10, blockOffsetX 20, headerHeight 25).
 local SECTION_SPACING = 10
 local ROW_OFFSET_X = 20
@@ -52,6 +56,26 @@ local function GetRow(index)
 	row.tag = ns.CreateNearbyTag(row)
 	row.tag:SetPoint("RIGHT", row, "LEFT", -TAG_GAP, 0)
 
+	-- "In area" rows: the same blue wash as the tracker's area marker, plus a label where
+	-- turn-in rows have their letter tag.
+	row.wash = row:CreateTexture(nil, "BACKGROUND")
+	row.wash:SetPoint("TOPLEFT", -ROW_OFFSET_X, 1)
+	row.wash:SetPoint("BOTTOMRIGHT", 0, -1)
+	row.wash:SetColorTexture(1, 1, 1)
+	row.wash:SetGradient("HORIZONTAL", CreateColor(BLUE.r, BLUE.g, BLUE.b, 0.30), CreateColor(BLUE.r, BLUE.g, BLUE.b, 0.03))
+
+	row.area = CreateFrame("Frame", nil, row)
+	row.area:SetHeight(16)
+	row.area:SetPoint("RIGHT", row, "LEFT", -TAG_GAP, 0)
+	local areaBackground = row.area:CreateTexture(nil, "BACKGROUND")
+	areaBackground:SetAllPoints()
+	areaBackground:SetColorTexture(0.03, 0.10, 0.22, 0.85)
+	row.area.label = row.area:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	row.area.label:SetPoint("CENTER")
+	row.area.label:SetText("in area")
+	row.area.label:SetTextColor(BLUE:GetRGB())
+	row.area:SetWidth(row.area.label:GetStringWidth() + 10)
+
 	rows[index] = row
 	return row
 end
@@ -87,14 +111,33 @@ local function Refresh()
 	end
 
 	local count = 0
+	local function AddRow(questID)
+		count = count + 1
+		local row = GetRow(count)
+		row.title:SetText(C_QuestLog.GetTitleForQuestID(questID) or tostring(questID))
+		row:Show()
+		return row
+	end
+
+	local areaQuests = {}
+	for questID in pairs(ns.UntrackedAreas.inside) do
+		table.insert(areaQuests, questID)
+	end
+	table.sort(areaQuests)
+	for _, questID in ipairs(areaQuests) do
+		local row = AddRow(questID)
+		row.tag:Hide()
+		row.wash:Show()
+		row.area:Show()
+	end
+
 	for _, spot in ipairs(ns.Nearby.spots) do
 		for _, questID in ipairs(spot.questIDs) do
 			if not ns.Tracker.FindBlock(questID) then
-				count = count + 1
-				local row = GetRow(count)
-				row.title:SetText(C_QuestLog.GetTitleForQuestID(questID) or tostring(questID))
+				local row = AddRow(questID)
+				row.wash:Hide()
+				row.area:Hide()
 				ns.SetNearbyTag(row.tag, spot)
-				row:Show()
 			end
 		end
 	end

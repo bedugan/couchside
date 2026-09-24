@@ -4,6 +4,13 @@
 
 local ADDON_NAME, ns = ...
 
+-- One meaning per colour, everywhere: blue = you're inside this quest's area,
+-- teal = this quest's turn-in icon is on your minimap.
+ns.Colors = {
+	inside = CreateColor(0.29, 0.64, 1.0),
+	nearby = CreateColor(0.25, 0.85, 0.77),
+}
+
 local PREFIX = "|cff66ccffErgonomancer|r "
 local DEBUG_PREFIX = "|cff66ccffErgonomancer|r |cffffcc00debug|r "
 
