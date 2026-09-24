@@ -9,14 +9,6 @@ local _, ns = ...
 
 local BLUE = CreateColor(0.29, 0.64, 1.0)
 
--- Tracker modules whose blocks are keyed by questID.
-local TRACKER_MODULES = {
-	"CampaignQuestObjectiveTracker",
-	"QuestObjectiveTracker",
-	"WorldQuestObjectiveTracker",
-	"BonusObjectiveTracker",
-}
-
 -- Blizzard hangs the quest icon left of the block (icon TOPRIGHT at HeaderText TOPLEFT -7, +5);
 -- the wash reaches back this far to sit behind it.
 local ICON_GUTTER = 32
@@ -70,22 +62,12 @@ local function ShowMarker(block)
 	marker:Show()
 end
 
-local function FindBlock(questID)
-	for _, name in ipairs(TRACKER_MODULES) do
-		local module = _G[name]
-		local block = module and module:GetExistingBlock(questID)
-		if block and block:IsShown() then
-			return block
-		end
-	end
-end
-
 local function Refresh()
 	for _, marker in pairs(markers) do
 		marker:Hide()
 	end
 	for questID in pairs(insideQuests) do
-		local block = FindBlock(questID)
+		local block = ns.Tracker.FindBlock(questID)
 		if block then
 			ShowMarker(block)
 		end
@@ -121,7 +103,7 @@ ns.RegisterCommand("areas", "- show which quest areas you're in and whether each
 		local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(index)
 		if questID then
 			watched[questID] = true
-			local block = FindBlock(questID)
+			local block = ns.Tracker.FindBlock(questID)
 			local marker = block and markers[block]
 			print(("  %s: game says inside %s, addon says inside %s, tracker entry %s, marker %s"):format(
 				ns.DescribeQuest(questID),
@@ -140,8 +122,9 @@ ns.RegisterCommand("areas", "- show which quest areas you're in and whether each
 	end
 end)
 
+ns.Tracker.OnLayout(Refresh)
+
 local frame = CreateFrame("Frame")
-frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
 frame:RegisterEvent("PLAYER_INSIDE_QUEST_BLOB_STATE_CHANGED")
@@ -151,16 +134,8 @@ frame:SetScript("OnEvent", function(_, event, ...)
 		insideQuests[questID] = isInside or nil
 		Refresh()
 		ns.Debug("%s %s", isInside and "|cff00ff00entered|r" or "|cffff6666left|r", ns.DescribeQuest(questID))
-		if isInside and not FindBlock(questID) then
+		if isInside and not ns.Tracker.FindBlock(questID) then
 			ns.Debug("no tracker entry found for %d, so nothing is marked", questID)
-		end
-	elseif event == "PLAYER_LOGIN" then
-		-- The tracker rebuilds blocks on every layout pass; re-mark afterwards.
-		for _, name in ipairs(TRACKER_MODULES) do
-			local module = _G[name]
-			if module then
-				hooksecurefunc(module, "EndLayout", Refresh)
-			end
 		end
 	else
 		Rescan()

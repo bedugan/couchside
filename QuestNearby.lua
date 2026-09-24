@@ -1,12 +1,16 @@
--- Nearby quest report: which quests have a map point within the minimap's view, and how far.
+-- Nearby quests: which quest turn-ins ("?" icons) are on the minimap right now, grouped into
+-- lettered spots (nearest first), with distance and where each spot sits on the minimap face.
 --
--- Diagnostic groundwork for a planned "nearby" marker. It checks two assumptions first:
---   1. GetDistanceSqToQuest is in yards. We compare it with a distance measured from the
---      quest's map position, which the game gives in world yards.
---   2. Whether the minimap shows icons for untracked quests. The report lists every quest in
---      the log, so the player can compare it with what the minimap actually shows.
---   3. Where each icon sits on the minimap, as a clock position, so the player can check the
---      direction maths against the real icon (fixed and rotating minimap).
+-- Turn-ins only: in-progress quests show an area on the minimap, and the area marker already
+-- covers those. A distance to an area's centre point is noise.
+--
+-- ns.Nearby is the shared model. Features (tracker tags, minimap badges, the Nearby section)
+-- subscribe with ns.Nearby.OnUpdate and draw from ns.Nearby.spots.
+--
+-- Verified in-game (see /ergo nearby):
+--   - Map positions give distances in yards that match GetDistanceSqToQuest exactly.
+--   - The minimap shows every map point of tracked quests, plus turn-ins of untracked ones.
+--   - Bearings and clock positions match the minimap, north-up and rotating.
 
 local _, ns = ...
 
@@ -59,6 +63,170 @@ local function ClockPosition(bearing, rotating)
 	local hour = math.floor((angle % 360) / 30 + 0.5) % 12
 	return hour == 0 and 12 or hour
 end
+
+-- Degrees clockwise from the top of the minimap face.
+local function MinimapAngle(bearing, rotating)
+	if rotating then
+		return (bearing + math.deg(GetPlayerFacing() or 0)) % 360
+	end
+	return bearing
+end
+
+-------------------------------------------------------------------------------
+-- Model
+-------------------------------------------------------------------------------
+
+-- Icons closer together than this share a letter, e.g. several turn-ins at one NPC.
+local SAME_SPOT_YARDS = 5
+local TICK_SECONDS = 0.1
+local MAX_SPOTS = 26
+
+ns.Nearby = {
+	spots = {},   -- nearest first: { letter, yards, bearing, angle, questIDs }
+	byQuest = {}, -- questID -> spot
+}
+
+local listeners = {}
+
+-- callback(changed): runs every tick; changed is true when spots, letters, or quests changed.
+function ns.Nearby.OnUpdate(callback)
+	table.insert(listeners, callback)
+end
+
+-- Turn-in points that can appear on the minimap. Rebuilt when quests or the map change,
+-- not every tick.
+local candidates = {}
+local candidatesMapID
+local candidatesDirty = true
+local east, north
+
+-- The minimap shows turn-ins for every completed quest, tracked or not.
+local function IsTurnIn(questID)
+	return C_QuestLog.IsComplete(questID)
+end
+
+local function RebuildCandidates(mapID)
+	wipe(candidates)
+	candidatesMapID = mapID
+	candidatesDirty = false
+	east, north = MapAxes(mapID)
+	for _, poi in ipairs(C_QuestLog.GetQuestsOnMap(mapID) or {}) do
+		if IsTurnIn(poi.questID) then
+			local world = WorldPos(poi.mapID, poi.x, poi.y)
+			if world then
+				table.insert(candidates, { questID = poi.questID, world = world })
+			end
+		end
+	end
+end
+
+local function FindSpot(spots, world)
+	for _, spot in ipairs(spots) do
+		if Distance(spot.world, world) <= SAME_SPOT_YARDS then
+			return spot
+		end
+	end
+end
+
+local function Signature(spots)
+	local parts = {}
+	for _, spot in ipairs(spots) do
+		table.insert(parts, spot.letter .. "=" .. table.concat(spot.questIDs, ","))
+	end
+	return table.concat(parts, ";")
+end
+
+local function DescribeSpots(spots)
+	if #spots == 0 then
+		return "none"
+	end
+	local parts = {}
+	for _, spot in ipairs(spots) do
+		local titles = {}
+		for _, questID in ipairs(spot.questIDs) do
+			table.insert(titles, C_QuestLog.GetTitleForQuestID(questID) or tostring(questID))
+		end
+		table.insert(parts, ("%s %.0f yd: %s"):format(spot.letter, spot.yards, table.concat(titles, ", ")))
+	end
+	return table.concat(parts, "; ")
+end
+
+local lastSignature = ""
+
+local function Update()
+	local spots = {}
+	local mapID = C_Map.GetBestMapForUnit("player")
+	-- No position inside instances; the feature simply goes quiet there.
+	local playerWorld = PlayerWorldPos(mapID)
+
+	if playerWorld then
+		if candidatesDirty or mapID ~= candidatesMapID then
+			RebuildCandidates(mapID)
+		end
+		local radius = C_Minimap.GetViewRadius()
+		for _, candidate in ipairs(candidates) do
+			local yards = Distance(candidate.world, playerWorld)
+			if yards <= radius then
+				local spot = FindSpot(spots, candidate.world)
+				if not spot then
+					spot = { world = candidate.world, yards = yards, questIDs = {} }
+					table.insert(spots, spot)
+				end
+				spot.yards = math.min(spot.yards, yards)
+				table.insert(spot.questIDs, candidate.questID)
+			end
+		end
+
+		table.sort(spots, function(a, b) return a.yards < b.yards end)
+		local rotating = GetCVarBool("rotateMinimap")
+		for index = #spots, MAX_SPOTS + 1, -1 do
+			spots[index] = nil
+		end
+		for index, spot in ipairs(spots) do
+			table.sort(spot.questIDs)
+			spot.letter = string.char(64 + index)
+			spot.bearing = east and Bearing(playerWorld, spot.world, east, north) or 0
+			spot.angle = MinimapAngle(spot.bearing, rotating)
+		end
+	end
+
+	local byQuest = {}
+	for _, spot in ipairs(spots) do
+		for _, questID in ipairs(spot.questIDs) do
+			byQuest[questID] = spot
+		end
+	end
+	ns.Nearby.spots = spots
+	ns.Nearby.byQuest = byQuest
+
+	local signature = Signature(spots)
+	local changed = signature ~= lastSignature
+	if changed then
+		lastSignature = signature
+		ns.Debug("nearby: %s", DescribeSpots(spots))
+	end
+	for _, callback in ipairs(listeners) do
+		callback(changed)
+	end
+end
+
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("PLAYER_LOGIN")
+frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+frame:RegisterEvent("QUEST_LOG_UPDATE")
+frame:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
+frame:RegisterEvent("QUEST_POI_UPDATE")
+frame:SetScript("OnEvent", function(_, event)
+	if event == "PLAYER_LOGIN" then
+		C_Timer.NewTicker(TICK_SECONDS, Update)
+	else
+		candidatesDirty = true
+	end
+end)
+
+-------------------------------------------------------------------------------
+-- Report
+-------------------------------------------------------------------------------
 
 local function Yards(value)
 	return value and ("%.0f yd"):format(value) or "none"
@@ -124,7 +292,9 @@ ns.RegisterCommand("nearby", "- list quest map points by distance and which are 
 		local direction = row.bearing
 			and (", %d o'clock (bearing %.0f°)"):format(ClockPosition(row.bearing, rotating), row.bearing)
 			or ", direction unknown"
-		print(("  %s %s: game %s, measured %s%s%s, %s"):format(
+		local spot = ns.Nearby.byQuest[row.questID]
+		print(("  %s%s %s: game %s, measured %s%s%s, %s"):format(
+			spot and ("|cff3fd8c4" .. spot.letter .. "|r ") or "",
 			where,
 			ns.DescribeQuest(row.questID),
 			Yards(row.game),
