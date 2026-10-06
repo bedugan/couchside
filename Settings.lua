@@ -43,6 +43,16 @@ local SECTIONS = {
 		},
 	},
 	{
+		title = "Controller interface",
+		options = {
+			{
+				key = "controllerPages",
+				name = "Show action page numbers",
+				tooltip = "Keep page numbers 1, 2 and 3 visible in the native controller interface, with the selected page highlighted. Only applies to the controller interface. Forever beta: configure in keyboard/mouse UI to avoid a settings-close freeze.",
+			},
+		},
+	},
+	{
 		title = "Troubleshooting",
 		options = {
 			{

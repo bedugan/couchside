@@ -28,9 +28,17 @@ Letters follow distance, so two of them can swap as you walk.
 
 Blue always means "you're inside this quest's area". Teal always means "this quest's turn-in is on your minimap".
 
+### Controller action pages
+
+Enable **Show action page numbers** to keep the `1 2 3` tiles visible after releasing LB+RB, with the selected page highlighted. While LB+RB is held, Blizzard's own strip appears and Ergonomancer's copy hides. Special controller pages use Blizzard's own display.
+
+This option is off by default. Configure it in keyboard/mouse UI, then return to gamepad UI. On the tested Forever beta build, changing the checkbox while gamepad UI is active and closing Options freezes the client. The keyboard/mouse configuration route and subsequent page switching have been verified in-game.
+
+The dependent option to show the tiles only on pages 2 or 3 remains planned.
+
 ## Settings
 
-Open **Options > AddOns > Ergonomancer**, or type `/ergo settings`. Every feature above has its own checkbox, and turning one off also stops the work behind it.
+Open **Options > AddOns > Ergonomancer**, or type `/ergo settings`. Every feature above has its own checkbox, and turning one off also stops the work behind it. On Forever beta build `1.60.1.70235`, disable **Enable Gamepad UI** in the built-in settings before changing the controller page option. Change the option in keyboard/mouse UI, close Options, then re-enable Gamepad UI. Switching interface modes may reload the UI.
 
 ## Commands
 
@@ -66,7 +74,7 @@ A `/reload` picks up code changes and new files listed in the `.toc`.
 
 ## How the game behaves
 
-Everything here was confirmed in-game on 12.1.x. The features depend on it, and a future patch could change any of it.
+The quest behaviour below was confirmed in-game on 12.1.x. Controller page reporting was confirmed on WoW Forever 1.60.1. The features depend on this behaviour, and a future patch could change any of it.
 
 - **Area events only cover tracked quests.** `PLAYER_INSIDE_QUEST_BLOB_STATE_CHANGED` and `C_Minimap.IsInsideQuestBlob` only report quests whose area is drawn, which means tracked ones. Untracking a quest while standing in its area fires a "left" event.
 - **Area state survives a character switch.** Logging out to character select and into another character can fire a "left" event for the previous character's quest. Exiting the game fully avoids it. It's harmless, because the addon rebuilds its state at login.
@@ -75,6 +83,8 @@ Everything here was confirmed in-game on 12.1.x. The features depend on it, and 
 - **Direction comes from the map, not a fixed axis convention.** The addon measures which way east and north point from the map's own corners, so the arrows can't come out mirrored or rotated. With a rotating minimap it adds `GetPlayerFacing`.
 - **Untracked areas need a workaround.** The world map finds the quest area under the cursor with a `QuestPOIFrame`'s `UpdateMouseOverTooltip(x, y)`. The addon draws one untracked quest's area at a time into its own invisible `QuestPOIFrame` and asks with your position instead. It checks once a second.
 - **Positions aren't available in instances.** The nearby and untracked-area features go quiet inside dungeons and raids.
+- **Forever gamepad settings can freeze the client on close.** On build `1.60.1.70235`, changing the controller page checkbox and closing Options froze macOS and SteamOS. It also froze with the controller display removed and addon option notifications bypassed, and when opening Options directly rather than through a slash command. Enabling the display at login without opening settings worked. Configuring the checkbox in keyboard/mouse UI and then returning to gamepad UI also worked. The underlying cause remains unconfirmed.
+- **Controller page state is available while the numbered strip is hidden.** The native controller page unit reports its selected page and each numbered slot's selected, normal or disabled state independently of the strip's visibility. `/ergo actionpage` reads this state.
 
 ## Limits
 
@@ -95,6 +105,7 @@ Everything here was confirmed in-game on 12.1.x. The features depend on it, and 
 | `UntrackedAreas.lua` | Untracked-area detection. `/ergo probe`. |
 | `NearbySection.lua` | The Nearby (Untracked) list below the tracker. |
 | `ControllerPageReport.lua` | Read-only controller page report. `/ergo actionpage`. Polls only while diagnostic watch mode is running. |
+| `ControllerPages.lua` | Persistent controller page tiles. Reads native page state at 10Hz only while the option is enabled. |
 | `Settings.lua` | The settings panel. |
 
 Blizzard's UI source, mirrored at [Gethe/wow-ui-source](https://github.com/Gethe/wow-ui-source), is the reference for API names and behaviour. Before building on an API we haven't used yet, we add a debug report that checks it in-game, and keep the report afterwards for bug reports.

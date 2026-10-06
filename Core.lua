@@ -19,6 +19,7 @@ ns.OptionDefaults = {
 	nearbyTags = true,
 	minimapBadges = true,
 	nearbyTurnIns = true,
+	controllerPages = false,
 	debug = false,
 }
 

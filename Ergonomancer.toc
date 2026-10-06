@@ -15,4 +15,5 @@ MinimapBadges.lua
 UntrackedAreas.lua
 NearbySection.lua
 ControllerPageReport.lua
+ControllerPages.lua
 Settings.lua
