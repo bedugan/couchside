@@ -50,6 +50,11 @@ local SECTIONS = {
 				name = "Show action page numbers",
 				tooltip = "Keep page numbers 1, 2 and 3 visible in the native controller interface, with the selected page highlighted. Only applies to the controller interface. Forever beta: configure in keyboard/mouse UI to avoid a settings-close freeze.",
 			},
+			{
+				key = "controllerPagesOnlyExtra",
+				name = "Only show on pages 2 or 3",
+				tooltip = "When Show action page numbers is enabled, hide the persistent tiles on page 1. Blizzard's normal LB+RB page strip still works. Forever beta: configure in keyboard/mouse UI to avoid a settings-close freeze.",
+			},
 		},
 	},
 	{

@@ -68,6 +68,10 @@ local function Refresh()
 		HideIndicator("special controller page")
 		return
 	end
+	if currentPage == 1 and ns.IsEnabled("controllerPagesOnlyExtra") then
+		HideIndicator("page 1 excluded by option")
+		return
+	end
 	if owner ~= pageUnit then
 		CreateIndicator(pageUnit)
 	end
@@ -117,7 +121,7 @@ ns.OnReady(function()
 	ApplyOption()
 end)
 ns.OnOptionChanged(function(key)
-	if key == "controllerPages" then
+	if key == "controllerPages" or key == "controllerPagesOnlyExtra" then
 		ApplyOption()
 	end
 end)

@@ -20,6 +20,7 @@ ns.OptionDefaults = {
 	minimapBadges = true,
 	nearbyTurnIns = true,
 	controllerPages = false,
+	controllerPagesOnlyExtra = false,
 	debug = false,
 }
 

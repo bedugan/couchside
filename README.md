@@ -34,11 +34,11 @@ Enable **Show action page numbers** to keep the `1 2 3` tiles visible after rele
 
 This option is off by default. Configure it in keyboard/mouse UI, then return to gamepad UI. On the tested Forever beta build, changing the checkbox while gamepad UI is active and closing Options freezes the client. The keyboard/mouse configuration route and subsequent page switching have been verified in-game.
 
-The dependent option to show the tiles only on pages 2 or 3 remains planned.
+Enable **Only show on pages 2 or 3** to hide the persistent tiles on page 1 and show them on pages 2 and 3. This sub-option is off by default and only applies when **Show action page numbers** is enabled. Blizzard's normal LB+RB strip still appears on every regular page while the modifiers are held. Both options have been verified in-game using the keyboard/mouse configuration route.
 
 ## Settings
 
-Open **Options > AddOns > Ergonomancer**, or type `/ergo settings`. Every feature above has its own checkbox, and turning one off also stops the work behind it. On Forever beta build `1.60.1.70235`, disable **Enable Gamepad UI** in the built-in settings before changing the controller page option. Change the option in keyboard/mouse UI, close Options, then re-enable Gamepad UI. Switching interface modes may reload the UI.
+Open **Options > AddOns > Ergonomancer**, or type `/ergo settings`. Every feature above has its own checkbox, and turning one off also stops the work behind it. On Forever beta build `1.60.1.70235`, disable **Enable Gamepad UI** in the built-in settings before changing either controller page option. Change the option in keyboard/mouse UI, close Options, then re-enable Gamepad UI. Switching interface modes may reload the UI.
 
 ## Commands
 
@@ -83,7 +83,7 @@ The quest behaviour below was confirmed in-game on 12.1.x. Controller page repor
 - **Direction comes from the map, not a fixed axis convention.** The addon measures which way east and north point from the map's own corners, so the arrows can't come out mirrored or rotated. With a rotating minimap it adds `GetPlayerFacing`.
 - **Untracked areas need a workaround.** The world map finds the quest area under the cursor with a `QuestPOIFrame`'s `UpdateMouseOverTooltip(x, y)`. The addon draws one untracked quest's area at a time into its own invisible `QuestPOIFrame` and asks with your position instead. It checks once a second.
 - **Positions aren't available in instances.** The nearby and untracked-area features go quiet inside dungeons and raids.
-- **Forever gamepad settings can freeze the client on close.** On build `1.60.1.70235`, changing the controller page checkbox and closing Options froze macOS and SteamOS. It also froze with the controller display removed and addon option notifications bypassed, and when opening Options directly rather than through a slash command. Enabling the display at login without opening settings worked. Configuring the checkbox in keyboard/mouse UI and then returning to gamepad UI also worked. The underlying cause remains unconfirmed.
+- **Forever gamepad settings can freeze the client on close.** On build `1.60.1.70235`, changing the controller page checkbox and closing Options froze macOS and SteamOS. It also froze with the controller display removed and addon option notifications bypassed, and when opening Options directly rather than through a slash command. Enabling the display at login without opening settings worked. Configuring both controller page options in keyboard/mouse UI and then returning to gamepad UI also worked, including hiding the persistent tiles on page 1 with the sub-option enabled. The underlying cause remains unconfirmed.
 - **Controller page state is available while the numbered strip is hidden.** The native controller page unit reports its selected page and each numbered slot's selected, normal or disabled state independently of the strip's visibility. `/ergo actionpage` reads this state.
 
 ## Limits
