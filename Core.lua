@@ -112,6 +112,44 @@ ns.RegisterCommand("debug", "[on|off] - print what Ergonomancer sees; stays on a
 	ns.Print("Debug output is %s.", ns.IsEnabled("debug") and "|cff00ff00on|r" or "off")
 end)
 
+-- Sets options without opening the settings panel, which freezes Forever on close in
+-- gamepad UI. Arguments arrive lowercased, so option keys are matched case-insensitively.
+local optionKeys = {}
+for key in pairs(ns.OptionDefaults) do
+	optionKeys[key:lower()] = key
+end
+
+local function PrintOption(key)
+	ns.Print("%s: %s", key, ns.IsEnabled(key) and "|cff00ff00on|r" or "off")
+end
+
+ns.RegisterCommand("option", "[name] [on|off] - list options, or turn one on or off without opening settings", function(arg)
+	local name, state = arg:match("^(%S*)%s*(.*)$")
+	if name == "" then
+		local keys = {}
+		for key in pairs(ns.OptionDefaults) do
+			table.insert(keys, key)
+		end
+		table.sort(keys)
+		for _, key in ipairs(keys) do
+			PrintOption(key)
+		end
+		return
+	end
+	local key = optionKeys[name]
+	if not key then
+		ns.Print("Unknown option \"%s\". /ergo option lists them.", name)
+		return
+	end
+	if state == "on" or state == "off" then
+		ns.SetOption(key, state == "on")
+	elseif state ~= "" then
+		ns.Print("Usage: /ergo option %s [on|off]", key)
+		return
+	end
+	PrintOption(key)
+end)
+
 SLASH_ERGONOMANCER1 = "/ergo"
 SLASH_ERGONOMANCER2 = "/ergonomancer"
 SlashCmdList.ERGONOMANCER = function(input)

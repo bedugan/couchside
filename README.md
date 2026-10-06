@@ -30,15 +30,13 @@ Blue always means "you're inside this quest's area". Teal always means "this que
 
 ### Controller action pages
 
-Enable **Show action page numbers** to keep the `1 2 3` tiles visible after releasing LB+RB, with the selected page highlighted. While LB+RB is held, Blizzard's own strip appears and Ergonomancer's copy hides. Special controller pages use Blizzard's own display.
+Enable **Show action page numbers** to keep the `1 2 3` tiles visible after releasing LB+RB, with the selected page highlighted. While LB+RB is held, Blizzard's own strip appears and Ergonomancer's copy hides. Special controller pages use Blizzard's own display. Off by default.
 
-This option is off by default. Configure it in keyboard/mouse UI, then return to gamepad UI. On the tested Forever beta build, changing the checkbox while gamepad UI is active and closing Options freezes the client. The keyboard/mouse configuration route and subsequent page switching have been verified in-game.
-
-Enable **Only show on pages 2 or 3** to hide the persistent tiles on page 1 and show them on pages 2 and 3. This sub-option is off by default and only applies when **Show action page numbers** is enabled. Blizzard's normal LB+RB strip still appears on every regular page while the modifiers are held. Both options have been verified in-game using the keyboard/mouse configuration route.
+Enable **Only show page 2 or 3** as well to show just the current page's tile: `2` on page 2, `3` on page 3, and nothing on page 1. Blizzard's full LB+RB strip still appears on every page while the modifiers are held. Off by default.
 
 ## Settings
 
-Open **Options > AddOns > Ergonomancer**, or type `/ergo settings`. Every feature above has its own checkbox, and turning one off also stops the work behind it. On Forever beta build `1.60.1.70235`, disable **Enable Gamepad UI** in the built-in settings before changing either controller page option. Change the option in keyboard/mouse UI, close Options, then re-enable Gamepad UI. Switching interface modes may reload the UI.
+Open **Options > AddOns > Ergonomancer**, or type `/ergo settings`. Every feature above has its own checkbox, and turning one off also stops the work behind it. On Forever build `1.60.1.70235`, don't open the panel in gamepad UI: use `/ergo option` instead (see [How the game behaves](#how-the-game-behaves)).
 
 ## Commands
 
@@ -46,6 +44,8 @@ Open **Options > AddOns > Ergonomancer**, or type `/ergo settings`. Every featur
 | --- | --- |
 | `/ergo` or `/ergo help` | Lists commands and shows the version. `/ergonomancer` works too. |
 | `/ergo settings` | Opens the settings panel. |
+| `/ergo option` | Lists every option and whether it's on. |
+| `/ergo option <name> on` / `off` | Turns an option on or off without opening the settings panel, for example `/ergo option controllerPages on`. Names aren't case-sensitive. |
 | `/ergo debug on` / `off` | Prints what the addon sees to chat. Stays on across sessions and reminds you at login. |
 | `/ergo areas` | For each tracked quest: whether the game and the addon think you're in its area, and whether the tracker mark is showing. |
 | `/ergo nearby` | Every quest in your log by distance, which turn-ins are on the minimap, their letter, and where each sits on the minimap face. |
@@ -83,7 +83,7 @@ The quest behaviour below was confirmed in-game on 12.1.x. Controller page repor
 - **Direction comes from the map, not a fixed axis convention.** The addon measures which way east and north point from the map's own corners, so the arrows can't come out mirrored or rotated. With a rotating minimap it adds `GetPlayerFacing`.
 - **Untracked areas need a workaround.** The world map finds the quest area under the cursor with a `QuestPOIFrame`'s `UpdateMouseOverTooltip(x, y)`. The addon draws one untracked quest's area at a time into its own invisible `QuestPOIFrame` and asks with your position instead. It checks once a second.
 - **Positions aren't available in instances.** The nearby and untracked-area features go quiet inside dungeons and raids.
-- **Forever gamepad settings can freeze the client on close.** On build `1.60.1.70235`, changing the controller page checkbox and closing Options froze macOS and SteamOS. It also froze with the controller display removed and addon option notifications bypassed, and when opening Options directly rather than through a slash command. Enabling the display at login without opening settings worked. Configuring both controller page options in keyboard/mouse UI and then returning to gamepad UI also worked, including hiding the persistent tiles on page 1 with the sub-option enabled. The underlying cause remains unconfirmed.
+- **Closing Ergonomancer's settings panel in gamepad UI freezes Forever.** On build `1.60.1.70235`, opening the panel in gamepad UI and closing it froze the client on macOS and SteamOS, even with no changes made. It still froze with the controller page code removed, so the cause is the game's settings close path rather than any one feature. Changing an option with `/ergo option` doesn't open the panel and doesn't freeze. Changing settings in keyboard/mouse UI and then switching back to gamepad UI also works.
 - **Controller page state is available while the numbered strip is hidden.** The native controller page unit reports its selected page and each numbered slot's selected, normal or disabled state independently of the strip's visibility. `/ergo actionpage` reads this state.
 
 ## Limits

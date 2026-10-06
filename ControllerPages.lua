@@ -68,7 +68,9 @@ local function Refresh()
 		HideIndicator("special controller page")
 		return
 	end
-	if currentPage == 1 and ns.IsEnabled("controllerPagesOnlyExtra") then
+	-- The sub-option shows only the current page's tile, and nothing on page 1.
+	local onlyCurrent = ns.IsEnabled("controllerPagesOnlyExtra")
+	if currentPage == 1 and onlyCurrent then
 		HideIndicator("page 1 excluded by option")
 		return
 	end
@@ -85,9 +87,10 @@ local function Refresh()
 			textures[page]:SetAtlas("gamepad-actionbar-numericalpage-" .. page .. "-" .. state)
 			lastStates[page] = state
 		end
+		textures[page]:SetShown(not onlyCurrent or page == currentPage)
 	end
 	indicator:Show()
-	local decision = "page " .. currentPage
+	local decision = "page " .. currentPage .. (onlyCurrent and " tile only" or "")
 	if lastDecision ~= decision then
 		lastDecision = decision
 		ns.Debug("Controller page indicator showing %s.", decision)
