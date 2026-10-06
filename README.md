@@ -2,7 +2,7 @@
 
 A World of Warcraft addon that fills user-experience gaps you hit when playing with a controller. It started with WoW Forever's native gamepad mode, but nothing in it needs a controller: every feature shows information on screen instead of hiding it behind a mouse hover, so it helps with any input method.
 
-Built for the 12.1.x client (Interface `120100` and `120105`).
+The TOC lists WoW Forever 1.60.1 (Interface `16001`) and the Retail 12.1.x client (Interface `120100` and `120105`).
 
 ## What it does
 
@@ -42,6 +42,8 @@ Open **Options > AddOns > Ergonomancer**, or type `/ergo settings`. Every featur
 | `/ergo areas` | For each tracked quest: whether the game and the addon think you're in its area, and whether the tracker mark is showing. |
 | `/ergo nearby` | Every quest in your log by distance, which turn-ins are on the minimap, their letter, and where each sits on the minimap face. |
 | `/ergo probe` | Checks untracked-area detection against the game's own answer for tracked quests. |
+| `/ergo actionpage` | Reports the native controller page, controller bar visibility and numbered strip state. |
+| `/ergo actionpage watch` / `off` | Reports changes to the controller page or numbered strip visibility until stopped or reloaded. |
 
 ## Reporting a problem
 
@@ -92,6 +94,7 @@ Everything here was confirmed in-game on 12.1.x. The features depend on it, and 
 | `MinimapBadges.lua` | Letter badges on the minimap, spread apart when icons cluster. |
 | `UntrackedAreas.lua` | Untracked-area detection. `/ergo probe`. |
 | `NearbySection.lua` | The Nearby (Untracked) list below the tracker. |
+| `ControllerPageReport.lua` | Read-only controller page report. `/ergo actionpage`. Polls only while diagnostic watch mode is running. |
 | `Settings.lua` | The settings panel. |
 
 Blizzard's UI source, mirrored at [Gethe/wow-ui-source](https://github.com/Gethe/wow-ui-source), is the reference for API names and behaviour. Before building on an API we haven't used yet, we add a debug report that checks it in-game, and keep the report afterwards for bug reports.
