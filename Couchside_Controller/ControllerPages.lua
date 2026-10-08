@@ -1,7 +1,7 @@
 -- Mirror the native controller page tiles while Blizzard's modifier-only strip
 -- is hidden. Our frame is a sibling of that strip, so hiding it doesn't hide us.
 -- Reference: Blizzard_GamepadActionBars/PageUnit.lua and ActionBarTemplates.xml
--- on Gethe/wow-ui-source's forever branch. /ergo actionpage probes this state.
+-- on Gethe/wow-ui-source's forever branch. /cs controller actionpage probes this state.
 
 local _, ns = ...
 
@@ -44,7 +44,7 @@ local function CreateIndicator(pageUnit)
 end
 
 local function Refresh()
-	if not ns.IsEnabled("controllerPages") then
+	if not ns.IsEnabled("pageNumbers") then
 		HideIndicator("option off")
 		return
 	end
@@ -69,7 +69,7 @@ local function Refresh()
 		return
 	end
 	-- The sub-option shows only the current page's tile, and nothing on page 1.
-	local onlyCurrent = ns.IsEnabled("controllerPagesOnlyExtra")
+	local onlyCurrent = ns.IsEnabled("pageNumbersExtraOnly")
 	if currentPage == 1 and onlyCurrent then
 		HideIndicator("page 1 excluded by option")
 		return
@@ -112,7 +112,7 @@ end)
 
 local function ApplyOption()
 	elapsed = 0
-	local enabled = ns.IsEnabled("controllerPages")
+	local enabled = ns.IsEnabled("pageNumbers")
 	driver:SetShown(enabled)
 	-- Create/update the display from OnUpdate after the settings callback returns.
 	if not enabled then
@@ -124,7 +124,7 @@ ns.OnReady(function()
 	ApplyOption()
 end)
 ns.OnOptionChanged(function(key)
-	if key == "controllerPages" or key == "controllerPagesOnlyExtra" then
+	if key == "pageNumbers" or key == "pageNumbersExtraOnly" then
 		ApplyOption()
 	end
 end)

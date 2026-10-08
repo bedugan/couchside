@@ -7,7 +7,7 @@
 -- ns.Nearby is the shared model. Features (tracker tags, minimap badges, the Nearby section)
 -- subscribe with ns.Nearby.OnUpdate and draw from ns.Nearby.spots.
 --
--- Verified in-game (see /ergo nearby):
+-- Verified in-game (see /cs quests nearby):
 --   - Map positions give distances in yards that match GetDistanceSqToQuest exactly.
 --   - The minimap shows every map point of tracked quests, plus turn-ins of untracked ones.
 --   - Bearings and clock positions match the minimap, north-up and rotating.

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couchside · Return to page 1</title>
+<style>
+:root{color-scheme:dark;--bg:#102334;--panel:#18384b;--text:#f3f8fc;--muted:#bfd5e2;--accent:#75e3cd;--line:#386079;--gold:#ffd48b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:17px/1.65 system-ui,sans-serif}main{max-width:960px;margin:auto;padding:44px 24px 72px}h1{font-size:clamp(32px,5vw,48px);line-height:1.15}h2{margin-top:32px;font-size:25px}p,li{max-width:850px}li{margin:8px 0}a{color:var(--accent)}code{color:var(--gold);overflow-wrap:anywhere}.lead{font-size:21px}.muted{color:var(--muted)}.callout{background:var(--panel);border-left:4px solid var(--accent);padding:18px 24px;margin:24px 0}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid var(--line)}th{color:var(--accent)}@media print{body{background:white;color:#102334;font-size:11pt}main{padding:0}.callout{background:#eef6f8}a,code,th{color:#145c68}.muted{color:#365365}}
+</style>
+</head>
+<body><main>
+<p class="muted">Couchside: Controller · Investigation · 7 October 2026</p>
+<h1>Return to page 1 after inactivity.</h1>
+<p class="lead">A small, independent Controller feature: enter page 2 or 3, use its actions, and return to page 1 after five seconds without another action attempt. Configure the delay from 3 to 10 seconds.</p>
+<div class="callout"><strong>Feasibility is conditional.</strong><p>Forever has a native controller page setter. We still need to establish whether an addon timer can use it during combat and whether the native action path exposes every relevant button press. Source inspection is not an in-game result.</p></div>
+<h2>Recommended behavior</h2>
+<ul>
+<li>Opt in with <strong>Automatically return to page 1</strong>, initially off. This works independently of the page-number display.</li>
+<li><strong>Return after</strong> defaults to 5 seconds, with whole-second choices from 3 through 10.</li>
+<li>Entering page 2 or 3 starts a fresh countdown. Switching between them restarts it.</li>
+<li>Each action attempt on the current controller page restarts the countdown, including a failed cast, an item or a macro. Brian confirmed that attempts should count. Input-path coverage still needs verification.</li>
+<li>Movement, camera input, targeting and unrelated spells do not restart it.</li>
+<li>Page 1, special pages and a hidden controller interface cancel the countdown. Returning to an eligible page starts fresh.</li>
+<li>Do not change pages while the player is actively using the native page selector. Start a fresh countdown when selection ends.</li>
+<li>Turning the feature off stops its timer and activity handling. Changing the delay starts a fresh countdown.</li>
+</ul>
+<p>Example: select page 2 at 0 seconds, attempt a spell at 4 seconds, and make no further attempts. With the default delay, return to page 1 just after 9 seconds.</p>
+<h2>Where it belongs</h2>
+<div class="scroll"><table><thead><tr><th>File</th><th>Proposed responsibility</th></tr></thead><tbody>
+<tr><td><code>Controller.lua</code></td><td>Declare the enable option and bounded numeric delay.</td></tr>
+<tr><td><code>ControllerPageReturn.lua</code>, new</td><td>Own page eligibility, activity timestamps, timer lifecycle and the native return request. Log state changes with <code>ns.Debug</code>.</td></tr>
+<tr><td><code>ControllerPageReport.lua</code></td><td>Extend diagnostics to report native capability and observed input, without enabling automatic changes.</td></tr>
+<tr><td><code>Couchside/Core.lua</code></td><td>Expose a named value getter to modules and support validated numeric values in <code>/cs option</code>. Keep <code>IsEnabled</code> for feature gates.</td></tr>
+<tr><td><code>Couchside/Settings.lua</code></td><td>Keep existing checkboxes; add numeric option rendering using a native slider.</td></tr>
+<tr><td>Controller TOC and README</td><td>List the new file, settings, commands and confirmed behavior when implementation begins.</td></tr>
+</tbody></table></div>
+<p>The base currently assumes every setting is boolean. Numeric support is a necessary shared change, while the return behavior belongs entirely in Controller. No dependency on the indicator's visibility or polling loop is needed.</p>
+<h2>Verify before building automation</h2>
+<ol>
+<li>Add a retained report/watch command that prints the build, native page, controller visibility, page-setter availability, combat state and observed action attempts.</li>
+<li>Brian checks page 2 and 3 with ordinary spells, cooldown and range failures, items, macros, empty buttons, mouse clicks and controller input. Verify modifier-selected bars as well.</li>
+<li>Add an explicit one-shot return test, separate from the read-only report. Test outside combat first, then during combat. Inspect errors, actual action assignments and the next pressed action, rather than trusting the highlighted tile.</li>
+<li>If that succeeds, test a return initiated by a timer. A successful manual command alone does not establish that timer-driven changes work.</li>
+<li>Check page selection holds, special/override bars, interface transitions and a cast or channel longer than the delay. Decide whether long casts need countdown suspension from those results.</li>
+<li>Build the option and timer only after the probe establishes the supported behavior. Test 3, 5 and 10 seconds, repeated activity and disabling mid-countdown. Commit after Brian confirms it works.</li>
+</ol>
+<p>If combat blocks the setter, an out-of-combat return is a narrower feature and should be described as such. Do not promise the requested combat behavior or try to bypass protection. The inspected Retail live source has no Blizzard_GamepadActionBars addon. Treat this as a Forever feature and leave Retail inactive when the native controller page unit is absent. Supporting a different Retail controller addon would be a separate integration.</p>
+<h2>Evidence</h2>
+<p>Forever's <a href="https://github.com/Gethe/wow-ui-source/blob/15666a6e67938a1ab5caf041406464251db111ca/Interface/AddOns/Blizzard_GamepadActionBars/PageUnit.lua">PageUnit.lua</a> defines controller page getters, setters and page-change callbacks. The setter updates displayed actions, bar visibility, button state and the tracker. Use this path rather than the keyboard action-bar page API.</p>
+<p>Blizzard's <a href="https://github.com/Gethe/wow-ui-source/blob/15666a6e67938a1ab5caf041406464251db111ca/Interface/AddOns/Blizzard_Settings_Shared/Blizzard_Settings.lua">settings source</a> defines numeric settings and native sliders with configurable bounds and steps.</p>
+<p><a href="research/controller-page-idle-api.md">Detailed API research</a> records the input path, client differences and remaining runtime questions. Existing behavior and the Forever settings-panel workaround are recorded in the repository README. Proposed command names and options in this document are not implemented.</p>
+</main></body></html>

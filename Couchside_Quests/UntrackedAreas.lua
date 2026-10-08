@@ -7,7 +7,7 @@
 -- QuestPOIFrame and ask with the player's position instead.
 --
 -- Verified in-game: matches IsInsideQuestBlob for tracked quests, and still detects an area
--- after its quest is untracked. /ergo probe repeats that comparison for bug reports.
+-- after its quest is untracked. /cs quests probe repeats that comparison for bug reports.
 
 local _, ns = ...
 

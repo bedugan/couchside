@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couchside · Smart quest tracking plan</title>
+<style>
+:root{color-scheme:dark;--bg:#101b28;--panel:#172b3b;--text:#f2f6fc;--muted:#bccddb;--teal:#64e0cc;--blue:#8ac5ff;--gold:#f7cf82;--line:#365369}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:17px/1.65 system-ui,-apple-system,sans-serif}main{max-width:1060px;margin:auto;padding:48px 28px 80px}header{border-bottom:1px solid var(--line);padding-bottom:28px}.eyebrow{color:var(--teal);font-size:13px;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(32px,5vw,52px);line-height:1.12;margin:14px 0 20px;max-width:800px}h2{font-size:25px;margin:38px 0 12px}h3{font-size:19px;margin:0 0 8px}p{margin:10px 0}a{color:var(--blue)}.lead{font-size:21px;max-width:850px}.muted{color:var(--muted)}.callout{padding:20px 24px;background:var(--panel);border-left:4px solid var(--teal);margin:22px 0}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:9px}.card p{color:var(--muted)}.status{font-size:13px;color:var(--gold)}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:16px}th,td{text-align:left;vertical-align:top;padding:14px;border-bottom:1px solid var(--line)}th{color:var(--teal)}td:first-child{width:25%}code{font-size:.9em;color:var(--gold);overflow-wrap:anywhere}li{margin:9px 0}.steps{padding-left:24px}.small{font-size:14px;color:var(--muted)}@media(max-width:750px){.cards{grid-template-columns:1fr}main{padding:28px 18px}th,td{padding:10px}}@media print{body{background:white;color:#152333;font-size:11pt}.card,.callout{background:#f3f7fa;color:#152333;break-inside:avoid}.muted,.card p,.small{color:#334b61}a,code,th,.eyebrow{color:#145878}main{padding:0}h2{break-after:avoid}}
+</style>
+</head>
+<body><main>
+<header>
+<div class="eyebrow">Couchside: Quests · Revised scope</div>
+<h1>Track quests by zone.</h1>
+<p class="lead">Use the game's quest-log groups as the default. Scan the player's map for extra quests with work here. Accept that the game's markers do not describe every possible gathering location.</p>
+<p class="muted">The zone-tracking option, read-only decision report, keep overrides and explicit watch API test are implemented. Watch APIs passed the in-game test, and Brian confirmed the initial zone filter works. Zone transitions, restoration, keep overrides and instance matching await broader playtesting.</p>
+</header>
+<div class="callout"><strong>The rule</strong><p>Track the current zone or instance's group, plus accepted quests with a direct marker on the player's map. Untrack quests grouped elsewhere when they have no qualifying local marker. Keep the selected navigation quest.</p></div>
+<h2>What changes when you travel</h2>
+<ol>
+<li>After entering a new zone or instance, wait briefly for location and quest data to settle.</li>
+<li>Read every accepted quest and its native quest-log group, including collapsed groups.</li>
+<li>Match the group to the current zone, parent outdoor maps, or native instance name.</li>
+<li>Scan the explicit player map for additional accepted quests with direct markers. Ignore quest-start and child-map markers. Browsing another zone's world map must not affect the scan.</li>
+<li>Apply the resulting watch list. Recompute local relevance for the new zone; do not accumulate quests from past zones.</li>
+</ol>
+<p>Also scan on login or reload and when the quest log changes, so accepting or completing a quest takes effect without requiring travel. Coalesce events and avoid movement polling. Gate both decisions and background work with the option.</p>
+<h2>Examples</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Situation</th><th>Expected best-effort behavior</th></tr></thead><tbody>
+<tr><td>Silverpine with Barrens quests</td><td>Track the Silverpine group. Hide Barrens quests unless they have a qualifying Silverpine marker or are explicitly kept.</td></tr>
+<tr><td>Quest starts elsewhere</td><td>A current-zone marker adds it even though its group belongs elsewhere.</td></tr>
+<tr><td>Gathering in several zones</td><td>Add it where the game supplies a qualifying marker. An unmarked gathering location may be missed; an explicit keep override covers that exception.</td></tr>
+<tr><td>Dungeon quest with no map destination</td><td>Use its dungeon group. The Book of Ur's group is Shadowfang Keep. Match against the native instance name inside, including floors with no usable player map.</td></tr>
+<tr><td>Completed quest</td><td>A local hand-in marker includes it. A known remote hand-in takes precedence over its original group.</td></tr>
+<tr><td>Missing location or group</td><td>Leave the watch state unchanged unless another usable source establishes relevance.</td></tr>
+</tbody></table></div>
+<h2>Keep the implementation small</h2>
+<p>One opt-in setting, <code>quests.smartTracking</code>, default off. The report is <code>/cs quests tracking [questID]</code>. The <code>/cs quests tracking keep &lt;questID&gt;</code> and <code>auto &lt;questID&gt;</code> commands provide explicit exceptions.</p>
+<p>Keep selected navigation quests. Let manual changes stand until the location or quest progress changes, so incidental map and watch updates do not immediately fight the player's checkbox. Use explicit keeps for exceptions that should survive scans. Watch events do not identify whether the player or native auto-watch caused them.</p>
+<p>Keep quest-specific state per character. Restore watch changes still owned by the addon when disabling it; preserve later manual choices. Respect watch capacity and native untracking restrictions. Log changes with <code>ns.Debug</code>.</p>
+<p>The feature stays in <code>Couchside_Quests</code>. No quest database, per-objective geographic model, route planner or learning system is required. Update the README with each implemented command, option, file and confirmed game behavior.</p>
+<h2>Evidence already collected</h2>
+<ul>
+<li>Border Crossings retains its Silverpine marker after untracking.</li>
+<li>With the Barrens map open, implicit map membership changes to false while the explicit player-map query still finds the Silverpine hand-in.</li>
+<li>Sample for Helbrim is ready for hand-in and points to the Barrens.</li>
+<li>The Book of Ur has group Shadowfang Keep, even with the heading collapsed and destination map zero.</li>
+</ul>
+<p>These are sampled Forever results, not a guarantee for every quest. Some markers may represent routes or entrances. Non-geographic quest groups and multi-zone gathering can need a keep override.</p>
+<h2>In-game feature validation</h2>
+<p>The watch test passed on Forever build <code>1.60.1.70245</code>. Reload, enable <code>/cs option quests.smartTracking on</code>, and check that Silverpine quests appear while Barrens and unfinished dungeon quests leave the tracker. Cross a zone boundary, test a keep override, then disable the option to check restoration. Commit after Brian confirms the automatic feature works.</p>
+<p><a href="../README.md#how-the-game-behaves">Confirmed behavior in the README</a> · <a href="research/zone-quest-tracking.md">API source research</a></p>
+</main></body></html>

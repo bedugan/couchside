@@ -62,10 +62,10 @@ ns.RegisterCommand("actionpage", "[watch|off] - report the native controller pag
 		previousState = nil
 		watcher:Show()
 		ns.Debug("Controller page diagnostic watch enabled.")
-		ns.Print("Watching controller page changes. /ergo actionpage off to stop; /reload also stops it.")
+		ns.Print("Watching controller page changes. /cs controller actionpage off to stop; /reload also stops it.")
 	elseif arg == "" then
 		Report()
 	else
-		ns.Print("Usage: /ergo actionpage [watch|off]")
+		ns.Print("Usage: /cs controller actionpage [watch|off]")
 	end
 end)
