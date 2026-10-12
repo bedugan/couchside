@@ -1,0 +1,15 @@
+## Interface: 16001, 120100, 120105
+## Title: Couchside: Gathering
+## Notes: Scanned minimap tracking names and gathering diagnostics.
+## Author: Brian Dugan
+## Version: 0.8.0
+## IconTexture: Interface\Icons\INV_Misc_Herb_01
+## Dependencies: Couchside
+## SavedVariables: CouchsideGatheringScanDB
+
+Gathering.lua
+ScanLog.lua
+QuestTextFilter.lua
+ScanMotion.lua
+NearbyList.lua
+MinimapProbe.lua

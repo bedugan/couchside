@@ -1,0 +1,138 @@
+{
+  "evidence": "Summary of one native SavedVariables scan after Brian's reload. Nonempty sample coordinates remain in the original SavedVariables file; omitted here.",
+  "savedVariable": "CouchsideGatheringScanDB",
+  "historyCount": 1,
+  "scan": {
+    "build": "70338",
+    "pointCount": 1009,
+    "id": 1,
+    "serverTime": 1791774892,
+    "durationSeconds": 1.25,
+    "grid": {
+      "rows": 36,
+      "columns": 36,
+      "spacing": 4
+    },
+    "tipsByText": {
+      "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Jorn Skyseer": {
+        "dataInstanceID": 50943,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Centaur Bracers|cffffffff\n- 0/15 Centaur Bracers|r\nJorn Skyseer"
+          }
+        ],
+        "type": 21
+      },
+      "Peacebloom Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r": {
+        "dataInstanceID": 51295,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Peacebloom\nCentaur Bracers|cffffffff\n- 0/15 Centaur Bracers|r"
+          }
+        ],
+        "type": 21
+      },
+      "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r": {
+        "dataInstanceID": 50871,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Centaur Bracers|cffffffff\n- 0/15 Centaur Bracers|r"
+          }
+        ],
+        "type": 21
+      }
+    },
+    "regions": [
+      {
+        "y": 0.3077033218785797,
+        "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r",
+        "count": 388,
+        "x": 0.3417096219931272
+      },
+      {
+        "y": 0.1666666666666667,
+        "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Jorn Skyseer",
+        "count": 9,
+        "x": 0.2222222222222222
+      },
+      {
+        "y": 0.5,
+        "text": "Peacebloom Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r",
+        "count": 20,
+        "x": 0.2916666666666666
+      }
+    ],
+    "geometry": {
+      "zoom": 0,
+      "bottom": 824.4999389648438,
+      "height": 198.0000457763672,
+      "scale": 0.7111111283302307,
+      "left": 1694.499877929688,
+      "width": 198.0001831054688
+    },
+    "cleanupRequestSucceeded": true,
+    "clientVersion": "1.60.1",
+    "hitCount": 417,
+    "interface": 16001
+  }
+}

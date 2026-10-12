@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couchside: one minimap list, different sources</title>
+<style>
+:root{color-scheme:dark;--bg:#101e29;--panel:#182f3b;--ink:#eff5f4;--muted:#b9ced0;--teal:#65dbcb;--gold:#f4cd79;--line:#31515d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,sans-serif}main{max-width:1040px;margin:auto;padding:44px 26px 60px}h1{font:700 clamp(30px,5vw,46px)/1.15 Georgia,serif;max-width:760px;margin:12px 0 22px}h2{font-size:23px;margin:32px 0 10px}p{margin:10px 0 16px}.eyebrow{color:var(--gold);font-size:13px;letter-spacing:.1em;text-transform:uppercase}.lead{font-size:21px;max-width:850px}.note,.decision{padding:18px 22px;background:var(--panel);border-left:3px solid var(--teal);border-radius:0 8px 8px 0}.decision{border-color:var(--gold)}a{color:var(--teal);text-underline-offset:3px}code{font-size:.88em;color:var(--gold);overflow-wrap:anywhere}.table{overflow:auto}table{border-collapse:collapse;width:100%;min-width:650px;background:var(--panel);border-radius:8px}th,td{text-align:left;vertical-align:top;padding:15px;border-bottom:1px solid var(--line)}th{color:var(--gold);font-size:14px}td:first-child{font-weight:650;width:19%}td{font-size:15px}.diagram{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.source{padding:18px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.source strong{display:block;color:var(--gold)}.source span{font-size:14px;color:var(--muted)}.sink{text-align:center;padding:18px;background:#123c40;border:1px solid #3d847d;border-radius:8px;margin:0 0 20px}.sink strong{color:var(--teal)}ol{padding-left:24px}li{margin:10px 0}footer{border-top:1px solid var(--line);margin-top:32px;padding-top:16px;font-size:14px;color:var(--muted)}@media(max-width:650px){main{padding:25px 18px}.diagram{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">Couchside · design investigation · 12 October 2026</div>
+<h1>One minimap list, with each source keeping its own evidence</h1>
+<p class="lead">Reconcile gathering with the quest turn-in model. Reuse the presentation and coordinate conventions, and keep the more precise quest data when it is available.</p>
+<div class="note">The current installed nearby-list candidate remains the test target. This document proposes the next work; available-quest support and a combined list are not implemented.</div>
+
+<h2>What the two existing methods know</h2>
+<div class="table"><table>
+<thead><tr><th>Source</th><th>Identity and position</th><th>Freshness</th><th>Consequence for a combined list</th></tr></thead>
+<tbody>
+<tr><td>Ready turn-ins</td><td>Quest IDs and map points, converted to world coordinates. The current model selects complete quests, groups close positions and calculates yards and bearing.</td><td>Candidate positions rebuild on quest/map events; directions and distances update at 10Hz.</td><td>Keep the structured quest model. A tooltip scan adds little to ordinary turn-in discovery.</td></tr>
+<tr><td>Gathering scan</td><td>Tooltip text at sampled minimap points. Connected regions supply approximate centers; no reliable herb identity flag was found in the inspected samples.</td><td>About 1.25 seconds per observed sweep. The display requires stillness and clears on motion or after ten seconds.</td><td>Keep observation age and uncertainty. A sampled name should not automatically become a typed resource or a precise world position.</td></tr>
+<tr><td>Available quests</td><td>Blizzard's quest-offer provider reads quest-line offers with IDs, names and map coordinates. Coverage of ordinary Forever yellow “!” pins is unverified.</td><td>Depends on the client's data and native offer filters; must be probed before choosing refresh rules.</td><td>A useful next category, once it matches what the client actually offers and shows nearby.</td></tr>
+</tbody></table></div>
+<p>Implementation references: <code>Couchside_Quests/QuestNearby.lua</code>, <code>MinimapBadges.lua</code>, and <code>Couchside_Gathering/MinimapProbe.lua</code>, <code>NearbyList.lua</code>. The native quest-offer path is visible in <a href="https://github.com/Gethe/wow-ui-source/blob/9465cb273b5513495d8ecc12fbb19930dd6b8957/Interface/AddOns/Blizzard_SharedMapDataProviders/QuestOfferDataProvider.lua#L173-L183">Blizzard's quest-offer provider</a>.</p>
+
+<h2>Use turn-ins to calibrate sampled positions</h2>
+<p>A known, isolated turn-in provides an independent reference. Its structured quest position predicts where the icon should appear. We can compare that with the tooltip region found by a stationary scan.</p>
+<ol>
+<li>Choose a ready turn-in whose “?” is inside the minimap, away from the rim and other pins. Avoid using the focused navigation arrow as the target.</li>
+<li>Compare the existing quest model's predicted location, bearing and distance with the scan's raw hit region. The scanner already saves raw hits even when quest filtering removes them from the gathering display.</li>
+<li>Repeat at another zoom, while facing another direction, and with a rotating minimap. Record disagreement instead of adjusting the result to look right.</li>
+<li>If the conversions agree, test reversing them: estimate a sampled herb's world position, then predict its minimap position after walking. Compare with a fresh scan and ordinary hover.</li>
+</ol>
+<p>This could let herb arrows follow movement between scans. It remains an inference. Pin hitbox centers are approximate, edge arrows can be clamped, and a herb can disappear while a cached position remains. Moving sweeps still need their own validation.</p>
+<p>The scale reference is <a href="https://github.com/Gethe/wow-ui-source/blob/9465cb273b5513495d8ecc12fbb19930dd6b8957/Interface/AddOns/Blizzard_APIDocumentationGenerated/MinimapDocumentation.lua#L120-L127"><code>C_Minimap.GetViewRadius()</code>, declared in yards</a>. Couchside's turn-in model already uses it to project world positions onto the minimap.</p>
+
+<h2>A possible “What's on the minimap” option</h2>
+<div class="diagram" aria-label="Three sources feeding one display">
+<div class="source"><strong>Resources / other tracking</strong><span>Sampled names and positions, observation age and uncertainty</span></div>
+<div class="source"><strong>Ready turn-ins</strong><span>Quest IDs, live directions and distances</span></div>
+<div class="source"><strong>Available quests</strong><span>Native offer evidence, after runtime verification</span></div>
+</div>
+<div class="sink"><strong>One optional list and one set of pin labels</strong><br>Category, name, direction, and distance or scan age where supported</div>
+<p>Category toggles would let someone show resources alone or include ready turn-ins and available quests. Unidentified tooltip text would stay under other tracking. Accepted quest objectives and blue quest areas already have their own display, so including them would be a separate choice.</p>
+<p>A combined display needs one label assignment. Today a teal quest A and a gold scan A can represent different locations. The list, pin badges and tracker tags must agree on the same location labels when combined. Nearby quest positions can share a marker without claiming that proximity proves the same NPC.</p>
+<div class="decision"><strong>Follow-up requested on 12 October: stable labels for both nodes and quest turn-ins.</strong><br>A letter identifies a tracked location, not its proximity rank. Moving closer updates direction and distance while keeping the label and relative row order. Removing A must not rename B to A. New locations use unused labels within the current observation context.</div>
+<p>The current quest display renumbers by distance. The node candidate keeps letters fixed within one snapshot, clears during motion, and assigns them anew by screen position on the next scan. Both rules need revisiting before automatic refresh or a combined display. Quest IDs and position evidence can support quest association; node association needs calibrated positions that distinguish multiple same-name herbs. Name equality alone does not establish the same node.</p>
+<div class="decision">Recommended boundary: quest discovery and eligibility stay in Quests; native tooltip sampling stays in Gathering. A broader minimap display would have its own module. Extract only the small shared data/placement interface needed for those real consumers, rather than building a general plugin framework.</div>
+
+<h2>Verify available quests before adding them</h2>
+<p><code>C_QuestLine.GetAvailableQuestLines(playerMapID)</code> is the first candidate, alongside native forced-visible offers. The generated <a href="https://github.com/Gethe/wow-ui-source/blob/9465cb273b5513495d8ecc12fbb19930dd6b8957/Interface/AddOns/Blizzard_APIDocumentationGenerated/QuestLineInfoDocumentation.lua">quest-line declarations</a> include quest ID, name, coordinates, hidden/in-progress state and starting map. That does not establish exhaustive Classic/Forever coverage.</p>
+<p>The next diagnostic should compare those APIs with visible ordinary yellow “!” pins while no NPC dialogue is open. It should also report <code>GetQuestsOnMap(playerMapID)</code> with start-marker fields. Missing APIs, empty results and unavailable data must remain distinct. An offer on the world map is not proof that a corresponding minimap pin is visible; nearby range, floors, tracking filters and actual eligibility need checking.</p>
+<p>A stricter turn-in classification should also require an accepted quest, a ready/completed state and a non-start marker. The current nearby model only tests completion. Blizzard's offer provider creates start markers, so available offers and hand-ins need separate classification. This is a source-based concern, not a reproduced bug.</p>
+
+<h2>Sequence</h2>
+<ol>
+<li>Finish the current nearby-list layout, hover and controller test.</li>
+<li>Reconcile projection and label placement against a known turn-in.</li>
+<li>Implement stable location labels, including the requested quest turn-in follow-up, and test approaching B, removing A and discovering a new location.</li>
+<li>Add a read-only available-quest report and compare it with Forever's ordinary “!” pins.</li>
+<li>Review static models for the combined categories before changing the installed display.</li>
+</ol>
+<footer>Evidence status: Brian reported the node display test passed on 12 October and letters aligned with pins. Stable labels across scans, available quests, combined rendering and estimated moving herb positions are proposals. Detailed available-quest source notes live in <code>docs/research/available-quest-minimap-api.md</code>.</footer>
+</main></body>
+</html>

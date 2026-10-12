@@ -1,0 +1,638 @@
+{
+  "evidence": "Native filtered scan after reload, ID 11. Hit coordinate arrays remain in the original SavedVariables file. Quest IDs and objective text here come from the running client, not fixtures. Brian confirmed the Silverleaf result matched the visible pin and normal hover/controller controls still worked.",
+  "scan": {
+    "pointCount": 1009,
+    "retainedHitCount": 20,
+    "grid": {
+      "rows": 36,
+      "columns": 36,
+      "spacing": 4
+    },
+    "regions": [
+      {
+        "y": 0.1944444444444445,
+        "text": "Silverleaf",
+        "count": 20,
+        "x": 0.4861111111111111
+      }
+    ],
+    "build": "70338",
+    "filtersByText": {
+      "Silverleaf Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "removed": [
+          {
+            "text": "Centaur Bracers",
+            "questID": 855,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 0/15 Centaur Bracers",
+            "questID": 855,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Root Samples",
+            "questID": 866,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 5/8 Root Sample",
+            "questID": 866,
+            "reason": "quest objective"
+          }
+        ],
+        "text": "Silverleaf"
+      },
+      "Serpentbloom|cffffffff - 0/10 Serpentbloom|r Trouble at the Docks|cffffffff - 0/1 99-Year-Old Port|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "removed": [
+          {
+            "text": "Serpentbloom",
+            "questID": 962,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 0/10 Serpentbloom",
+            "questID": 962,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Trouble at the Docks",
+            "questID": 959,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 0/1 99-Year-Old Port",
+            "questID": 959,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Root Samples",
+            "questID": 866,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 5/8 Root Sample",
+            "questID": 866,
+            "reason": "quest objective"
+          }
+        ],
+        "text": ""
+      },
+      "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 5/8 Root Sample|r Jorn Skyseer": {
+        "removed": [
+          {
+            "text": "Centaur Bracers",
+            "questID": 855,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 0/15 Centaur Bracers",
+            "questID": 855,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Root Samples",
+            "questID": 866,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 5/8 Root Sample",
+            "questID": 866,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Jorn Skyseer",
+            "questID": 3261,
+            "reason": "quest title"
+          }
+        ],
+        "text": ""
+      },
+      "Serpentbloom|cffffffff - 0/10 Serpentbloom|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "removed": [
+          {
+            "text": "Serpentbloom",
+            "questID": 962,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 0/10 Serpentbloom",
+            "questID": 962,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Root Samples",
+            "questID": 866,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 5/8 Root Sample",
+            "questID": 866,
+            "reason": "quest objective"
+          }
+        ],
+        "text": ""
+      },
+      "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "removed": [
+          {
+            "text": "Centaur Bracers",
+            "questID": 855,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 0/15 Centaur Bracers",
+            "questID": 855,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Root Samples",
+            "questID": 866,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 5/8 Root Sample",
+            "questID": 866,
+            "reason": "quest objective"
+          }
+        ],
+        "text": ""
+      },
+      "Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "removed": [
+          {
+            "text": "Root Samples",
+            "questID": 866,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 5/8 Root Sample",
+            "questID": 866,
+            "reason": "quest objective"
+          }
+        ],
+        "text": ""
+      },
+      "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Hezrul Bloodmark|cffffffff - 0/1 Hezrul's Head|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "removed": [
+          {
+            "text": "Centaur Bracers",
+            "questID": 855,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 0/15 Centaur Bracers",
+            "questID": 855,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Hezrul Bloodmark",
+            "questID": 852,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 0/1 Hezrul's Head",
+            "questID": 852,
+            "reason": "quest objective"
+          },
+          {
+            "text": "Root Samples",
+            "questID": 866,
+            "reason": "quest title"
+          },
+          {
+            "text": "- 5/8 Root Sample",
+            "questID": 866,
+            "reason": "quest objective"
+          }
+        ],
+        "text": ""
+      }
+    },
+    "id": 11,
+    "geometry": {
+      "zoom": 0,
+      "bottom": 824.4999389648438,
+      "height": 198.0000457763672,
+      "scale": 0.7111111283302307,
+      "left": 1694.499877929688,
+      "width": 198.0001831054688
+    },
+    "serverTime": 1791779030,
+    "tipsByText": {
+      "Silverleaf Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "dataInstanceID": 71106,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Silverleaf\nCentaur Bracers|cffffffff\n- 0/15 Centaur Bracers|r\nRoot Samples|cffffffff\n- 5/8 Root Sample|r"
+          }
+        ],
+        "type": 21
+      },
+      "Serpentbloom|cffffffff - 0/10 Serpentbloom|r Trouble at the Docks|cffffffff - 0/1 99-Year-Old Port|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "dataInstanceID": 71954,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Serpentbloom|cffffffff\n- 0/10 Serpentbloom|r\nTrouble at the Docks|cffffffff\n- 0/1 99-Year-Old Port|r\nRoot Samples|cffffffff\n- 5/8 Root Sample|r"
+          }
+        ],
+        "type": 21
+      },
+      "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 5/8 Root Sample|r Jorn Skyseer": {
+        "dataInstanceID": 71043,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Centaur Bracers|cffffffff\n- 0/15 Centaur Bracers|r\nRoot Samples|cffffffff\n- 5/8 Root Sample|r\nJorn Skyseer"
+          }
+        ],
+        "type": 21
+      },
+      "Serpentbloom|cffffffff - 0/10 Serpentbloom|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "dataInstanceID": 71949,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Serpentbloom|cffffffff\n- 0/10 Serpentbloom|r\nRoot Samples|cffffffff\n- 5/8 Root Sample|r"
+          }
+        ],
+        "type": 21
+      },
+      "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "dataInstanceID": 71025,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Centaur Bracers|cffffffff\n- 0/15 Centaur Bracers|r\nRoot Samples|cffffffff\n- 5/8 Root Sample|r"
+          }
+        ],
+        "type": 21
+      },
+      "Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "dataInstanceID": 71026,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Root Samples|cffffffff\n- 5/8 Root Sample|r"
+          }
+        ],
+        "type": 21
+      },
+      "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Hezrul Bloodmark|cffffffff - 0/1 Hezrul's Head|r Root Samples|cffffffff - 5/8 Root Sample|r": {
+        "dataInstanceID": 71670,
+        "lines": [
+          {
+            "leftColor": {
+              "b": 0,
+              "GetHSL": "<function omitted>",
+              "g": 0.8235294222831726,
+              "GetRGBA": "<function omitted>",
+              "IsRGBEqualTo": "<function omitted>",
+              "SetRGB": "<function omitted>",
+              "GetRGB": "<function omitted>",
+              "OnLoad": "<function omitted>",
+              "GenerateHexColorMarkup": "<function omitted>",
+              "WrapTextInColorCode": "<function omitted>",
+              "GenerateHexColor": "<function omitted>",
+              "IsEqualTo": "<function omitted>",
+              "r": 1,
+              "GenerateHexColorNoAlpha": "<function omitted>",
+              "SetRGBA": "<function omitted>",
+              "GetRGBAsBytes": "<function omitted>",
+              "GetRGBAAsBytes": "<function omitted>"
+            },
+            "type": 0,
+            "leftText": "Centaur Bracers|cffffffff\n- 0/15 Centaur Bracers|r\nHezrul Bloodmark|cffffffff\n- 0/1 Hezrul's Head|r\nRoot Samples|cffffffff\n- 5/8 Root Sample|r"
+          }
+        ],
+        "type": 21
+      }
+    },
+    "durationSeconds": 1.25,
+    "hitCount": 1009,
+    "cleanupRequestSucceeded": true,
+    "clientVersion": "1.60.1",
+    "questText": {
+      "titles": {
+        "A Frightened Request": 92401,
+        "Watching the Roads": 95981,
+        "Serpentbloom": 962,
+        "Consumed by Hatred": 899,
+        "Beren's Peril": 516,
+        "Centaur Bracers": 855,
+        "Lost in Battle": 4921,
+        "Hamuul Runetotem": 1489,
+        "The Engraved Ring": 440,
+        "Jorn Skyseer": 3261,
+        "The Book of Ur": 1013,
+        "Call of Water": 1530,
+        "Root Samples": 866,
+        "Hezrul Bloodmark": 852,
+        "Arugal's Folly": 99,
+        "Mura Runetotem": 3301,
+        "Rot Hide Ichor": 443,
+        "Letter to Jin'Zil": 1060,
+        "Trouble at the Docks": 959,
+        "The Power to Destroy...": 5725,
+        "A Recipe For Death": 450,
+        "Smart Drinks": 1491
+      },
+      "available": true,
+      "entries": [
+        {
+          "questID": 5725,
+          "title": "The Power to Destroy...",
+          "objectives": [
+            "0/1 Spells of Shadow",
+            "1/1 Incantations from the Nether"
+          ]
+        },
+        {
+          "questID": 92401,
+          "title": "A Frightened Request",
+          "objectives": [
+            "Investigate the disappearance of Edward Heartweaver in the Ruins of Lordaeron."
+          ]
+        },
+        {
+          "questID": 1013,
+          "title": "The Book of Ur",
+          "objectives": [
+            "0/1 The Book of Ur"
+          ]
+        },
+        {
+          "questID": 450,
+          "title": "A Recipe For Death",
+          "objectives": [
+            "0/1 Berard's Journal"
+          ]
+        },
+        {
+          "questID": 99,
+          "title": "Arugal's Folly",
+          "objectives": [
+            "0/6 Pyrewood Shackle"
+          ]
+        },
+        {
+          "questID": 440,
+          "title": "The Engraved Ring",
+          "objectives": [
+            "Bring Deliah's Ring to Magistrate Sevren in Brill."
+          ]
+        },
+        {
+          "questID": 443,
+          "title": "Rot Hide Ichor",
+          "objectives": [
+            "0/8 Rot Hide Ichor"
+          ]
+        },
+        {
+          "questID": 95981,
+          "title": "Watching the Roads",
+          "objectives": [
+            "0/8 Dalaran Watcher slain",
+            "0/8 Dalaran Wizard slain"
+          ]
+        },
+        {
+          "questID": 516,
+          "title": "Beren's Peril",
+          "objectives": [
+            "0/6 Ravenclaw Drudger slain",
+            "0/6 Ravenclaw Guardian slain"
+          ]
+        },
+        {
+          "questID": 855,
+          "title": "Centaur Bracers",
+          "objectives": [
+            "0/15 Centaur Bracers"
+          ]
+        },
+        {
+          "questID": 3301,
+          "title": "Mura Runetotem",
+          "objectives": [
+            "Speak with Mura Runetotem in the Sepulcher."
+          ]
+        },
+        {
+          "questID": 3261,
+          "title": "Jorn Skyseer",
+          "objectives": {}
+        },
+        {
+          "questID": 852,
+          "title": "Hezrul Bloodmark",
+          "objectives": [
+            "0/1 Hezrul's Head"
+          ]
+        },
+        {
+          "questID": 899,
+          "title": "Consumed by Hatred",
+          "objectives": [
+            "0/60 Bristleback Quilboar Tusk"
+          ]
+        },
+        {
+          "questID": 1060,
+          "title": "Letter to Jin'Zil",
+          "objectives": [
+            "Deliver Darsok's letter to Jin'Zil within his cave in Malaka'Jin, in Stonetalon."
+          ]
+        },
+        {
+          "questID": 4921,
+          "title": "Lost in Battle",
+          "objectives": [
+            "0/1 Find Mankrik's Wife"
+          ]
+        },
+        {
+          "questID": 1489,
+          "title": "Hamuul Runetotem",
+          "objectives": {}
+        },
+        {
+          "questID": 962,
+          "title": "Serpentbloom",
+          "objectives": [
+            "0/10 Serpentbloom"
+          ]
+        },
+        {
+          "questID": 1491,
+          "title": "Smart Drinks",
+          "objectives": [
+            "0/6 Wailing Essence"
+          ]
+        },
+        {
+          "questID": 959,
+          "title": "Trouble at the Docks",
+          "objectives": [
+            "0/1 99-Year-Old Port"
+          ]
+        },
+        {
+          "questID": 866,
+          "title": "Root Samples",
+          "objectives": [
+            "5/8 Root Sample"
+          ]
+        },
+        {
+          "questID": 1530,
+          "title": "Call of Water",
+          "objectives": {}
+        }
+      ],
+      "warnings": {},
+      "objectives": {
+        "Rot Hide Ichor": 443,
+        "Find Mankrik's Wife": 4921,
+        "Hezrul's Head": 852,
+        "Wailing Essence": 1491,
+        "Ravenclaw Guardian slain": 516,
+        "Bring Deliah's Ring to Magistrate Sevren in Brill.": 440,
+        "Centaur Bracers": 855,
+        "Investigate the disappearance of Edward Heartweaver in the Ruins of Lordaeron.": 92401,
+        "Spells of Shadow": 5725,
+        "Root Sample": 866,
+        "The Book of Ur": 1013,
+        "Ravenclaw Drudger slain": 516,
+        "Bristleback Quilboar Tusk": 899,
+        "Deliver Darsok's letter to Jin'Zil within his cave in Malaka'Jin, in Stonetalon.": 1060,
+        "Berard's Journal": 450,
+        "Speak with Mura Runetotem in the Sepulcher.": 3301,
+        "Pyrewood Shackle": 99,
+        "Dalaran Watcher slain": 95981,
+        "Incantations from the Nether": 5725,
+        "99-Year-Old Port": 959,
+        "Serpentbloom": 962,
+        "Dalaran Wizard slain": 95981
+      }
+    },
+    "interface": 16001
+  }
+}
