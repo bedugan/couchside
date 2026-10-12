@@ -57,9 +57,18 @@
 <p>The next diagnostic should compare those APIs with visible ordinary yellow “!” pins while no NPC dialogue is open. It should also report <code>GetQuestsOnMap(playerMapID)</code> with start-marker fields. Missing APIs, empty results and unavailable data must remain distinct. An offer on the world map is not proof that a corresponding minimap pin is visible; nearby range, floors, tracking filters and actual eligibility need checking.</p>
 <p>A stricter turn-in classification should also require an accepted quest, a ready/completed state and a non-start marker. The current nearby model only tests completion. Blizzard's offer provider creates start markers, so available offers and hand-ins need separate classification. This is a source-based concern, not a reproduced bug.</p>
 
+<h2>Next node validation</h2>
+<p>The current display removes known quest-log text and keeps everything else. Unidentified names can therefore appear with generic letters. Raw tooltip fields are saved before exclusion. The latest saved scans, 23-25, contained only Briarthorn, Peacebloom and Mageroyal among retained names; they do not validate NPC, service, player or available-quest classification.</p>
+<div class="decision">For the herb-symbol display, unmatched or ambiguous text should remain under <strong>Other tracking</strong>, with no herb symbol, and in diagnostic history. Unknown can mean a missing herb catalog entry, not just a non-resource. A name match alone is not guaranteed resource identity. This separation is proposed, not installed.</div>
+<div class="table"><table><thead><tr><th>Priority</th><th>In-game comparison</th><th>What it resolves</th></tr></thead><tbody>
+<tr><td>Next</td><td>In town, compare scans with ordinary hover for NPC/services, available quests, turn-ins and any visible player/party markers.</td><td>Capture actual non-resource tooltip examples and check which text is retained or excluded.</td></tr>
+<tr><td>Next</td><td>At one stationary position with a visible herb pin, manually scan with Find Herbs on, off, then on again. Reload after all three and report the order.</td><td>Observe which labels follow herb tracking. The addon does not toggle tracking.</td></tr>
+<tr><td>Node coverage</td><td>Two separated and two close same-name pins; gather and rescan; an empty area; rim pins and another zoom.</td><td>Find grouping gaps, stale readings and placement errors before drawing permanent type symbols. Counts remain approximate.</td></tr>
+<tr><td>As needed</td><td>Mining, rotating minimap and other scales. Before automation, check combat refusal/interrupted cleanup and extended controls.</td><td>Validate additional types, layouts and native-state paths. The existing still-scan test does not establish these.</td></tr>
+</tbody></table></div>
 <h2>Sequence</h2>
 <ol>
-<li>Finish the current nearby-list layout, hover and controller test.</li>
+<li>Complete the focused mixed-tracking and on/off/on comparison, then define classification from the captured evidence. The initial nearby-list test has passed.</li>
 <li>Reconcile projection and label placement against a known turn-in.</li>
 <li>Review the fixed-herb-symbol/quest-number comparison. Establish a complete, readable herb catalog and stable quest labels before implementing the new display.</li>
 <li>Add a read-only available-quest report and compare it with Forever's ordinary “!” pins.</li>
