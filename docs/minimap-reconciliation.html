@@ -42,11 +42,13 @@
 <div class="source"><strong>Ready turn-ins</strong><span>Quest IDs, live directions and distances</span></div>
 <div class="source"><strong>Available quests</strong><span>Native offer evidence, after runtime verification</span></div>
 </div>
-<div class="sink"><strong>One optional list and one set of pin labels</strong><br>Category, name, direction, and distance or scan age where supported</div>
+<div class="sink"><strong>One optional symbol legend</strong><br>Symbol, name, category and scan age where supported. Direction comes from the minimap player arrow.</div>
 <p>Category toggles would let someone show resources alone or include ready turn-ins and available quests. Unidentified tooltip text would stay under other tracking. Accepted quest objectives and blue quest areas already have their own display, so including them would be a separate choice.</p>
-<p>A combined display needs one label assignment. Today a teal quest A and a gold scan A can represent different locations. The list, pin badges and tracker tags must agree on the same location labels when combined. Nearby quest positions can share a marker without claiming that proximity proves the same NPC.</p>
-<div class="decision"><strong>Follow-up requested on 12 October: stable labels for both nodes and quest turn-ins.</strong><br>A letter identifies a tracked location, not its proximity rank. Moving closer updates direction and distance while keeping the label and relative row order. Removing A must not rename B to A. New locations use unused labels within the current observation context.</div>
-<p>The current quest display renumbers by distance. The node candidate keeps letters fixed within one snapshot, clears during motion, and assigns them anew by screen position on the next scan. Both rules need revisiting before automatic refresh or a combined display. Quest IDs and position evidence can support quest association; node association needs calibrated positions that distinguish multiple same-name herbs. Name equality alone does not establish the same node.</p>
+<p>A combined display needs one assignment table. Today a teal quest A and a gold scan A can represent different locations. The legend, pin badges and tracker tags must agree on symbol meanings when combined.</p>
+<div class="decision"><strong>Chosen direction: stable symbols by herb type and specific quest.</strong><br>Every observed Mageroyal location shares the purple diamond. Each specific quest has its own symbol, keyed by quest ID. Herb and quest meanings reserve symbols from one shared pool. Different meanings cannot claim the same symbol.</div>
+<p>The legend only needs symbols and names; Brian considers the native player arrow and minimap orientation sufficient for direction. Per-location arrows and follow controls are unnecessary for this concept. Shape, color, a contrasting outline and adjustable size make the markers easier to distinguish without requiring color alone.</p>
+<p>The current quest display renumbers by distance. The node candidate keeps letters fixed within one snapshot, clears during motion, and assigns them anew by screen position on the next scan. Both rules need revisiting before automatic refresh or a combined display. The symbol decision removes the need for individual herb identity just to keep its type's symbol stable. Moving-pin placement still needs calibration. Multiple specific quests at one giver need a readable grouping treatment.</p>
+<p>The finite symbol pool must never silently duplicate a different meaning or rename an existing one to fit more entries. The prototype leaves overflow entries listed without symbols and reserves retired meanings for the current encounter. That retention policy still needs tuning. The table coordinates Couchside's own markers; it cannot reserve symbols used by Blizzard or other addons.</p>
 <div class="decision">Recommended boundary: quest discovery and eligibility stay in Quests; native tooltip sampling stays in Gathering. A broader minimap display would have its own module. Extract only the small shared data/placement interface needed for those real consumers, rather than building a general plugin framework.</div>
 
 <h2>Verify available quests before adding them</h2>
@@ -58,10 +60,10 @@
 <ol>
 <li>Finish the current nearby-list layout, hover and controller test.</li>
 <li>Reconcile projection and label placement against a known turn-in.</li>
-<li>Implement stable location labels, including the requested quest turn-in follow-up, and test approaching B, removing A and discovering a new location.</li>
+<li>Review the symbol legend prototype, then implement shared meanings by herb type and specific quest. Include the quest turn-in follow-up and test approaching, disappearing observations, repeated herbs and pool overflow.</li>
 <li>Add a read-only available-quest report and compare it with Forever's ordinary “!” pins.</li>
 <li>Review static models for the combined categories before changing the installed display.</li>
 </ol>
-<footer>Evidence status: Brian reported the node display test passed on 12 October and letters aligned with pins. Stable labels across scans, available quests, combined rendering and estimated moving herb positions are proposals. Detailed available-quest source notes live in <code>docs/research/available-quest-minimap-api.md</code>.</footer>
+<footer>Evidence status: Brian reported the node display test passed on 12 October and letters aligned with pins. The symbol meaning and arrow-free legend direction are selected; runtime symbols, available quests, combined rendering and estimated moving herb positions remain pending. The prototype is captured on local branch <code>prototype/minimap-symbol-legend</code>, at <code>docs/prototypes/minimap-symbols.prototype.html</code>. Detailed available-quest source notes live in <code>docs/research/available-quest-minimap-api.md</code>.</footer>
 </main></body>
 </html>
