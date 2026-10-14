@@ -2,6 +2,8 @@
 
 Researched 2026-10-07. No addon code changed. Brian confirmed that attempted action use should restart the timer, including unsuccessful attempts.
 
+Status updated 2026-10-09: the candidate was removed after SteamOS runtime tests. Both a direct timer-driven setter call and a `securecallfunction` experiment visibly returned the page but broke subsequent input with protected-call errors. Observation-only probing with manual paging preserved Jump in the comparison test. The report and experiment commands described below are historical and are no longer installed. The original source investigation follows.
+
 ## Conclusion
 
 Forever has a plausible native entry point for returning to page 1. Observing attempted action-button use is also plausible. The unresolved part is whether an addon timer can safely change the native page, especially in combat. Source inspection is insufficient to promise that behaviour. Retail 12.1.0 has no matching native gamepad-page implementation in the inspected source tree; this feature should remain unavailable there unless a separate page provider is identified and verified.
