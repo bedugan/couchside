@@ -25,26 +25,6 @@ local function Grid(g)
 	end
 	return math.ceil(width / spacing), math.ceil(height / spacing), spacing
 end
-local NATIVE_PANELS = { "WorldMapFrame", "MacroFrame", "GameMenuFrame", "SettingsPanel",
-	"QuestFrame", "GossipFrame", "MerchantFrame", "PlayerSpellsFrame", "SpellBookFrame" }
-
-local function PanelBlock()
-	-- Chat input stays visible at reduced alpha in IM chat style, so typing is
-	-- read from keyboard focus. This also covers every other text field.
-	if not GetCurrentKeyBoardFocus then return "keyboard focus unavailable" end
-	local focus = GetCurrentKeyBoardFocus()
-	if issecretvalue and issecretvalue(focus) then return "keyboard focus restricted" end
-	if focus then return "text input focused" end
-	for _, name in ipairs(NATIVE_PANELS) do
-		local panel = _G[name]
-		if panel then
-			local visible = panel:IsVisible()
-			if issecretvalue and issecretvalue(visible) then return "native panel state restricted" end
-			if type(visible) ~= "boolean" then return "native panel state unavailable" end
-			if visible then return "native panel open: " .. name end
-		end
-	end
-end
 
 local function CleanupSoftCursor(quiet)
 	if not softCleanupNeeded then return true end
@@ -358,6 +338,12 @@ local function Scan(token, finished, request)
 	local timeoutSeconds = ScanTimeout(#points)
 	ns.Debug("Scan budget: %d points, %.2fs watchdog.", #points, timeoutSeconds)
 	if InCombatLockdown() then return false, "combat began before cursor setup" end
+	if request.guard then
+		local blocked = ns.PanelGuard.Block()
+		if blocked then return false, blocked end
+		local valid, reason = ns.MotionGuard.Check(request.guard)
+		if not valid then return false, reason end
+	end
 	activeScan = { quiet = request.quiet, source = request.source or "manual", finished = finished }
 	operation = operation == "watch" and "watch" or "scan"
 	softCleanupNeeded = true
@@ -464,7 +450,7 @@ local function Scan(token, finished, request)
 				return
 			end
 			if request.guard then
-				local blocked = PanelBlock()
+				local blocked = ns.PanelGuard.Block()
 				if blocked then Stop(blocked); return end
 				local valid, reason = ns.MotionGuard.Check(request.guard)
 				if not valid then Stop(reason); return end
@@ -475,7 +461,7 @@ local function Scan(token, finished, request)
 				local point = points[index]
 				if not point then
 					if request.guard then
-						local blocked = PanelBlock()
+						local blocked = ns.PanelGuard.Block()
 						if blocked then Stop(blocked); return end
 						local valid, reason = ns.MotionGuard.Check(request.guard)
 						if not valid then Stop(reason); return end
@@ -537,7 +523,7 @@ local function ReadyForAutomatic()
 	if not db or db.version ~= 1 then return false, "scan history unavailable or unsupported" end
 	if InCombatLockdown() then return false, "in combat" end
 	if not Minimap:IsVisible() then return false, "minimap hidden" end
-	local blocked = PanelBlock()
+	local blocked = ns.PanelGuard.Block()
 	if blocked then return false, blocked end
 	if not Minimap.UpdateMouseoverAtPoint or not Minimap.SetUsingSoftCursor
 		or not C_TooltipInfo or not C_TooltipInfo.GetMinimapMouseover then

@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 legend = runpy.run_path(str(ROOT / "tests/gathering-legend-check.py"))
 STUB = r'''
 autoEnabled=false;speed=0;moving=false;mapVisible=true;cursorX=0;cursorY=0
+function GetUIPanel() return nil end
 local priorEnabled=ns.IsEnabled
 ns.IsEnabled=function(k) if k=='autoScan' then return autoEnabled end;return priorEnabled(k) end
 function GetUnitSpeed() return speed end
@@ -67,7 +68,7 @@ end
 
 def make(setup=""):
     vm = legend["make"](STUB + setup)
-    for name in ("PanelProbe.lua", "MinimapProbe.lua", "AutomaticScan.lua", "ScanMacro.lua"):
+    for name in ("PanelGuard.lua", "MinimapProbe.lua", "AutomaticScan.lua", "ScanMacro.lua"):
         vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / "Couchside_Gathering" / name).read_text())
     return vm
 
@@ -154,6 +155,7 @@ assert(#softRequests==0 and queries==0 and r.addonVersion==ns.version)
 commands.log('clear');assert(not CouchsideGatheringScanDB.panelReport)
 ''')
 check("missing erroring and restricted panel reads stay explicit", r'''
+GetUIPanel=nil
 commands.panels('');assert(CouchsideGatheringScanDB.panelReport.slots.left=='API unavailable')
 GetUIPanel=function() error('panel read failed') end
 commands.panels('');assert(CouchsideGatheringScanDB.panelReport.slots.left:find('panel read failed'))
@@ -163,6 +165,48 @@ ContainerFrame1={IsVisible=function() return secret end}
 commands.panels('');local r=CouchsideGatheringScanDB.panelReport
 assert(r.slots.left=='restricted' and r.frames.ContainerFrame1=='restricted')
 assert(#softRequests==0 and queries==0)
+''')
+check("panel-manager slots block launch and opening one cancels an active batch", r'''
+local panel={GetName=function() return 'TestPanel' end}
+local occupied='left'
+GetUIPanel=function(slot) return slot==occupied and panel or nil end
+enableAuto()
+for _,slot in ipairs({'left','center','right','doublewide','fullscreen'}) do
+ occupied=slot;advance(3);assert(#softRequests==0,'manager slot did not block: '..slot)
+end
+occupied=nil
+queryAction=function(n) if n==10 then occupied='center' end end
+advance(3);assert(not soft and queries<=16 and #CouchsideGatheringScanDB.scans==0)
+''')
+check("combined and individual bags block automatic cursor setup", r'''
+local open=true
+ContainerFrameCombinedBags={IsVisible=function() return open end}
+enableAuto();advance(3);assert(#softRequests==0,'combined bags did not block')
+open=false;ContainerFrame7={IsVisible=function() return true end}
+advance(3);assert(#softRequests==0,'individual bag did not block')
+''')
+check("a panel opening during quest snapshot preparation prevents cursor enable", r'''
+local open=false
+GetUIPanel=function(slot) return open and slot=='left' and {} or nil end
+C_QuestLog.GetInfo=function() open=true;return nil end
+enableAuto();advance(3);assert(#softRequests==0,'cursor enabled after a panel opened in preparation')
+''')
+check("missing erroring or restricted panel-manager reads withhold scanning and recover when readable", r'''
+GetUIPanel=nil;enableAuto();advance(3)
+assert(#softRequests==0 and CouchsideGatheringScanDB.automationReport.reason=='native panel manager unavailable')
+GetUIPanel=function() error('panel unavailable') end;advance(3)
+assert(#softRequests==0 and CouchsideGatheringScanDB.automationReport.reason:find('native panel read failed'))
+local secret={};issecretvalue=function(v) return v==secret end
+GetUIPanel=function() return secret end;advance(3)
+assert(#softRequests==0 and CouchsideGatheringScanDB.automationReport.reason:find('restricted'))
+GetUIPanel=function() return nil end;advance(3);assert(#softRequests==2)
+''')
+check("unreadable explicit panel visibility withholds launch without faulting the scheduler", r'''
+BankFrame={IsVisible=function() error('unreadable bank') end}
+enableAuto();advance(3);assert(#softRequests==0)
+assert(CouchsideGatheringScanDB.automationReport.reason:find('BankFrame'))
+assert(CouchsideGatheringScanDB.automationReport.status=='waiting')
+BankFrame.IsVisible=function() return false end;advance(3);assert(#softRequests==2)
 ''')
 check("one second quiet interval starts the shared scanner and saves a quiet snapshot", r'''
 enableAuto();advance(1);assert(#softRequests==0)
