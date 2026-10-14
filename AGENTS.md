@@ -23,5 +23,6 @@ The update is done when every feature, option, command and `.toc` file in the co
 - Blizzard's UI source ([Gethe/wow-ui-source](https://github.com/Gethe/wow-ui-source)) is the reference for API names, signatures and behaviour. Read it before using an API.
 - Verify before building. For an API the addon hasn't used yet, first add a report command (`ns.RegisterCommand`, run as `/cs <module> <command>`) that shows what the API returns, have Brian check it in-game, then build on it. Keep the report for bug reports.
 - Only Brian can test in-game. Commit a change after he confirms it works; a `/reload` loads code changes and new files listed in a `.toc`.
+- The game loads copies from `/Applications/World of Warcraft/_classic_beta_/Interface/AddOns`, not the repo. Symlinks exposed half-finished work while Brian played, so when a change is ready to test, copy each changed module folder there and confirm it matches the repo. Syncthing shares that folder with his other devices.
 - Every mark is the addon's own frame, anchored beside or behind Blizzard's frames, which stay where Blizzard put them.
 - Log decisions with `ns.Debug` so `/cs debug on` explains what the addon did.
