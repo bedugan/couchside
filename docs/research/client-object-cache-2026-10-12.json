@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "capturedAt": "2026-10-13T06:19:20.458164+00:00",
+  "sourcePath": "/Applications/World of Warcraft/_classic_beta_/Cache/WDB/enUS/gameobjectcache.wdb",
+  "bytes": 3239,
+  "sha256": "926369b6fd17594fb88b2b2f3e59ebbdd6243c69149f30f82c5eb9a2437c0b73",
+  "signatureHex": "424f4757",
+  "headerBuildCandidate": 70338,
+  "headerLocaleBytes": "SUne",
+  "byteStringMatches": {
+    "Peacebloom": true,
+    "Silverleaf": true,
+    "Earthroot": false,
+    "Mageroyal": true,
+    "Briarthorn": true,
+    "Bruiseweed": false,
+    "Kingsblood": false,
+    "Copper Vein": false,
+    "Tin Vein": false
+  },
+  "exploratoryFraming": {
+    "headerBytes": 24,
+    "wholeFileConsumed": true,
+    "records": [
+      {
+        "candidateEntryID": 3729,
+        "payloadLength": 182,
+        "candidateType": 3,
+        "candidateDisplayID": 271,
+        "name": "Briarthorn"
+      },
+      {
+        "candidateEntryID": 612350,
+        "payloadLength": 182,
+        "candidateType": 5,
+        "candidateDisplayID": 116404,
+        "name": "Faction Banner"
+      },
+      {
+        "candidateEntryID": 529161,
+        "payloadLength": 182,
+        "candidateType": 8,
+        "candidateDisplayID": 133684,
+        "name": "Basic Campfire"
+      },
+      {
+        "candidateEntryID": 165750,
+        "payloadLength": 181,
+        "candidateType": 8,
+        "candidateDisplayID": 201,
+        "name": "Crude Brazier"
+      },
+      {
+        "candidateEntryID": 3725,
+        "payloadLength": 182,
+        "candidateType": 3,
+        "candidateDisplayID": 270,
+        "name": "Silverleaf"
+      },
+      {
+        "candidateEntryID": 165746,
+        "payloadLength": 181,
+        "candidateType": 8,
+        "candidateDisplayID": 201,
+        "name": "Crude Brazier"
+      },
+      {
+        "candidateEntryID": 3661,
+        "payloadLength": 180,
+        "candidateType": 3,
+        "candidateDisplayID": 335,
+        "name": "Weapon Crate"
+      },
+      {
+        "candidateEntryID": 651948,
+        "payloadLength": 177,
+        "candidateType": 5,
+        "candidateDisplayID": 85675,
+        "name": "Mana Well"
+      },
+      {
+        "candidateEntryID": 3662,
+        "payloadLength": 178,
+        "candidateType": 3,
+        "candidateDisplayID": 336,
+        "name": "Food Crate"
+      },
+      {
+        "candidateEntryID": 165751,
+        "payloadLength": 181,
+        "candidateType": 8,
+        "candidateDisplayID": 201,
+        "name": "Crude Brazier"
+      },
+      {
+        "candidateEntryID": 3724,
+        "payloadLength": 182,
+        "candidateType": 3,
+        "candidateDisplayID": 269,
+        "name": "Peacebloom"
+      },
+      {
+        "candidateEntryID": 20808,
+        "payloadLength": 177,
+        "candidateType": 15,
+        "candidateDisplayID": 3015,
+        "name": "TEST Ship"
+      },
+      {
+        "candidateEntryID": 3727,
+        "payloadLength": 181,
+        "candidateType": 3,
+        "candidateDisplayID": 268,
+        "name": "Mageroyal"
+      },
+      {
+        "candidateEntryID": 165740,
+        "payloadLength": 181,
+        "candidateType": 8,
+        "candidateDisplayID": 201,
+        "name": "Crude Brazier"
+      },
+      {
+        "candidateEntryID": 165747,
+        "payloadLength": 181,
+        "candidateType": 8,
+        "candidateDisplayID": 201,
+        "name": "Crude Brazier"
+      },
+      {
+        "candidateEntryID": 3705,
+        "payloadLength": 182,
+        "candidateType": 3,
+        "candidateDisplayID": 334,
+        "name": "Barrel of Milk"
+      },
+      {
+        "candidateEntryID": 651953,
+        "payloadLength": 181,
+        "candidateType": 5,
+        "candidateDisplayID": 6448,
+        "name": "First Aid Kit"
+      }
+    ],
+    "verifiedDiskSchema": false
+  },
+  "interpretation": "Partial cached query history; byte-string observations and empirically consistent framing, not a verified classifier or full catalog. Missing names do not establish world absence."
+}

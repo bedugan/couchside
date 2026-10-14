@@ -1,0 +1,1052 @@
+{
+  "observedOn": "2026-10-12",
+  "source": "Mac Forever Couchside_Gathering SavedVariables, read without executing Lua",
+  "scope": "Saved scans 26-33; no assumptions about tracking toggle order or NPC roles",
+  "findings": [
+    "NPC and herb text share generic tooltip type 21 and line type 0.",
+    "No explicit service category, creature type, unit GUID or NPC ID appears in these saved tooltip fields.",
+    "Some tooltips combine NPC names with Silverleaf or with other NPC names. Filter individual entries rather than discarding mixed tooltips.",
+    "Creature-tracking and quest-objective associations are not validated by this batch."
+  ],
+  "scans": [
+    {
+      "id": 26,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 16,
+      "cleanupRequestSucceeded": true,
+      "regions": [
+        {
+          "text": "Silverleaf"
+        }
+      ],
+      "tooltipSummaries": [
+        {
+          "flattenedText": "Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Silverleaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 16,
+      "cleanupRequestSucceeded": true,
+      "regions": [
+        {
+          "text": "Silverleaf"
+        }
+      ],
+      "tooltipSummaries": [
+        {
+          "flattenedText": "Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Silverleaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 16,
+      "cleanupRequestSucceeded": true,
+      "regions": [
+        {
+          "text": "Silverleaf"
+        }
+      ],
+      "tooltipSummaries": [
+        {
+          "flattenedText": "Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Silverleaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 93,
+      "cleanupRequestSucceeded": true,
+      "regions": [
+        {
+          "text": "Silverleaf"
+        },
+        {
+          "text": "Halija Whitestrider"
+        },
+        {
+          "text": "Halija Whitestrider / Silverleaf"
+        },
+        {
+          "text": "Thork"
+        },
+        {
+          "text": "Lizzarik"
+        },
+        {
+          "text": "Devrak / Thork"
+        },
+        {
+          "text": "Devrak"
+        },
+        {
+          "text": "Innkeeper Boorand Plainswind"
+        }
+      ],
+      "tooltipSummaries": [
+        {
+          "flattenedText": "Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Silverleaf"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak"
+            }
+          ]
+        },
+        {
+          "flattenedText": "|cffb0b0b0Innkeeper Boorand Plainswind|r",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "|cffb0b0b0Innkeeper Boorand Plainswind|r"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Lizzarik",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Lizzarik"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Thork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak\nThork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider\nSilverleaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "build": "70338",
+      "durationSeconds": 1.260000000002037,
+      "pointCount": 1009,
+      "hitCount": 93,
+      "cleanupRequestSucceeded": true,
+      "regions": [
+        {
+          "text": "Silverleaf"
+        },
+        {
+          "text": "Halija Whitestrider"
+        },
+        {
+          "text": "Halija Whitestrider / Silverleaf"
+        },
+        {
+          "text": "Thork"
+        },
+        {
+          "text": "Lizzarik"
+        },
+        {
+          "text": "Devrak / Thork"
+        },
+        {
+          "text": "Devrak"
+        },
+        {
+          "text": "Innkeeper Boorand Plainswind"
+        }
+      ],
+      "tooltipSummaries": [
+        {
+          "flattenedText": "Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Silverleaf"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak"
+            }
+          ]
+        },
+        {
+          "flattenedText": "|cffb0b0b0Innkeeper Boorand Plainswind|r",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "|cffb0b0b0Innkeeper Boorand Plainswind|r"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Lizzarik",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Lizzarik"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Thork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak\nThork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider\nSilverleaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 89,
+      "cleanupRequestSucceeded": true,
+      "regions": [
+        {
+          "text": "Silverleaf"
+        },
+        {
+          "text": "Halija Whitestrider"
+        },
+        {
+          "text": "Halija Whitestrider / Silverleaf"
+        },
+        {
+          "text": "Thork"
+        },
+        {
+          "text": "Lizzarik"
+        },
+        {
+          "text": "Devrak / Thork"
+        },
+        {
+          "text": "Devrak"
+        },
+        {
+          "text": "Innkeeper Boorand Plainswind"
+        }
+      ],
+      "tooltipSummaries": [
+        {
+          "flattenedText": "Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Silverleaf"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak"
+            }
+          ]
+        },
+        {
+          "flattenedText": "|cffb0b0b0Innkeeper Boorand Plainswind|r",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "|cffb0b0b0Innkeeper Boorand Plainswind|r"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Lizzarik",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Lizzarik"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Thork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak\nThork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider\nSilverleaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 93,
+      "cleanupRequestSucceeded": true,
+      "regions": [
+        {
+          "text": "Silverleaf"
+        },
+        {
+          "text": "Halija Whitestrider"
+        },
+        {
+          "text": "Halija Whitestrider / Silverleaf"
+        },
+        {
+          "text": "Thork"
+        },
+        {
+          "text": "Lizzarik"
+        },
+        {
+          "text": "Devrak / Thork"
+        },
+        {
+          "text": "Devrak"
+        },
+        {
+          "text": "Innkeeper Boorand Plainswind"
+        }
+      ],
+      "tooltipSummaries": [
+        {
+          "flattenedText": "Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Silverleaf"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak"
+            }
+          ]
+        },
+        {
+          "flattenedText": "|cffb0b0b0Innkeeper Boorand Plainswind|r",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "|cffb0b0b0Innkeeper Boorand Plainswind|r"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Lizzarik",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Lizzarik"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Thork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak\nThork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider Silverleaf",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider\nSilverleaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 80,
+      "cleanupRequestSucceeded": true,
+      "regions": [
+        {
+          "text": "Halija Whitestrider"
+        },
+        {
+          "text": "Thork"
+        },
+        {
+          "text": "Lizzarik"
+        },
+        {
+          "text": "Devrak / Thork"
+        },
+        {
+          "text": "Devrak"
+        },
+        {
+          "text": "Innkeeper Boorand Plainswind"
+        }
+      ],
+      "tooltipSummaries": [
+        {
+          "flattenedText": "|cffb0b0b0Innkeeper Boorand Plainswind|r",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "|cffb0b0b0Innkeeper Boorand Plainswind|r"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Lizzarik",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Lizzarik"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Thork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Halija Whitestrider",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Halija Whitestrider"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak Thork",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak\nThork"
+            }
+          ]
+        },
+        {
+          "flattenedText": "Devrak",
+          "topFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "type": 21,
+          "lines": [
+            {
+              "fields": [
+                "leftColor",
+                "leftText",
+                "type"
+              ],
+              "type": 0,
+              "leftText": "Devrak"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

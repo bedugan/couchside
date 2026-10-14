@@ -1,0 +1,214 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-13T06:19:21.981Z",
+  "product": "wow_classic_beta",
+  "build": "1.60.1.70338",
+  "locale": "enUS",
+  "source": "installed local CASC, no CDN fallback",
+  "toolRevision": "c2fd7bde36a712be78a5da896c995b84fbfa2545",
+  "schemaRevision": "d6f50d4f351193e84226aa62a36faa0f58528afa",
+  "tables": [
+    {
+      "name": "GameObjects",
+      "fileDataID": 841620,
+      "bytes": 88814,
+      "sha256": "3db3a7ba438421af4fc3fd9dcd1ae429048eb5494f6632d0b4ccb79b57e00c3a",
+      "contentMD5": "f7b167847f08f740470f4030b62aa847",
+      "expectedContentMD5": "f7b167847f08f740470f4030b62aa847",
+      "schemaSha256": "212df85eb042a682ca29a37da4f4db713749518446cf7ac488559b474b995b9e",
+      "declaredRows": 1520,
+      "parsedRows": 1520,
+      "encryptedSections": 0,
+      "fields": [
+        "Name_lang",
+        "Pos",
+        "Rot",
+        "ID",
+        "OwnerID",
+        "DisplayID",
+        "Flags",
+        "Scale",
+        "TypeID",
+        "PhaseUseFlags",
+        "PhaseID",
+        "PhaseGroupID",
+        "Field_11_0_0_54210_011",
+        "PropValue"
+      ],
+      "typeCounts": {
+        "5": 1515,
+        "38": 2,
+        "48": 3
+      },
+      "caseInsensitiveMatches": {
+        "Peacebloom": 0,
+        "Silverleaf": 0,
+        "Earthroot": 0,
+        "Mageroyal": 0,
+        "Briarthorn": 0,
+        "Bruiseweed": 0,
+        "Kingsblood": 0,
+        "Copper Vein": 0,
+        "Tin Vein": 0
+      },
+      "byteStringMatches": {
+        "Peacebloom": false,
+        "Silverleaf": false,
+        "Earthroot": false,
+        "Mageroyal": false,
+        "Briarthorn": false,
+        "Bruiseweed": false,
+        "Kingsblood": false,
+        "Copper Vein": false,
+        "Tin Vein": false
+      },
+      "matches": {
+        "Peacebloom": [],
+        "Silverleaf": [],
+        "Earthroot": [],
+        "Mageroyal": [],
+        "Briarthorn": [],
+        "Bruiseweed": [],
+        "Kingsblood": [],
+        "Copper Vein": [],
+        "Tin Vein": []
+      },
+      "rowsSha256": "5e7c13c0d2195156b80015c5c98956bbc51704662be3afb0bc78a746714106f1",
+      "sampleNames": [
+        "Old Coast Road",
+        "Sentinel Hill",
+        "Elwynn Forest",
+        "Jangolode Mine",
+        "Old Coast Road",
+        "Duskwood",
+        "Elwynn Forest",
+        "Moonbrook",
+        "Duskwood",
+        "Northshire Abbey"
+      ],
+      "otherTypeRows": [
+        {
+          "name": "Meeting Stone",
+          "typeID": 48
+        },
+        {
+          "name": "Meeting Stone",
+          "typeID": 48
+        },
+        {
+          "name": "Farm",
+          "typeID": 38
+        },
+        {
+          "name": "Farm",
+          "typeID": 38
+        },
+        {
+          "name": "Meeting Stone",
+          "typeID": 48
+        }
+      ]
+    },
+    {
+      "name": "Creature",
+      "fileDataID": 841631,
+      "error": "[BLTE] Missing decryption key 057dc814574bd5b6"
+    },
+    {
+      "name": "Lock",
+      "fileDataID": 1343608,
+      "error": "[BLTE] Missing decryption key 057dc814574bd5b6"
+    },
+    {
+      "name": "LockType",
+      "fileDataID": 1284823,
+      "bytes": 1428,
+      "sha256": "01377e14dba8f1ba91ae165476f3e5102c3cacb549916a478561859f261c900e",
+      "contentMD5": "c67b8db51105b6e30dfa2cb979b92c09",
+      "expectedContentMD5": "c67b8db51105b6e30dfa2cb979b92c09",
+      "schemaSha256": "7a63fbc68646a6f6b5729ae85ccfa03bb605e0a8ac2d8eedf329c5d1ff972b62",
+      "declaredRows": 23,
+      "parsedRows": 23,
+      "encryptedSections": 0,
+      "fields": [
+        "ID",
+        "Name_lang",
+        "ResourceName_lang",
+        "Verb_lang",
+        "CursorName",
+        "EnumID",
+        "TrackingIcon"
+      ],
+      "typeCounts": {},
+      "caseInsensitiveMatches": {
+        "Peacebloom": 0,
+        "Silverleaf": 0,
+        "Earthroot": 0,
+        "Mageroyal": 0,
+        "Briarthorn": 0,
+        "Bruiseweed": 0,
+        "Kingsblood": 0,
+        "Copper Vein": 0,
+        "Tin Vein": 0
+      },
+      "byteStringMatches": {
+        "Peacebloom": false,
+        "Silverleaf": false,
+        "Earthroot": false,
+        "Mageroyal": false,
+        "Briarthorn": false,
+        "Bruiseweed": false,
+        "Kingsblood": false,
+        "Copper Vein": false,
+        "Tin Vein": false
+      },
+      "matches": {
+        "Peacebloom": [],
+        "Silverleaf": [],
+        "Earthroot": [],
+        "Mageroyal": [],
+        "Briarthorn": [],
+        "Bruiseweed": [],
+        "Kingsblood": [],
+        "Copper Vein": [],
+        "Tin Vein": []
+      },
+      "rowsSha256": "33ef615073cfc1011b68437dc3540012f53a7b0f3ae500aa54820378f8087a45",
+      "harvestingRows": [
+        {
+          "ID": 2,
+          "Name_lang": "Herbalism",
+          "ResourceName_lang": "Herbs",
+          "Verb_lang": "Gather",
+          "CursorName": "GatherHerbs",
+          "EnumID": 1,
+          "TrackingIcon": 0
+        },
+        {
+          "ID": 3,
+          "Name_lang": "Mining",
+          "ResourceName_lang": "Ore Deposits",
+          "Verb_lang": "Mine",
+          "CursorName": "Mine",
+          "EnumID": 2,
+          "TrackingIcon": 0
+        }
+      ]
+    }
+  ],
+  "adapterSha256": "d9647789514b8861db727a221edecccba0ae542b38011b7e0ce638171dbca0dc",
+  "sourceManifestSha256": "d6ce4af33a2f98ff08dbb0a77cfcaf71fc258745dbe4c123d8b1107eb49ee019",
+  "publicKeysRevision": "f800811762b2e9ea638bf6dfdb4707382c497943",
+  "experimentStatus": "partial",
+  "workDirectory": "/Users/briandugan/Documents/Codex/2026-10-12/couchside-client-export",
+  "interpretation": "GameObjects rejected as a resource catalog for the checked names. LockType confirms harvesting labels. Creature and Lock coverage unassessed because the public BLTE key was unavailable. Cache is partial historical evidence, not an adopted catalog.",
+  "validation": {
+    "decodedContentMD5Verified": true,
+    "rowCountsMatch": true,
+    "repeatGameObjectsBinaryHashMatches": true,
+    "repeatGameObjectsRowsHashMatches": true,
+    "partialDecryption": false,
+    "cdnFallback": false,
+    "addonOrGameInteraction": false
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-12",
+  "scope": "Read-only inspection of latest saved BugGrabber errors exposed by BugSack; no native reproduction or addon changes",
+  "fileModifiedLocal": "2026-10-12T21:51:15.829301",
+  "databaseSession": 55,
+  "uniqueErrorCount": 8,
+  "lastErrorSession": 54,
+  "providerVersion": "1.52.3-8-g26d58dd",
+  "providerFilesChangedFromInstalledManifest": [],
+  "installedCouchsideFilesMatchRepository": true,
+  "unsafeControllerPagingAbsentFromRepositoryAndInstalledCopy": true,
+  "finding": "Latest retained errors attribute blocked/forbidden controller calls to GatherMate2. No Couchside frame appears in those two stacks. Historical Couchside_Controller entries last occurred on 2026-10-09.",
+  "limits": "Taint attribution names the addon associated with the protected failure; it does not establish the original taint source. Absence from a truncated stack is not proof of innocence. No entries for saved session 55; subsequent unsaved errors are not covered.",
+  "errors": [
+    {
+      "session": 6,
+      "count": 1,
+      "lastOccurredLocal": "2026-10-09T14:34:57-07:00",
+      "message": "[ADDON_ACTION_FORBIDDEN] AddOn 'Couchside_Controller' tried to call the protected function 'RunBinding()'.",
+      "stack": "[Interface/AddOns/!BugGrabber/BugGrabber.lua]:554: in function '?'\n[Interface/AddOns/!BugGrabber/BugGrabber.lua]:538: in function <Interface/AddOns/!BugGrabber/BugGrabber.lua:538>\n[C]: in function 'RunBinding'\n[Interface/AddOns/Blizzard_GamepadActionBars/MainActionBarFrame.lua]:330: in function <...ns/Blizzard_GamepadActionBars/MainActionBarFrame.lua:324>\n[C]: in function 'Click'\n[Interface/AddOns/Blizzard_GamepadActionBars/MainActionBarFrame.lua]:564: in function <...ns/Blizzard_GamepadActionBars/MainActionBarFrame.lua:559>\n[C]: in function 'PressActionButton'\n[GAMEPADACTIONBUTTON8]:1: in function <[string \"GAMEPADACTIONBUTTON8\"]:1>\n",
+      "couchsideInStack": false
+    },
+    {
+      "session": 9,
+      "count": 3,
+      "lastOccurredLocal": "2026-10-09T14:50:03-07:00",
+      "message": "[ADDON_ACTION_FORBIDDEN] AddOn 'Couchside_Controller' tried to call the protected function 'SetPreferredGamepadInteractTarget()'.",
+      "stack": "[Interface/AddOns/!BugGrabber/BugGrabber.lua]:554: in function '?'\n[Interface/AddOns/!BugGrabber/BugGrabber.lua]:538: in function <Interface/AddOns/!BugGrabber/BugGrabber.lua:538>\n[C]: in function 'SetPreferredGamepadInteractTarget'\n[Interface/AddOns/Blizzard_GamepadActionBars/MainActionBarFrame.lua]:291: in function 'UpdateInteractIcons'\n[Interface/AddOns/Blizzard_GamepadActionBars/MainActionBarFrame.lua]:52: in function <...ns/Blizzard_GamepadActionBars/MainActionBarFrame.lua:35>\n[tail call]: ?\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputBindingManager.lua]:42: in function <...redUtility/InputBindingStack/InputBindingManager.lua:38>\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputBindingManager.lua]:190: in function 'RemoveSet'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/BindingSetFactory.lua]:254: in function 'DeactivateBindingGroup'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:121: in function <...izzard_GamepadSharedUtility/FrameControlsManager.lua:113>\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:546: in function 'FrameHidden'\n[Interface/AddOns/Blizzard_ChatFrameBase/Mainline/FloatingChatFrame.lua]:145: in function 'ClearGamepadFocus'\n[Interface/AddOns/Blizzard_ChatFrameBase/Mainline/FloatingChatFrame.lua]:175: in function 'SmartNavigationCloseHandler'\n[Interface/AddOns/Blizzard_GamepadSmartNavigation/SmartNavigation.lua]:1533: in function <.../Blizzard_GamepadSmartNavigation/SmartNavigation.lua:1528>\n[tail call]: ?\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputFunctionBinding.lua]:31: in function <...edUtility/InputBindingStack/InputFunctionBinding.lua:28>\n",
+      "couchsideInStack": false
+    },
+    {
+      "session": 17,
+      "count": 2,
+      "lastOccurredLocal": "2026-10-09T16:42:44-07:00",
+      "message": "...Blizzard_EditMode/Shared/EditModeSystemTemplates.lua:312: attempt to perform indexed assignment on field 'systemInfo' (a nil value)",
+      "stack": "[Interface/AddOns/Blizzard_EditMode/Shared/EditModeSystemTemplates.lua]:312: in function <...Blizzard_EditMode/Shared/EditModeSystemTemplates.lua:311>\n[tail call]: ?\n[Interface/AddOns/Blizzard_SharedXML/Shared/Button/UIButtonTemplate.lua]:16: in function <...lizzard_SharedXML/Shared/Button/UIButtonTemplate.lua:12>\n",
+      "couchsideInStack": false
+    },
+    {
+      "session": 23,
+      "count": 2,
+      "lastOccurredLocal": "2026-10-11T12:37:25-07:00",
+      "message": "[ADDON_ACTION_FORBIDDEN] AddOn 'BugSack' tried to call the protected function 'SetPreferredGamepadInteractTarget()'.",
+      "stack": "[Interface/AddOns/!BugGrabber/BugGrabber.lua]:554: in function '?'\n[Interface/AddOns/!BugGrabber/BugGrabber.lua]:538: in function <Interface/AddOns/!BugGrabber/BugGrabber.lua:538>\n[C]: in function 'SetPreferredGamepadInteractTarget'\n[Interface/AddOns/Blizzard_GamepadActionBars/MainActionBarFrame.lua]:291: in function 'UpdateInteractIcons'\n[Interface/AddOns/Blizzard_GamepadActionBars/MainActionBarFrame.lua]:52: in function <...ns/Blizzard_GamepadActionBars/MainActionBarFrame.lua:35>\n[tail call]: ?\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputBindingManager.lua]:42: in function <...redUtility/InputBindingStack/InputBindingManager.lua:38>\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputBindingManager.lua]:190: in function 'RemoveSet'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/BindingSetFactory.lua]:254: in function 'DeactivateBindingGroup'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:121: in function <...izzard_GamepadSharedUtility/FrameControlsManager.lua:113>\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:546: in function 'FrameHidden'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:230: in function <...izzard_GamepadSharedUtility/FrameControlsManager.lua:225>\n...[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:933: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_Settings_Shared/Blizzard_SettingsPanel.lua]:296: in function 'TransitionBackOpeningPanel'\n[Interface/AddOns/Blizzard_Settings_Shared/Blizzard_SettingsPanel.lua]:291: in function 'ExitWithCommit'\n[Interface/AddOns/Blizzard_Settings_Shared/Blizzard_SettingsPanel.lua]:260: in function 'Close'\n[Interface/AddOns/Blizzard_Settings_Shared/Blizzard_SettingsPanel.lua]:65: in function <.../Blizzard_Settings_Shared/Blizzard_SettingsPanel.lua:64>\n[C]: in function 'MouseUp'\n[Interface/AddOns/Blizzard_GamepadSmartNavigation/SmartNavigation.lua]:1499: in function <.../Blizzard_GamepadSmartNavigation/SmartNavigation.lua:1497>\n[Interface/AddOns/Blizzard_GamepadSmartNavigation/SmartNavigation.lua]:1557: in function <.../Blizzard_GamepadSmartNavigation/SmartNavigation.lua:1528>\n[tail call]: ?\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputFunctionBinding.lua]:31: in function <...edUtility/InputBindingStack/InputFunctionBinding.lua:28>\n",
+      "couchsideInStack": false
+    },
+    {
+      "session": 23,
+      "count": 4,
+      "lastOccurredLocal": "2026-10-11T12:37:34-07:00",
+      "message": "Interface/AddOns/Blizzard_BuffFrame/BuffFrame.lua:1300: attempt to compare field 'expirationTime' (a secret number value, while execution tainted by 'BugSack')",
+      "stack": "debugstack() returned secrets.",
+      "couchsideInStack": false
+    },
+    {
+      "session": 23,
+      "count": 2,
+      "lastOccurredLocal": "2026-10-11T12:37:31-07:00",
+      "message": "Interface/AddOns/Blizzard_BuffFrame/BuffFrame.lua:912: attempt to compare field 'auraInstanceID' (a secret number value, while execution tainted by 'BugSack')",
+      "stack": "[Interface/AddOns/Blizzard_BuffFrame/BuffFrame.lua]:912: in function <Interface/AddOns/Blizzard_BuffFrame/BuffFrame.lua:909>\n",
+      "couchsideInStack": false
+    },
+    {
+      "session": 52,
+      "count": 1,
+      "lastOccurredLocal": "2026-10-12T19:46:30-07:00",
+      "message": "[ADDON_ACTION_BLOCKED] AddOn 'GatherMate2' tried to call the protected function 'SetOverrideBindingClick()'.",
+      "stack": "[Interface/AddOns/!BugGrabber/BugGrabber.lua]:554: in function '?'\n[Interface/AddOns/!BugGrabber/BugGrabber.lua]:538: in function <Interface/AddOns/!BugGrabber/BugGrabber.lua:538>\n[C]: in function 'SetOverrideBindingClick'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputFunctionBinding.lua]:49: in function <...edUtility/InputBindingStack/InputFunctionBinding.lua:45>\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputFunctionBinding.lua]:65: in function 'Bind'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputBindingSet.lua]:28: in function 'BindAll'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputBindingManager.lua]:158: in function 'AddBindingSet'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/BindingSetFactory.lua]:247: in function 'ActivateBindingGroup'\n[Interface/AddOns/Blizzard_WorldMap/Blizzard_WorldMap.lua]:857: in function 'UpdateStateChangeIndicators'\n[Interface/AddOns/Blizzard_WorldMap/Blizzard_WorldMap.lua]:624: in function 'FocusQuests'\n[Interface/AddOns/Blizzard_WorldMap/Blizzard_WorldMap.lua]:1244: in function 'FocusGamepad'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:102: in function <...izzard_GamepadSharedUtility/FrameControlsManager.lua:73>\n...[Interface/AddOns/Blizzard_SharedXMLBase/CallbackRegistry.lua]:213: in function 'TriggerEvent'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:874: in function 'BroadcastShowUIPanelEvent'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:902: in function 'ShowUIPanel'\n[Interface/AddOns/Blizzard_WorldMap/QuestLogOwnerMixin.lua]:115: in function 'SetDisplayState'\n[Interface/AddOns/Blizzard_WorldMap/QuestLogOwnerMixin.lua]:95: in function 'HandleUserActionOpenQuestLog'\n[Interface/AddOns/Blizzard_WorldMap/Blizzard_WorldMap.lua]:1446: in function 'OpenQuestLog'\n[Interface/AddOns/Blizzard_UIPanels_Game/Mainline/QuestMapFrame.lua]:1177: in function 'QuestMapFrame_OpenToQuestDetails'\n[Interface/AddOns/Blizzard_ObjectiveTracker/Blizzard_QuestObjectiveTracker.lua]:68: in function 'OnBlockHeaderClick'\n[Interface/AddOns/Blizzard_ObjectiveTracker/Blizzard_ObjectiveTrackerBlock.lua]:285: in function 'OnHeaderClick'\n[Interface/AddOns/Blizzard_ObjectiveTracker/Blizzard_ObjectiveTrackerBlock.lua]:388: in function <..._ObjectiveTracker/Blizzard_ObjectiveTrackerBlock.lua:386>\n",
+      "couchsideInStack": false
+    },
+    {
+      "session": 54,
+      "count": 2,
+      "lastOccurredLocal": "2026-10-12T21:49:44-07:00",
+      "message": "[ADDON_ACTION_FORBIDDEN] AddOn 'GatherMate2' tried to call the protected function 'SetPreferredGamepadInteractTarget()'.",
+      "stack": "[Interface/AddOns/!BugGrabber/BugGrabber.lua]:554: in function '?'\n[Interface/AddOns/!BugGrabber/BugGrabber.lua]:538: in function <Interface/AddOns/!BugGrabber/BugGrabber.lua:538>\n[C]: in function 'SetPreferredGamepadInteractTarget'\n[Interface/AddOns/Blizzard_GamepadActionBars/MainActionBarFrame.lua]:291: in function 'UpdateInteractIcons'\n[Interface/AddOns/Blizzard_GamepadActionBars/MainActionBarFrame.lua]:52: in function <...ns/Blizzard_GamepadActionBars/MainActionBarFrame.lua:35>\n[tail call]: ?\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputBindingManager.lua]:42: in function <...redUtility/InputBindingStack/InputBindingManager.lua:38>\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputBindingManager.lua]:190: in function 'RemoveSet'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/BindingSetFactory.lua]:254: in function 'DeactivateBindingGroup'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:121: in function <...izzard_GamepadSharedUtility/FrameControlsManager.lua:113>\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:546: in function 'FrameHidden'\n[Interface/AddOns/Blizzard_GamepadSharedUtility/FrameControlsManager.lua]:230: in function <...izzard_GamepadSharedUtility/FrameControlsManager.lua:225>\n...[Interface/AddOns/Blizzard_SharedXML/Mainline/SharedUIPanelTemplates.lua]:189: in function 'HideParentPanel'\n[*Blizzard_WorldMap.xml:120_OnLoad]:1: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_SharedXML/Mainline/SharedUIPanelTemplates.lua]:155: in function <...izzard_SharedXML/Mainline/SharedUIPanelTemplates.lua:150>\n[C]: in function 'Click'\n[Interface/AddOns/Blizzard_WorldMap/Blizzard_WorldMap.lua]:1078: in function <...rface/AddOns/Blizzard_WorldMap/Blizzard_WorldMap.lua:1070>\n[tail call]: ?\n[Interface/AddOns/Blizzard_GamepadSharedUtility/PromptedBindings/PromptedBinding.lua]:248: in function <...adSharedUtility/PromptedBindings/PromptedBinding.lua:238>\n[Interface/AddOns/Blizzard_GamepadSharedUtility/PromptedBindings/PromptedBinding.lua]:627: in function <...adSharedUtility/PromptedBindings/PromptedBinding.lua:616>\n[tail call]: ?\n[Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/InputFunctionBinding.lua]:31: in function <...edUtility/InputBindingStack/InputFunctionBinding.lua:28>\n",
+      "couchsideInStack": false
+    }
+  ]
+}
