@@ -159,7 +159,7 @@ check("dungeon snapshot expiry, combat and option changes retain lifecycle", r''
 for _,why in ipairs({'expiry','combat','option'}) do
  clock=0;combat=false;legend=true
  local d=ns.NearbyList.Show(dungeonScan());assert(visiblePanel())
- if why=='expiry' then clock=10;tick(.1)
+ if why=='expiry' then clock=ns.NearbyList.LIFETIME;tick(.1)
  elseif why=='combat' then combat=true;tick(.1)
  else legend=false;changed('resourceLegend') end
  assert(not visiblePanel() and #markers()==0 and d.status=='cleared')

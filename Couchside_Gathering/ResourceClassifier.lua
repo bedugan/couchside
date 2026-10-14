@@ -99,8 +99,7 @@ ns.RegisterCommand("classify", "[library|prototype] [scanID] - classify saved to
 	if not scan then ns.Print("No matching retained scan. Run /cs gathering scan first."); return end
 	local version = useLibrary and C_AddOns and C_AddOns.GetAddOnMetadata
 		and C_AddOns.GetAddOnMetadata("GatherMate2", "Version") or nil
-	local classifierVersion = (useLibrary or usePrototype) and C_AddOns and C_AddOns.GetAddOnMetadata
-		and C_AddOns.GetAddOnMetadata("Couchside_Gathering", "Version") or nil
+	local classifierVersion = (useLibrary or usePrototype) and ns.version or nil
 	if useLibrary and (not GatherMate2 or type(GatherMate2.GetIDForNode) ~= "function") then
 		ns.Print("GatherMate2 is not loaded with GetIDForNode. This command does not install or enable addons. Use classify without library for the five observed English herb names.")
 		ns.SaveProviderReport({ provider = "GatherMate2", scanID = scan.id, scanBuild = scan.build, providerVersion = version,

@@ -1,13 +1,17 @@
 -- Opt-in launch policy. Every automatic request uses the shared bounded scanner.
+-- One scan per stop: the nearby list owns the snapshot lifetime, and a refresh
+-- starts shortly before it expires so the list is replaced rather than blinking.
+-- MIN_GAP only caps native work across stop-and-go movement.
 -- No saved observation or pending job resumes on reload.
 local _, ns = ...
 
-local INTERVAL, CHECK_INTERVAL = 10, 0.2
+-- The lead matches the scanner's 12-second watchdog, its longest possible sweep.
+local REFRESH_LEAD, MIN_GAP, CHECK_INTERVAL = 12, 10, 0.2
 local delaySeconds = 1
 local frame = CreateFrame("Frame")
-local anchor, settledAt, running, paused, fault
+local anchor, settledAt, retryAt, running, paused, fault
 local lastStart, elapsed = -math.huge, 0
-local report = { version = 1, addonVersion = "0.13.0", attempts = 0, completed = 0, cancelled = 0, failed = 0 }
+local report = { version = 1, addonVersion = ns.version, attempts = 0, completed = 0, cancelled = 0, failed = 0 }
 
 local function Save(reason)
 	local enabled, nearby = ns.IsEnabled("autoScan"), ns.IsEnabled("nearbyList")
@@ -17,15 +21,16 @@ local function Save(reason)
 		and report.status == status and report.delaySeconds == delaySeconds then return end
 	if reason ~= report.reason then ns.Debug("Automatic scan: %s.", reason) end
 	report.reason = reason
-	report.delaySeconds, report.intervalSeconds = delaySeconds, INTERVAL
+	report.delaySeconds, report.lifetimeSeconds = delaySeconds, ns.NearbyList.LIFETIME
 	report.enabled, report.nearbyList, report.status = enabled, nearby, status
 	report.serverTime = GetServerTime()
 	local db = CouchsideGatheringScanDB
 	if db and db.version == 1 then db.automationReport = ns.SnapshotTooltip(report) end
 end
 
+-- Any reset starts a new stop, which may scan as soon as the wait passes.
 local function Reset()
-	anchor, settledAt = nil, nil
+	anchor, settledAt, retryAt = nil, nil, nil
 end
 
 local Refresh
@@ -62,6 +67,11 @@ local function Finished(outcome)
 			Fault("nearby display failed: " .. tostring(outcome.record.display.reason))
 			return
 		end
+		-- The list rejected a finished scan. Hold the next one for this stop to
+		-- the snapshot lifetime so a persistent rejection isn't rescanned often.
+		if not (outcome.record.display and outcome.record.display.status == "shown") then
+			retryAt = GetTime() + ns.NearbyList.LIFETIME
+		end
 	elseif outcome.status == "failed" then
 		report.failed = report.failed + 1
 		Fault(outcome.reason)
@@ -79,12 +89,14 @@ local function Tick()
 		if not valid then Reset(); Save(motionReason); return end
 	else
 		anchor, reason = ns.MotionGuard.Stationary()
-		if not anchor then Save(reason); return end
+		if not anchor then Reset(); Save(reason); return end
 		settledAt = GetTime()
 	end
 	local now = GetTime()
 	if now - settledAt < delaySeconds then Save("waiting for stationary interval"); return end
-	if now - lastStart < INTERVAL then Save("waiting for scan interval"); return end
+	if ns.NearbyList.Remaining() > REFRESH_LEAD then Save("showing snapshot"); return end
+	if retryAt and now < retryAt then Save("waiting to retry after a withheld scan"); return end
+	if now - lastStart < MIN_GAP then Save("waiting for minimum gap between scans"); return end
 	running, lastStart = true, now
 	report.attempts = report.attempts + 1
 	Save("scan started")
@@ -172,8 +184,8 @@ ns.RegisterCommand("auto", "[pause|resume|delay 1-4] - automatic scan status and
 		return
 	end
 	Save(report.reason or "ready")
-	ns.Print("Automatic scans %s: %s. Wait %ds; minimum interval %ds. Attempts %d, completed %d, cancelled %d, failed %d.",
-		report.status, report.reason, delaySeconds, INTERVAL, report.attempts, report.completed, report.cancelled, report.failed)
+	ns.Print("Automatic scans %s: %s. Wait %ds; snapshots last %ds and refresh before expiry while still. Attempts %d, completed %d, cancelled %d, failed %d.",
+		report.status, report.reason, delaySeconds, ns.NearbyList.LIFETIME, report.attempts, report.completed, report.cancelled, report.failed)
 	ns.Print("Protected-action notifications registered: %s.", tostring(report.protectionEventsReady))
 	ns.Print("Enable with /cs option gathering.autoScan on and gathering.nearbyList on. Pause with /cs gathering auto pause; turn off with /cs option gathering.autoScan off.")
 end)

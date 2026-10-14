@@ -5,7 +5,7 @@ from lupa.lua51 import LuaRuntime
 ROOT = Path(__file__).resolve().parents[1]
 STUB = r'''
 clock=0;combat=false;logs={};commands={};frames={};speed=0;moving=false
-ns={Print=function(fmt,...) logs[#logs+1]=string.format(fmt,...) end,
+ns={version='test',Print=function(fmt,...) logs[#logs+1]=string.format(fmt,...) end,
  Debug=function() end,IsEnabled=function() return false end,OnOptionChanged=function() end,
  OnReady=function(fn) fn() end,RegisterCommand=function(k,_,fn) commands[k]=fn end}
 function GetTime() return clock end

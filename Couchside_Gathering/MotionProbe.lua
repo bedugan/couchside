@@ -68,7 +68,7 @@ local function Begin(watch)
 	if InCombatLockdown() then ns.Print("Motion probe refused in combat."); return end
 	Finish("restarted")
 	started, lastSample, phase = GetTime(), nil, 1
-	active = { version = 1, addonVersion = "0.13.0", samples = {}, events = {}, eventRegistrationErrors = {},
+	active = { version = 1, addonVersion = ns.version, samples = {}, events = {}, eventRegistrationErrors = {},
 		instance = Read(function() return IsInInstance() end),
 		instanceInfo = Read(function() return GetInstanceInfo() end) }
 	local version, build, _, interface = GetBuildInfo()

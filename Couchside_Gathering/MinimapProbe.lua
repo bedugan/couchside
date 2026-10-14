@@ -10,9 +10,15 @@ local activeScan
 local operation
 local cursorChange
 local NATIVE_PANELS = { "WorldMapFrame", "MacroFrame", "GameMenuFrame", "SettingsPanel",
-	"QuestFrame", "GossipFrame", "MerchantFrame", "PlayerSpellsFrame", "SpellBookFrame", "ChatFrame1EditBox" }
+	"QuestFrame", "GossipFrame", "MerchantFrame", "PlayerSpellsFrame", "SpellBookFrame" }
 
 local function PanelBlock()
+	-- Chat input stays visible at reduced alpha in IM chat style, so typing is
+	-- read from keyboard focus. This also covers every other text field.
+	if not GetCurrentKeyBoardFocus then return "keyboard focus unavailable" end
+	local focus = GetCurrentKeyBoardFocus()
+	if issecretvalue and issecretvalue(focus) then return "keyboard focus restricted" end
+	if focus then return "text input focused" end
 	for _, name in ipairs(NATIVE_PANELS) do
 		local panel = _G[name]
 		if panel then

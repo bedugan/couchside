@@ -47,7 +47,7 @@ for _,why in ipairs({'position','facing','expired','combat'}) do
  local d=ns.NearbyList.Show(s);s.display=d
  assert(d.status=='shown')
  if why=='position' then motion=true elseif why=='facing' then pose.facing=.1
- elseif why=='combat' then combat=true else clock=10 end
+ elseif why=='combat' then combat=true else clock=ns.NearbyList.LIFETIME-.1;tick(.05);assert(d.status=='shown');clock=ns.NearbyList.LIFETIME end
  tick(.1)
  assert(s.display==d and d.status=='cleared' and d.reason:find(why),d.reason)
  assert(not visiblePanel() and #markers()==0)

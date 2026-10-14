@@ -190,15 +190,49 @@ UnitPosition=function() return nil,nil,nil,43 end
 C_Map.GetPlayerMapPosition=function() return nil end
 GetPlayerFacing=function() return nil end
 ''')
-check("automatic refresh stays bounded by ten seconds and history by ten scans", r'''
-enableAuto();advance(9);assert(#softRequests==2)
-advance(3);assert(#softRequests==3)
-advance(110);assert(#CouchsideGatheringScanDB.scans==10)
-assert(CouchsideGatheringScanDB.automationReport.completed>=11)
+check("a still player gets one scan per snapshot lifetime, replaced without a gap", r'''
+enableAuto();advance(4);assert(#softRequests==2 and visiblePanel())
+advance(40);assert(#softRequests==2,'rescanned while the snapshot was live')
+for _=1,30 do advance(.5);assert(visiblePanel(),'snapshot blinked off before its refresh') end
+assert(#softRequests==4 and #CouchsideGatheringScanDB.scans==2)
+assert(CouchsideGatheringScanDB.automationReport.lifetimeSeconds==ns.NearbyList.LIFETIME)
 ''')
-check("automatic refresh preserves a still-valid display until replacement or expiry", r'''
-enableAuto();advance(4);assert(visiblePanel())
-advance(7.7);assert(soft and visiblePanel(),'automatic refresh hid the previous live snapshot immediately')
+check("a manual scan counts as the snapshot for this stop", r'''
+enableAuto();advance(20);assert(#softRequests==2)
+commands.scan('');advance(3);assert(#softRequests==4 and CouchsideGatheringScanDB.scans[2].source=='manual')
+advance(40);assert(#softRequests==4,'automatic scan replaced a live manual snapshot')
+advance(15);assert(#softRequests==6 and CouchsideGatheringScanDB.scans[3].source=='automatic')
+''')
+check("a withheld automatic scan retries once per lifetime until the player moves", r'''
+ns.NearbyList.Show=function() return {status='withheld',reason='fixture'} end
+enableAuto();advance(4);assert(#softRequests==2)
+advance(50);assert(#softRequests==2,'withheld scan retried before the lifetime')
+advance(15);assert(#softRequests==4)
+fire('PLAYER_STARTED_MOVING');fire('PLAYER_STOPPED_MOVING');advance(5)
+assert(#softRequests==6,'a new stop did not scan')
+''')
+check("moving clears the snapshot and the next stop scans after the wait", r'''
+enableAuto();advance(4);assert(visiblePanel() and #softRequests==2)
+fire('PLAYER_STARTED_MOVING');pose.x=.6;advance(.2);assert(not visiblePanel())
+fire('PLAYER_STOPPED_MOVING');advance(3);assert(#softRequests==2,'minimum gap ignored')
+advance(5);assert(#softRequests==4 and visiblePanel())
+''')
+check("stop-and-go movement starts at most one scan per minimum gap", r'''
+enableAuto()
+for _=1,10 do advance(1.5);fire('PLAYER_STARTED_MOVING');fire('PLAYER_STOPPED_MOVING') end
+assert(CouchsideGatheringScanDB.automationReport.attempts==2)
+''')
+check("a cancelled scan retries after the minimum gap, not the lifetime", r'''
+queryAction=function(n) if n==10 then cursorX=100;cursorY=100 end end
+enableAuto();advance(2);assert(CouchsideGatheringScanDB.automationReport.cancelled==1)
+queryAction=nil;cursorX=0;cursorY=0;advance(12)
+assert(#CouchsideGatheringScanDB.scans==1 and visiblePanel())
+''')
+check("a visible but unfocused chat input does not block; typing does", r'''
+ChatFrame1EditBox={IsVisible=function() return true end}
+focus=ChatFrame1EditBox;enableAuto();advance(3);assert(#softRequests==0)
+assert(CouchsideGatheringScanDB.automationReport.reason=='text input focused')
+focus=nil;advance(2);assert(soft)
 ''')
 check("manual scan replaces an automatic scan without letting its old callback finish", r'''
 enableAuto();advance(1.8);assert(soft)
@@ -357,4 +391,4 @@ for _,name in ipairs({'PickupMacro','SetBinding','SetOverrideBindingClick','Show
 end
 commands.macro('probe');commands.macro('create');assert(created==1 and #softRequests==0)
 ''')
-print("43 scan launch checks passed")
+print("49 scan launch checks passed")

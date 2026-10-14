@@ -3,7 +3,8 @@
 -- addon frames. All frame APIs and the arrow atlas are used by the quest UI.
 local _, ns = ...
 
-local MAX_ROWS, LIFETIME = 8, 10
+-- The one snapshot lifetime. Automatic scans refresh on this clock rather than their own.
+local MAX_ROWS, LIFETIME = 8, 60
 local MINIMAP_SYMBOL_SIZE = 12
 local MINIMAP_STAR_SIZE = 16
 local panel, footer
@@ -193,7 +194,7 @@ local function ShowLegend(scan)
 	end
 	panel:SetHeight(30 - y)
 	local message = count == 0 and "No nearby names" or #model.rows > MAX_ROWS
-		and ("8 of " .. #model.rows .. " names - scan snapshot") or "Scan snapshot - clears in 10s"
+		and ("8 of " .. #model.rows .. " names - scan snapshot") or ("Scan snapshot - clears in %ds"):format(LIFETIME)
 	footer:SetText(message .. (omitted and " - some marks omitted" or ""))
 	ns.Debug("Prototype legend: %d/%d names, %d marks; %d mixed/invalid regions withheld. Unknowns retained.",
 		count, #model.rows, drawn, model.withheldRegions)
@@ -203,7 +204,7 @@ end
 local function Show(scan)
 	Clear("new scan")
 	local guard, display = ns.MotionGuard.Prepare(scan.motion)
-	display.version, display.addonVersion, display.status = 1, "0.13.0", "withheld"
+	display.version, display.addonVersion, display.status = 1, ns.version, "withheld"
 	display.scanID, display.legend = scan.id, ns.IsEnabled("resourceLegend")
 	lastDisplay = display
 	local reason = Rejection(scan, display)
@@ -266,7 +267,7 @@ local function Show(scan)
 	end
 	for index = count + 1, #rows do rows[index]:Hide(); badges[index]:Hide() end
 	panel:SetHeight(64 + math.max(count, 1) * 27)
-	footer:SetText(count == 0 and "No tracking text found" or #spots > MAX_ROWS and "First 8 results - scan snapshot" or "Scan snapshot - clears in 10s")
+	footer:SetText(count == 0 and "No tracking text found" or #spots > MAX_ROWS and "First 8 results - scan snapshot" or ("Scan snapshot - clears in %ds"):format(LIFETIME))
 	panel:Show()
 	display.status, display.reason, display.rows, display.marks = "shown", "accepted still scan", count, count
 	observation = { geometry = scan.geometry, guard = guard, expires = GetTime() + LIFETIME, display = display }
@@ -284,7 +285,7 @@ driver:SetScript("OnUpdate", function(_, delta)
 		if not ns.IsEnabled("nearbyList") then return "nearby list disabled" end
 		if InCombatLockdown() then return "combat started" end
 		if not Minimap:IsVisible() then return "minimap hidden" end
-		if GetTime() >= observation.expires then return "snapshot expired after ten seconds" end
+		if GetTime() >= observation.expires then return ("snapshot expired after %d seconds"):format(LIFETIME) end
 		if not GeometryMatches(observation.geometry) then return "minimap geometry or zoom changed" end
 		local matches, failure = ns.MotionGuard.Check(observation.guard)
 		if not matches then return failure end
@@ -320,8 +321,13 @@ end)
 
 local function RecordError(reason, scanID)
 	Clear("display error")
-	lastDisplay = { version = 1, addonVersion = "0.13.0", scanID = scanID, status = "error", reason = tostring(reason) }
+	lastDisplay = { version = 1, addonVersion = ns.version, scanID = scanID, status = "error", reason = tostring(reason) }
 	return lastDisplay
 end
 
-ns.NearbyList = { Show = Show, Clear = Clear, RecordError = RecordError }
+-- Seconds left on the live snapshot, or 0 when none is shown.
+local function Remaining()
+	return observation and math.max(0, observation.expires - GetTime()) or 0
+end
+
+ns.NearbyList = { Show = Show, Clear = Clear, RecordError = RecordError, Remaining = Remaining, LIFETIME = LIFETIME }

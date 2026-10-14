@@ -17,7 +17,7 @@ local function Count(value, label)
 end
 
 local function Persist(report)
-	report.version, report.addonVersion = 1, "0.13.0"
+	report.version, report.addonVersion = 1, ns.version
 	report.name, report.icon, report.body = NAME, ICON, BODY
 	report.serverTime = GetServerTime()
 	local version, build, _, interface = GetBuildInfo()

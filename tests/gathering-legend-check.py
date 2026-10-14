@@ -10,7 +10,9 @@ FILES = ("ScanLog.lua", "QuestTextFilter.lua", "ResourceLegend.lua", "ResourceCl
 STUB = r'''
 logs={};commands={};frames={};nativeCalls=0;clock=0;combat=false;enabled=true;legend=true;motion=false
 pose={mapID=1413,x=.5,y=.5,facing=0,rotating=false}
-ns={Print=function(fmt,...) table.insert(logs,string.format(fmt,...)) end,Debug=function() end,
+focus=nil;function GetCurrentKeyBoardFocus() return focus end
+C_AddOns={GetAddOnMetadata=function(_,key) if key=='Version' then return 'test' end end}
+ns={version='test',Print=function(fmt,...) table.insert(logs,string.format(fmt,...)) end,Debug=function() end,
  RegisterCommand=function(k,_,fn) commands[k]=fn end,OnReady=function(fn) fn() end,
  IsEnabled=function(k) return k=='resourceLegend' and legend or k=='nearbyList' and enabled end,
  OnOptionChanged=function(fn) optionHandlers[#optionHandlers+1]=fn end}
@@ -148,7 +150,7 @@ check("movement, combat and expiry clear all owned marks", r'''
 for _,why in ipairs({'motion','combat','expiry'}) do
  motion=false;combat=false;clock=0
  ns.NearbyList.Show(scan({{text='Mageroyal',x=.8,y=.5}}))
- if why=='motion' then motion=true elseif why=='combat' then combat=true else clock=10 end
+ if why=='motion' then motion=true elseif why=='combat' then combat=true else clock=ns.NearbyList.LIFETIME end
  tick(.1);assert(not visiblePanel() and #markers()==0)
 end
 ''')
