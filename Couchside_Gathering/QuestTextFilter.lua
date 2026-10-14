@@ -4,6 +4,7 @@ local _, ns = ...
 
 local function Normalize(text)
 	return (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+		:gsub("|T.-|t", "")
 		:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", ""))
 end
 
@@ -81,7 +82,7 @@ local function Filter(data, snapshot)
 			end
 		end
 	end
-	return { text = table.concat(kept, " / "), removed = removed }
+	return { text = table.concat(kept, " / "), entries = kept, removed = removed }
 end
 
 ns.QuestTextFilter = { Snapshot = BuildSnapshot, Filter = Filter }

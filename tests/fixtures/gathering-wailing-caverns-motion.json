@@ -1,0 +1,733 @@
+{
+  "source": "Native Gathering 0.11.3 motion probe in Wailing Caverns, 2026-10-13",
+  "build": "70374",
+  "instanceID": 43,
+  "instanceType": "party",
+  "rotating": false,
+  "samples": [
+    {
+      "elapsed": 0,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 0.1169999999983702,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 0.217000000004191,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 0.3340000000025611,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 0.4500000000043656,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 0.5670000000027358,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 0.684000000001106,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 0.8000000000029104,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 0.9170000000012806,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.033999999999651,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.150000000001455,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.266999999999825,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.383999999998196,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.484000000004016,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.599999999998545,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.700000000004366,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.817000000002736,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 1.934000000001106,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.05000000000291,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.167000000001281,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.283999999999651,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.400000000001455,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.516999999999825,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.633999999998196,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.734000000004016,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.849999999998545,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 2.950000000004366,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.067000000002736,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.184000000001106,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.30000000000291,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.417000000001281,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.533999999999651,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.650000000001455,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.766999999999825,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.883999999998196,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 3.984000000004016,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 4.099999999998545,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 4.200000000004366,
+      "speed": 2.5,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 4.317000000002736,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 4.434000000001106,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 4.55000000000291,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 4.667000000001281,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 4.783999999999651,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 4.900000000001455,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.016999999999825,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.133999999998196,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.234000000004016,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.349999999998545,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.450000000004366,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.567000000002736,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.684000000001106,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.80000000000291,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 5.917000000001281,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.033999999999651,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.150000000001455,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.266999999999825,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.383999999998196,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.484000000004016,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.599999999998545,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.700000000004366,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.817000000002736,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 6.919000000001688,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.035000000003493,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.152000000001863,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.269000000000233,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.385000000002037,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.502000000000408,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.618999999998778,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.719000000004598,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.834999999999127,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 7.951999999997497,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.052000000003318,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.169000000001688,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.285000000003492,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.402000000001863,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.519000000000233,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.635000000002037,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.752000000000407,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.868999999998778,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 8.969000000004598,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 9.084999999999127,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 9.201999999997497,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 9.302000000003318,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 9.419000000001688,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 9.535000000003492,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 9.652000000001863,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 9.769000000000233,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 9.885000000002037,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.00200000000041,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.11899999999878,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.2190000000046,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.33499999999913,
+      "speed": 7,
+      "moving": true,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.4519999999975,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.55200000000332,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.66900000000169,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.78500000000349,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 10.90200000000186,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.01900000000023,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.13500000000204,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.25200000000041,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.36899999999878,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.4690000000046,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.58499999999913,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.7019999999975,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.80200000000332,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 11.91900000000169,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    },
+    {
+      "elapsed": 12.00200000000041,
+      "speed": 0,
+      "moving": false,
+      "instanceID": 43
+    }
+  ],
+  "events": [
+    {
+      "elapsed": 2.467000000004191,
+      "event": "PLAYER_STARTED_LOOKING"
+    },
+    {
+      "elapsed": 2.467000000004191,
+      "event": "PLAYER_STARTED_TURNING"
+    },
+    {
+      "elapsed": 4.099999999998545,
+      "event": "PLAYER_STARTED_LOOKING"
+    },
+    {
+      "elapsed": 4.167000000001281,
+      "event": "PLAYER_STARTED_MOVING"
+    },
+    {
+      "elapsed": 4.167000000001281,
+      "event": "PLAYER_STARTED_TURNING"
+    },
+    {
+      "elapsed": 4.234000000004016,
+      "event": "PLAYER_STOPPED_TURNING"
+    },
+    {
+      "elapsed": 4.234000000004016,
+      "event": "PLAYER_STOPPED_LOOKING"
+    },
+    {
+      "elapsed": 4.599999999998545,
+      "event": "PLAYER_STARTED_TURNING"
+    },
+    {
+      "elapsed": 4.817000000002736,
+      "event": "PLAYER_STOPPED_TURNING"
+    },
+    {
+      "elapsed": 5.11699999999837,
+      "event": "PLAYER_STOPPED_MOVING"
+    },
+    {
+      "elapsed": 8.951999999997497,
+      "event": "PLAYER_STARTED_LOOKING"
+    },
+    {
+      "elapsed": 9.084999999999127,
+      "event": "PLAYER_STARTED_MOVING"
+    },
+    {
+      "elapsed": 9.084999999999127,
+      "event": "PLAYER_STARTED_TURNING"
+    },
+    {
+      "elapsed": 9.219000000004598,
+      "event": "PLAYER_STOPPED_TURNING"
+    },
+    {
+      "elapsed": 9.219000000004598,
+      "event": "PLAYER_STOPPED_LOOKING"
+    },
+    {
+      "elapsed": 9.701999999997497,
+      "event": "PLAYER_STARTED_TURNING"
+    },
+    {
+      "elapsed": 9.819000000003143,
+      "event": "PLAYER_STARTED_LOOKING"
+    },
+    {
+      "elapsed": 10.16900000000169,
+      "event": "PLAYER_STOPPED_TURNING"
+    },
+    {
+      "elapsed": 10.16900000000169,
+      "event": "PLAYER_STOPPED_LOOKING"
+    },
+    {
+      "elapsed": 10.33499999999913,
+      "event": "PLAYER_STOPPED_MOVING"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
--- On-demand diagnostics, not automatic node tracking. Forever declares UpdateMouseoverAtPoint
+-- Shared bounded scanner and on-demand diagnostics. Forever declares UpdateMouseoverAtPoint
 -- but does not document its coordinate convention. Explicit test soft and scan
 -- experiments change cursor mode. No native script replacements or bindings.
 local _, ns = ...
@@ -6,27 +6,48 @@ local _, ns = ...
 local capture
 local generation = 0
 local softCleanupNeeded = false
+local activeScan
+local operation
+local cursorChange
 
-local function CleanupSoftCursor()
+local function CleanupSoftCursor(quiet)
 	if not softCleanupNeeded then return true end
+	-- A protected-action notification can synchronously cancel a job inside
+	-- a native cursor call. Never invoke cleanup inside that call's event callback.
+	if cursorChange then return false end
 	if InCombatLockdown() then
 		ns.Print("Soft-cursor cleanup pending: entered combat. /reload, or /cs gathering probe off after combat.")
 		return false
 	end
+	local before = generation
+	cursorChange = "cleanup"
 	local ok, err = pcall(Minimap.SetUsingSoftCursor, Minimap, false)
+	cursorChange = nil
 	if not ok then
 		ns.Print("Soft-cursor cleanup ERROR: %s. /reload before further testing.", tostring(err))
 		return false
 	end
+	if before ~= generation then
+		ns.Print("Soft-cursor cleanup interrupted. /reload before further testing.")
+		return false
+	end
 	softCleanupNeeded = false
-	ns.Print("Requested soft-cursor false. Previous state is unknown; /reload after this experiment, then check hover and controller input.")
+	if not quiet then ns.Print("Requested soft-cursor false. Previous state is unknown; /reload after this experiment, then check hover and controller input.") end
 	return true
 end
 
-local function Stop()
+local function Stop(reason, failed, keepDisplay)
 	generation = generation + 1
-	if ns.NearbyList then ns.NearbyList.Clear("scan/probe restarted or stopped") end
-	return CleanupSoftCursor()
+	operation = nil
+	local job = activeScan
+	activeScan = nil
+	if ns.NearbyList and not keepDisplay then ns.NearbyList.Clear("scan/probe restarted or stopped") end
+	local cleaned = CleanupSoftCursor(job and job.quiet)
+	if job and job.finished then
+		job.finished({ status = (failed or not cleaned) and "failed" or "cancelled",
+			reason = reason or "scan cancelled", cleanupSucceeded = cleaned })
+	end
+	return cleaned
 end
 
 local function Geometry()
@@ -106,9 +127,11 @@ local function SameGeometry(a, b)
 end
 
 local function Capture(token)
+	operation = "capture"
 	ns.Print("In 5 seconds, capturing one pin. Hover an isolated yellow pin and keep its tooltip visible. Don't move your character.")
 	C_Timer.After(5, function()
 		if token ~= generation then return end
+		operation = nil
 		local g = Geometry()
 		local x, y = GetCursorPosition()
 		if InCombatLockdown() or not g or not CursorInside(g, x, y) then
@@ -189,6 +212,7 @@ local function Test(token, mode)
 		return true
 	end
 	if not Ready() then return end
+	operation = "probe"
 	ns.Print("Testing saved point in %s formats (%d). Don't move, zoom or rotate. Matches can be stale; this report does not declare success.",
 		mode or "original", #candidates)
 	if soft then
@@ -217,6 +241,7 @@ local function Test(token, mode)
 		local candidate = candidates[index]
 		if not candidate then
 			CleanupSoftCursor()
+			operation = nil
 			ns.Print("Test ended. Re-hover the pin normally and check controller input. /reload if either is abnormal. Send the report including the before-query lines.")
 			return
 		end
@@ -255,17 +280,19 @@ local function Test(token, mode)
 	end
 end
 
-local function Scan(token, finished)
+local function Scan(token, finished, request)
+	request = request or {}
+	local function Say(...)
+		if not request.quiet then ns.Print(...) end
+	end
 	if not Minimap.UpdateMouseoverAtPoint or not Minimap.SetUsingSoftCursor
 		or not C_TooltipInfo or not C_TooltipInfo.GetMinimapMouseover then
-		ns.Print("Scan unavailable: point, soft-cursor and tooltip APIs are all required.")
-		return
+		return false, "point, soft-cursor and tooltip APIs are all required"
 	end
 	local g = Geometry()
 	local x, y = GetCursorPosition()
 	if InCombatLockdown() or not g or CursorInside(g, x, y) then
-		ns.Print("Scan skipped: stay out of combat and move the cursor outside the minimap.")
-		return
+		return false, "stay out of combat and move the cursor outside the minimap"
 	end
 	local width, height = g.width * g.scale, g.height * g.scale
 	local spacing = 4
@@ -279,14 +306,14 @@ local function Scan(token, finished)
 	local points, hits, rawByText, filtersByText = {}, {}, {}, {}
 	local questText = ns.QuestTextFilter.Snapshot()
 	if questText.available then
-		ns.Print("Quest-text filter: %d quest titles, %d objective-read warnings. Unknown text stays visible.",
+		Say("Quest-text filter: %d quest titles, %d objective-read warnings. Unknown text stays visible.",
 			#questText.entries, #questText.warnings)
 	else
-		ns.Print("Quest-text filter unavailable: %s.", questText.error)
+		Say("Quest-text filter unavailable: %s.", questText.error)
 	end
 	local started = GetTime and GetTime()
 	local serverTime = GetServerTime and GetServerTime()
-	local motion = ns.ScanMotion.Start()
+	local motion = ns.MotionGuard.Start()
 	for row = 0, rows do
 		for column = 0, columns do
 			local nx, ny = column / columns, row / rows
@@ -295,20 +322,27 @@ local function Scan(token, finished)
 			end
 		end
 	end
-	ReportText("Before scan")
-	ns.Print("Scanning round minimap: %d sample points, spacing at most %d physical pixels. Don't move, rotate or zoom.", #points, spacing)
+	if not request.quiet then ReportText("Before scan") end
+	Say("Scanning round minimap: %d sample points, spacing at most %d physical pixels. Don't move, rotate or zoom.", #points, spacing)
+	if InCombatLockdown() then return false, "combat began before cursor setup" end
+	activeScan = { quiet = request.quiet, source = request.source or "manual", finished = finished }
+	operation = operation == "watch" and "watch" or "scan"
 	softCleanupNeeded = true
+	cursorChange = "enable"
 	local ok, err = pcall(Minimap.SetUsingSoftCursor, Minimap, true)
+	cursorChange = nil
 	if not ok then
 		ns.Print("Scan soft-cursor enable ERROR: %s.", tostring(err))
-		Stop()
-		return
+		Stop("soft-cursor enable failed: " .. tostring(err), true)
+		return true
 	end
-	ns.Print("Requested soft-cursor true for scan.")
+	if token ~= generation then return true end
+	Say("Requested soft-cursor true for scan.")
 	local index, hitCount, retainedHitCount = 1, 0, 0
 	local function Finish()
-		ns.ScanMotion.Finish(motion)
-		local cleanupSucceeded = CleanupSoftCursor()
+		ns.MotionGuard.Finish(motion)
+		local cleanupSucceeded = CleanupSoftCursor(request.quiet)
+		if token ~= generation then return end
 		local regions, visited = {}, {}
 		-- Connected components preserve separated regions with identical names.
 		-- Nearby same-name nodes may merge; a fragmented hitbox may split a node.
@@ -342,19 +376,19 @@ local function Scan(token, finished)
 				regions[#regions + 1] = region
 			end
 		end
-		ns.Print("Scan complete: %d points, %d raw nonempty hits, %d retained hits, %d approximate tooltip regions. These are not confirmed node counts.",
+		Say("Scan complete: %d points, %d raw nonempty hits, %d retained hits, %d approximate tooltip regions. These are not confirmed node counts.",
 			#points, hitCount, retainedHitCount, #regions)
-		ns.Print("Motion observed: %s; %d unknown samples; %d observations. Moving/turning positions are not a single snapshot.",
+		Say("Motion observed: %s; %d unknown samples; %d observations. Moving/turning positions are not a single snapshot.",
 			motion.status, motion.unknownSamples, #motion.trace)
 		for i = 1, math.min(#regions, 20) do
 			local region = regions[i]
 			local vertical = region.y > 0.62 and "top" or region.y < 0.38 and "bottom" or ""
 			local horizontal = region.x > 0.62 and "right" or region.x < 0.38 and "left" or ""
 			local direction = vertical .. (vertical ~= "" and horizontal ~= "" and "-" or "") .. horizontal
-			ns.Print("Region %d: %s; %s; center %.1f%% from left, %.1f%% from top; %d samples.",
+			Say("Region %d: %s; %s; center %.1f%% from left, %.1f%% from top; %d samples.",
 				i, region.text, direction == "" and "center" or direction, region.x * 100, (1 - region.y) * 100, region.count)
 		end
-		if #regions > 20 then ns.Print("Only the first 20 regions are printed.") end
+		if #regions > 20 then Say("Only the first 20 regions are printed.") end
 		local samples = {}
 		for _, point in ipairs(points) do
 			if point.rawText then
@@ -364,39 +398,51 @@ local function Scan(token, finished)
 			end
 		end
 		local version, build, _, interface = GetBuildInfo()
-		ns.SaveGatheringScan({ clientVersion = version, build = build, interface = interface,
+		local record = { clientVersion = version, build = build, interface = interface,
 			serverTime = serverTime, durationSeconds = started and (GetTime() - started),
 			geometry = g, grid = { columns = columns, rows = rows, spacing = spacing },
 			pointCount = #points, hitCount = hitCount, regions = regions, hits = samples,
 			retainedHitCount = retainedHitCount, questText = questText, filtersByText = filtersByText,
 			motion = motion, scanProfile = "quest-filter-motion-v1",
-			tipsByText = rawByText, cleanupRequestSucceeded = cleanupSucceeded })
-		ns.Print("Compare names and positions with ordinary hover. Check controller input, then /reload. Empty results can be missed samples; other tracking can produce non-herb text.")
+			tipsByText = rawByText, cleanupRequestSucceeded = cleanupSucceeded, source = request.source or "manual" }
+		ns.SaveGatheringScan(record, request.quiet)
+		Say("Compare names and positions with ordinary hover. Check controller input, then /reload. Empty results can be missed samples; other tracking can produce non-herb text.")
 		if ns.NearbyList then
-			local shown, displayError = pcall(ns.NearbyList.Show, { regions = regions, geometry = g, motion = motion,
-				cleanupRequestSucceeded = cleanupSucceeded, questText = questText })
+			local shown, displayError = pcall(ns.NearbyList.Show, record)
+			if shown then record.display = displayError end
 			if not shown then
-				ns.NearbyList.Clear("display error")
+				record.display = ns.NearbyList.RecordError(displayError, record.id)
 				ns.Print("Nearby tracking display ERROR: %s. The completed diagnostic scan was saved.", tostring(displayError))
 			end
 		end
-		if finished and cleanupSucceeded then finished() end
+		activeScan = nil
+		if operation ~= "watch" then operation = nil end
+		if finished then finished({ status = cleanupSucceeded and "complete" or "failed",
+			reason = cleanupSucceeded and "scan complete" or "soft-cursor cleanup failed", record = record,
+			cleanupSucceeded = cleanupSucceeded }) end
 	end
 	local function Batch()
 		if token ~= generation then return end
 		local success, failure = pcall(function()
 			local cx, cy = GetCursorPosition()
 			if InCombatLockdown() or not SameGeometry(g, Geometry()) or CursorInside(g, cx, cy) then
-				ns.Print("Scan stopped: combat, geometry/zoom changed, or cursor entered minimap. Partial results discarded.")
-				Stop()
+				Say("Scan stopped: combat, geometry/zoom changed, or cursor entered minimap. Partial results discarded.")
+				Stop("combat, geometry/zoom changed, or cursor entered minimap")
 				return
 			end
-			ns.ScanMotion.Sample(motion)
+			ns.MotionGuard.Sample(motion)
 			for _ = 1, 16 do
+				if token ~= generation then return end
 				local point = points[index]
 				if not point then Finish(); return end
-				Minimap:UpdateMouseoverAtPoint((g.left + point.nx * g.width) * g.scale,
-					(g.bottom + point.ny * g.height) * g.scale)
+				cursorChange = "query"
+				local queried, queryError = pcall(function()
+					Minimap:UpdateMouseoverAtPoint((g.left + point.nx * g.width) * g.scale,
+						(g.bottom + point.ny * g.height) * g.scale)
+				end)
+				cursorChange = nil
+				if token ~= generation then return end
+				if not queried then error(queryError) end
 				local text, readError, data = TooltipText()
 				if readError then error(readError) end
 				if text ~= "" then
@@ -421,16 +467,17 @@ local function Scan(token, finished)
 		end)
 		if not success then
 			ns.Print("Scan ERROR: %s. Partial results discarded.", tostring(failure))
-			Stop()
+			Stop("scan error: " .. tostring(failure), true)
 		end
 	end
 	C_Timer.After(0.2, Batch)
 	C_Timer.After(12, function()
 		if token == generation and (index <= #points or softCleanupNeeded) then
 			ns.Print("Scan watchdog ending experiment or pending cleanup. /reload if cleanup remains pending.")
-			Stop()
+			Stop("scan watchdog expired", true)
 		end
 	end)
+	return true
 end
 
 ns.RegisterCommand("probe", "[capture|test [alternate|soft]|off] - report or test one minimap pin", function(arg)
@@ -459,21 +506,26 @@ ns.RegisterCommand("scan", "[watch|off] - sample once, or three times with five-
 	elseif arg == "" then
 		if not Stop() then return end
 		ns.Debug("Requested bounded gathering minimap scan.")
-		Scan(generation)
+		local started, reason = Scan(generation)
+		if not started then ns.Print("Scan skipped: %s.", reason) end
 	elseif arg == "watch" then
 		local function Round(index)
 			if not Stop() then return end
 			local token = generation
+			operation = "watch"
 			ns.Print("Bounded scan watch: %d/3. Stay still for the first scan, then walk/turn for comparison. /cs gathering scan off stops it.", index)
-			Scan(token, function()
+			local started, reason = Scan(token, function(outcome)
+				if outcome.status ~= "complete" then operation = nil; return end
 				if index == 3 then
+					operation = nil
 					ns.Print("Scan watch finished. Check hover and controls, then /reload to write the three records.")
 				else
 					C_Timer.After(5, function()
 						if token == generation then Round(index + 1) end
 					end)
-					end
+				end
 				end)
+			if not started then operation = nil; ns.Print("Scan skipped: %s.", reason) end
 		end
 		Round(1)
 	else

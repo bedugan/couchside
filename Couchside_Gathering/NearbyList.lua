@@ -4,19 +4,29 @@
 local _, ns = ...
 
 local MAX_ROWS, LIFETIME = 8, 10
+local MINIMAP_SYMBOL_SIZE = 12
+local MINIMAP_STAR_SIZE = 16
 local panel, footer
 local rows, badges = {}, {}
+local symbolBadges, headings = {}, {}
 local observation
+local lastDisplay
 local elapsed = 0
 local driver = CreateFrame("Frame")
 driver:Hide()
 
 local function Clear(reason)
 	local wasVisible = observation ~= nil
+	if observation then
+		observation.display.status = "cleared"
+		observation.display.reason = reason
+	end
 	observation = nil
 	driver:Hide()
 	if panel then panel:Hide() end
 	for _, badge in ipairs(badges) do badge:Hide() end
+	for _, badge in ipairs(symbolBadges) do badge:Hide() end
+	for _, heading in pairs(headings) do heading:Hide() end
 	if wasVisible then ns.Debug("Nearby tracking cleared: %s.", reason) end
 end
 
@@ -46,6 +56,8 @@ local function CreatePanel()
 	title:SetText("Nearby tracking")
 	footer = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	footer:SetPoint("BOTTOMLEFT", 12, 10)
+	footer:SetPoint("BOTTOMRIGHT", -12, 10)
+	footer:SetWordWrap(true)
 end
 
 local function GetRow(index)
@@ -81,6 +93,7 @@ local function GetRow(index)
 	badge.letter = badge:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	badge.letter:SetPoint("CENTER")
 	badge.letter:SetTextColor(0.07, 0.045, 0.02)
+	badge:Hide()
 	rows[index], badges[index] = row, badge
 	return row, badge
 end
@@ -91,27 +104,131 @@ local function GeometryMatches(g)
 		and Minimap:GetEffectiveScale() == g.scale and Minimap:GetZoom() == g.zoom
 end
 
-local function PoseMatches(pose)
-	local current = ns.ScanMotion.Start().trace[1]
-	if current.positionError or current.facingError then return false end
-	return current.mapID == pose.mapID and current.rotating == pose.rotating
-		and math.sqrt((current.x - pose.x) ^ 2 + (current.y - pose.y) ^ 2) <= 0.0000001
-		and math.abs((current.facing - pose.facing + math.pi) % (2 * math.pi) - math.pi) <= 0.0001
+-- A dungeon guard never hides unreadable coordinate evidence in the raw trace.
+local function Rejection(scan, display)
+	if not ns.IsEnabled("nearbyList") then return "nearby list disabled" end
+	if not scan.cleanupRequestSucceeded then return "soft-cursor cleanup request failed" end
+	if display.guardReason then return display.guardReason end
+	if not scan.questText.available then return "quest snapshot unavailable" end
+	if #scan.questText.warnings > 0 then return "quest snapshot has warnings" end
+	if InCombatLockdown() then return "combat started" end
+	if not Minimap:IsVisible() then return "minimap hidden" end
+	if not GeometryMatches(scan.geometry) then return "minimap geometry or zoom changed" end
+end
+
+local function Heading(key, text, y)
+	if not headings[key] then headings[key] = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall") end
+	local heading = headings[key]
+	heading:ClearAllPoints()
+	heading:SetPoint("TOPLEFT", 12, y)
+	heading:SetText(text)
+	heading:Show()
+end
+
+local function ShowLegend(scan)
+	local model = ns.ResourceLegend.Build(scan)
+	local count, y, lastGroup = math.min(#model.rows, MAX_ROWS), -34, nil
+	local listed = {}
+	for index = 1, count do
+		local item = model.rows[index]
+		local group = item.kind == "resource-candidate" and "herbs" or "other"
+		if group ~= lastGroup then
+			Heading(group, group == "herbs" and "Herbs" or "Other tracking", y)
+			y, lastGroup = y - 19, group
+		end
+		local row = GetRow(index)
+		row:ClearAllPoints()
+		row:SetPoint("TOPLEFT", 12, y)
+		y = y - 29
+		row.arrow:Hide()
+		if not row.symbol then
+			row.symbol = row:CreateTexture(nil, "ARTWORK")
+			row.symbol:SetPoint("LEFT", -2, 0)
+			row.symbol:SetSize(24, 24)
+		end
+		if item.symbol then
+			row.symbol:SetTexture("Interface\\AddOns\\Couchside_Gathering\\Media\\" .. item.symbol .. ".tga")
+			row.symbol:Show()
+			row.letter:Hide()
+			listed[item.resourceKey] = true
+		else
+			row.symbol:Hide()
+			row.letter:SetText("?")
+			row.letter:SetTextColor(0.76, 0.81, 0.80)
+			row.letter:Show()
+		end
+		row.name:ClearAllPoints()
+		row.name:SetPoint("LEFT", 31, 0)
+		row.name:SetPoint("RIGHT")
+		row.name:SetText(item.text)
+		row:Show()
+	end
+	for index = count + 1, #rows do rows[index]:Hide() end
+	local drawn, omitted = 0, model.withheldRegions > 0
+	for _, mark in ipairs(model.marks) do
+		if listed[mark.resourceKey] and drawn < 24 then
+			drawn = drawn + 1
+			local badge = symbolBadges[drawn]
+			if not badge then
+				badge = CreateFrame("Frame", nil, Minimap)
+				badge:EnableMouse(false)
+				badge:SetFrameLevel(Minimap:GetFrameLevel() + 11)
+				badge.symbol = badge:CreateTexture(nil, "ARTWORK")
+				badge.symbol:SetAllPoints()
+				symbolBadges[drawn] = badge
+			end
+			-- Badges are reused across scans, including between different shapes.
+			local size = mark.symbol == "star-yellow" and MINIMAP_STAR_SIZE or MINIMAP_SYMBOL_SIZE
+			badge:SetSize(size, size)
+			local x, y = (mark.x - 0.5) * scan.geometry.width, (mark.y - 0.5) * scan.geometry.height
+			local length = math.sqrt(x * x + y * y)
+			local nudge = length > 0 and math.min(13, length) / length or 0
+			badge:ClearAllPoints()
+			badge:SetPoint("CENTER", Minimap, "CENTER", x * (1 - nudge), y * (1 - nudge))
+			badge.symbol:SetTexture("Interface\\AddOns\\Couchside_Gathering\\Media\\" .. mark.symbol .. ".tga")
+			badge:Show()
+		else
+			omitted = true
+		end
+	end
+	panel:SetHeight(30 - y)
+	local message = count == 0 and "No nearby names" or #model.rows > MAX_ROWS
+		and ("8 of " .. #model.rows .. " names - scan snapshot") or "Scan snapshot - clears in 10s"
+	footer:SetText(message .. (omitted and " - some marks omitted" or ""))
+	ns.Debug("Prototype legend: %d/%d names, %d marks; %d mixed/invalid regions withheld. Unknowns retained.",
+		count, #model.rows, drawn, model.withheldRegions)
+	return count, drawn
 end
 
 local function Show(scan)
 	Clear("new scan")
-	if not ns.IsEnabled("nearbyList") then return end
-	if not scan.cleanupRequestSucceeded or scan.motion.status ~= "still"
-		or scan.motion.unknownSamples > 0 or not scan.questText.available
-		or #scan.questText.warnings > 0 or InCombatLockdown() or not Minimap:IsVisible()
-		or not GeometryMatches(scan.geometry) then
-		ns.Debug("Nearby tracking withheld: scan was not still, clean and fully quest-filtered.")
-		return
+	local guard, display = ns.MotionGuard.Prepare(scan.motion)
+	display.version, display.addonVersion, display.status = 1, "0.12.0", "withheld"
+	display.scanID, display.legend = scan.id, ns.IsEnabled("resourceLegend")
+	lastDisplay = display
+	local reason = Rejection(scan, display)
+	if not reason then
+		local matches
+		matches, reason = ns.MotionGuard.Check(guard)
+		if matches then reason = nil end
 	end
-	local pose = scan.motion.trace[#scan.motion.trace]
-	if not PoseMatches(pose) then return end
+	if reason then
+		display.reason = reason
+		if scan.source ~= "automatic" then ns.Print("Nearby list withheld: %s. /cs gathering display reports details.", reason) end
+		return display
+	end
+	ns.Debug("Nearby tracking accepted %s guard (%s); raw motion %s, unreadable coordinate samples %s.",
+		display.guardMode, display.guardStatus, tostring(display.motionStatus), tostring(display.unknownSamples))
 	if not panel then CreatePanel() end
+	if ns.IsEnabled("resourceLegend") then
+		display.rows, display.marks = ShowLegend(scan)
+		panel:Show()
+		display.status, display.reason = "shown", "accepted still scan"
+		observation = { geometry = scan.geometry, guard = guard, expires = GetTime() + LIFETIME, display = display }
+		elapsed = 0
+		driver:Show()
+		return display
+	end
 	local spots = {}
 	for _, region in ipairs(scan.regions) do spots[#spots + 1] = region end
 	-- Top to bottom, then left to right. This is not nearest world distance.
@@ -124,6 +241,15 @@ local function Show(scan)
 	for index = 1, count do
 		local spot = spots[index]
 		local row, badge = GetRow(index)
+		row:ClearAllPoints()
+		row:SetPoint("TOPLEFT", 12, -34 - (index - 1) * 27)
+		if row.symbol then row.symbol:Hide() end
+		row.letter:SetTextColor(1, 0.82, 0)
+		row.letter:Show()
+		row.arrow:Show()
+		row.name:ClearAllPoints()
+		row.name:SetPoint("LEFT", 43, 0)
+		row.name:SetPoint("RIGHT")
 		local letter = string.char(64 + index)
 		row.letter:SetText(letter)
 		row.name:SetText(spot.text)
@@ -142,25 +268,60 @@ local function Show(scan)
 	panel:SetHeight(64 + math.max(count, 1) * 27)
 	footer:SetText(count == 0 and "No tracking text found" or #spots > MAX_ROWS and "First 8 results - scan snapshot" or "Scan snapshot - clears in 10s")
 	panel:Show()
-	observation = { geometry = scan.geometry, pose = pose, expires = GetTime() + LIFETIME }
+	display.status, display.reason, display.rows, display.marks = "shown", "accepted still scan", count, count
+	observation = { geometry = scan.geometry, guard = guard, expires = GetTime() + LIFETIME, display = display }
 	elapsed = 0
 	driver:Show()
 	ns.Debug("Nearby tracking showing %d of %d sampled regions for up to %d seconds.", count, #spots, LIFETIME)
+	return display
 end
 
 driver:SetScript("OnUpdate", function(_, delta)
 	elapsed = elapsed + delta
 	if elapsed < 0.1 or not observation then return end
 	elapsed = 0
-	local ok, valid = pcall(function()
-		return ns.IsEnabled("nearbyList") and not InCombatLockdown() and Minimap:IsVisible()
-			and GetTime() < observation.expires and GeometryMatches(observation.geometry)
-			and PoseMatches(observation.pose)
+	local ok, reason = pcall(function()
+		if not ns.IsEnabled("nearbyList") then return "nearby list disabled" end
+		if InCombatLockdown() then return "combat started" end
+		if not Minimap:IsVisible() then return "minimap hidden" end
+		if GetTime() >= observation.expires then return "snapshot expired after ten seconds" end
+		if not GeometryMatches(observation.geometry) then return "minimap geometry or zoom changed" end
+		local matches, failure = ns.MotionGuard.Check(observation.guard)
+		if not matches then return failure end
 	end)
-	if not ok or not valid then Clear("motion, expiry, combat, minimap change or unreadable state") end
+	if not ok then reason = "display state read failed: " .. tostring(reason) end
+	if reason then Clear(reason) end
+end)
+
+ns.RegisterCommand("display", "report the last nearby-list acceptance or clearing reason", function(arg)
+	if arg ~= "" then ns.Print("Usage: /cs gathering display"); return end
+	local db = CouchsideGatheringScanDB
+	local scan = db and db.scans and db.scans[#db.scans]
+	local display = lastDisplay or (scan and scan.display)
+	if not display then
+		ns.Print("No display verdict recorded. Run a fresh /cs gathering scan with Gathering 0.11.2 or later.")
+		return
+	end
+	ns.Print("Nearby list %s: %s. Scan %s; Gathering %s; %s.", display.status, display.reason,
+		tostring(display.scanID), tostring(display.addonVersion),
+		lastDisplay and "current session" or "saved previous session, not a live display")
+	ns.Print("Settings now: nearbyList %s, resourceLegend %s. Scan motion %s, unreadable samples %s; drawn rows %s, marks %s.",
+		tostring(ns.IsEnabled("nearbyList")), tostring(ns.IsEnabled("resourceLegend")),
+		tostring(display.motionStatus), tostring(display.unknownSamples), tostring(display.rows), tostring(display.marks))
+	if display.positionError then ns.Print("Position read: %s.", display.positionError) end
+	if display.facingError then ns.Print("Facing read: %s.", display.facingError) end
+	if display.guardMode then ns.Print("Display guard: %s, %s; unreadable guard samples %s.",
+		display.guardMode, display.guardStatus, tostring(display.guardUnknownSamples)) end
 end)
 
 ns.OnOptionChanged(function(key)
-	if key == "nearbyList" then Clear("option changed") end
+	if key == "nearbyList" or key == "resourceLegend" then Clear("option changed") end
 end)
-ns.NearbyList = { Show = Show, Clear = Clear }
+
+local function RecordError(reason, scanID)
+	Clear("display error")
+	lastDisplay = { version = 1, addonVersion = "0.12.0", scanID = scanID, status = "error", reason = tostring(reason) }
+	return lastDisplay
+end
+
+ns.NearbyList = { Show = Show, Clear = Clear, RecordError = RecordError }

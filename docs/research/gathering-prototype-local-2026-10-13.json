@@ -1,0 +1,209 @@
+{
+  "version": 1,
+  "checkedAt": "2026-10-13T23:42:34.699144+00:00",
+  "candidate": "Couchside_Gathering 0.11.0",
+  "checks": {
+    "classifier": 15,
+    "scanner": 60,
+    "legacyDisplay": 13,
+    "prototype": 13
+  },
+  "savedVariablesSha256": "7abdf93d4e3868790055337492deabf474b81bfc9872e015b10d4e2a8a913f35",
+  "replays": [
+    {
+      "scanID": 59,
+      "build": "70338",
+      "names": 8,
+      "marks": 0,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "unknown": 8
+      },
+      "reportCounts": {
+        "resource-candidate": 0,
+        "unknown": 8,
+        "ambiguous": 0,
+        "quest-text": 0
+      }
+    },
+    {
+      "scanID": 60,
+      "build": "70338",
+      "names": 3,
+      "marks": 3,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "resource-candidate": 3
+      },
+      "reportCounts": {
+        "resource-candidate": 3,
+        "unknown": 0,
+        "ambiguous": 0,
+        "quest-text": 1
+      }
+    },
+    {
+      "scanID": 61,
+      "build": "70338",
+      "names": 6,
+      "marks": 1,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "resource-candidate": 1,
+        "unknown": 5
+      },
+      "reportCounts": {
+        "resource-candidate": 1,
+        "unknown": 5,
+        "ambiguous": 0,
+        "quest-text": 1
+      }
+    },
+    {
+      "scanID": 62,
+      "build": "70338",
+      "names": 2,
+      "marks": 2,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "resource-candidate": 2
+      },
+      "reportCounts": {
+        "resource-candidate": 2,
+        "unknown": 0,
+        "ambiguous": 0,
+        "quest-text": 1
+      }
+    },
+    {
+      "scanID": 63,
+      "build": "70338",
+      "names": 2,
+      "marks": 2,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "resource-candidate": 2
+      },
+      "reportCounts": {
+        "resource-candidate": 2,
+        "unknown": 0,
+        "ambiguous": 0,
+        "quest-text": 1
+      }
+    },
+    {
+      "scanID": 64,
+      "build": "70338",
+      "names": 2,
+      "marks": 2,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "resource-candidate": 2
+      },
+      "reportCounts": {
+        "resource-candidate": 2,
+        "unknown": 0,
+        "ambiguous": 0,
+        "quest-text": 1
+      }
+    },
+    {
+      "scanID": 65,
+      "build": "70338",
+      "names": 0,
+      "marks": 0,
+      "withheldRegions": 0,
+      "rowsByKind": {},
+      "reportCounts": {
+        "resource-candidate": 0,
+        "unknown": 0,
+        "ambiguous": 0,
+        "quest-text": 1
+      }
+    },
+    {
+      "scanID": 66,
+      "build": "70338",
+      "names": 2,
+      "marks": 3,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "resource-candidate": 2
+      },
+      "reportCounts": {
+        "resource-candidate": 2,
+        "unknown": 0,
+        "ambiguous": 0,
+        "quest-text": 1
+      }
+    },
+    {
+      "scanID": 67,
+      "build": "70338",
+      "names": 2,
+      "marks": 3,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "resource-candidate": 2
+      },
+      "reportCounts": {
+        "resource-candidate": 2,
+        "unknown": 0,
+        "ambiguous": 0,
+        "quest-text": 1
+      }
+    },
+    {
+      "scanID": 68,
+      "build": "70374",
+      "names": 1,
+      "marks": 1,
+      "withheldRegions": 0,
+      "rowsByKind": {
+        "resource-candidate": 1
+      },
+      "reportCounts": {
+        "resource-candidate": 1,
+        "unknown": 0,
+        "ambiguous": 0,
+        "quest-text": 0
+      }
+    }
+  ],
+  "nativeCallsDuringReplay": 0,
+  "nativeAcceptance": "pending Brian test",
+  "installed": true,
+  "sourceHashes": {
+    "Couchside_Gathering/Gathering.lua": "070f6b30633155302d0ea6ed4cc0a7cb3cf205e6f63ab19a95475ab01efdf43c",
+    "Couchside_Gathering/Media/circle-orange.tga": "d60f414b993a713cf727c947792b32ed51c5d29dbdab3bc22f2e83016490e7b9",
+    "Couchside_Gathering/Media/cross-red.tga": "9e49010bf209b6937925e60d1d0153a1ac2f54fe71e31bc02e6353256484bacc",
+    "Couchside_Gathering/Media/diamond-purple.tga": "48ba29adcad5792aec6003518ee1c9899ad054cb5f113e350698497ccf21de3f",
+    "Couchside_Gathering/Media/hexagon-teal.tga": "2ae6bc5017d706adb753ddc43679e58d64af61f734c7c583e974fa1a9df1b72f",
+    "Couchside_Gathering/Media/square-blue.tga": "6da9188bc3e0188e36eacad0c556b078ca6f9d73ebc593d0207691dc8bfaabb5",
+    "Couchside_Gathering/Media/star-yellow.tga": "e0f09131354206b29bd18dd5d59eed5f9a12ef8dc1b799d47eaebebaf0d9d01d",
+    "Couchside_Gathering/Media/triangle-green.tga": "37425484cbe3c037b7ef4e49d9656f05b2e577535c18fab11eb54828ed9f5279",
+    "Couchside_Gathering/MinimapProbe.lua": "8b1b55a5bf53fb8bcba1686b7f10419919c2c198d7e7b6ede55f0f9db7e4ea49",
+    "Couchside_Gathering/NearbyList.lua": "2a6c86151a35b650f15db26a7e8ec72c9769c1b9dbbd549ded719286eca55014",
+    "Couchside_Gathering/QuestTextFilter.lua": "c2e602fea67dca74f2a525ef9dc26d94a500dccf3102393a770e6552dc21041c",
+    "Couchside_Gathering/ResourceClassifier.lua": "a8dba6145f4012d0639a2bd2fc7a13bf254c71bf1752374d06f33803cf459151",
+    "Couchside_Gathering/ResourceLegend.lua": "471a1ba9276f5fa47ad3c2ead1f01ec1e5a020e25b535951abc737cb0fafbe9f",
+    "Couchside_Gathering/ScanLog.lua": "75dbb83fae1c5a606cddb90238c4fc90642597ee3ce53f461f8b4712128c4d57",
+    "Couchside_Gathering/ScanMotion.lua": "18543de54447a039c488a2fe1e9e33aa2270da63712b2421a98dbda441373c42",
+    "Couchside_Gathering/Couchside_Gathering.toc": "7e705927fd4a534007d76cc5f31f8150a02c01ea36b4373703ce903d01df8942"
+  },
+  "installedAt": "2026-10-13T23:48:05.691383+00:00",
+  "installedPath": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/Couchside_Gathering",
+  "installedFilesVerified": 16,
+  "backupPath": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns.disabled/Couchside_Gathering-pre-0.11-2026-10-13",
+  "review": {
+    "model": "Luna",
+    "finding": "Mixed resource/unknown marking",
+    "resolution": "Withhold any mark unless every retained entry agrees on one resource candidate",
+    "recheck": "No remaining concrete blocker; native acceptance pending"
+  },
+  "assetChecks": {
+    "originalTextures": 7,
+    "format": "64x64 uncompressed BGRA TGA with alpha",
+    "browserPreview": "Seven matching embedded PNG swatches; no broken images or overflow"
+  }
+}

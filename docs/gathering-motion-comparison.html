@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couchside motion guards: accuracy, cost and next step</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#101b29;color:#eff5fc;line-height:1.6}
+body{margin:0}main{max-width:1020px;margin:auto;padding:36px 24px 60px}
+h1,h2{line-height:1.2}h1{font-size:clamp(28px,4vw,42px);max-width:850px}h2{font-size:23px;margin-top:34px}
+p{max-width:880px}.eyebrow{color:#a6c8df;font-size:14px}.verdict{background:#173548;border-left:5px solid #74d6c6;padding:18px 22px;border-radius:6px}
+.verdict p{margin:0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;margin:20px 0;font-size:15px}
+th,td{padding:14px;text-align:left;vertical-align:top;border-bottom:1px solid #344d64}th{background:#1c3145;color:#cce2f7}th:first-child{width:20%}
+td:nth-child(2),td:nth-child(3){width:40%}.note{background:#302c20;border-left:4px solid #edcd7f;padding:14px 18px}
+.diagram{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}.box{border:1px solid #4b718a;border-radius:8px;padding:16px;background:#182b3f}.wide{grid-column:1/-1;border-color:#74d6c6;text-align:center}
+.small{font-size:14px;color:#bcd1e1}code{color:#d9e8ff;font-size:.94em}a{color:#95d8ff}li{margin:8px 0}
+@media(max-width:640px){main{padding:24px 16px}table{min-width:680px}.diagram{grid-template-columns:1fr}.wide{grid-column:1}}
+</style>
+</head>
+<body><main>
+<p class="eyebrow">Couchside Gathering 0.11.6 assessment · updated with the 0.12.0 consolidation candidate</p>
+<h1>Keep two sources of evidence behind one motion guard</h1>
+<div class="verdict"><p>The dungeon fallback is useful because the coordinate method cannot support the observed Wailing Caverns case. It provides weaker evidence about actual displacement, so replacing the stronger method everywhere would lose information. The recommended simplification is one owner for motion validation, with the choice of evidence kept inside that module. Version 0.12.0 implements this consolidation locally. Native acceptance of that candidate remains pending.</p></div>
+
+<h2>What accuracy means here</h2>
+<p>Both guards use the same tooltip scanner, approximate regions and minimap placements. They do not calculate herb locations differently. They decide whether a scan can be shown and whether its locations should be cleared as stale.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Question</th><th>Position and facing guard</th><th>Dungeon motion guard</th></tr></thead>
+<tbody>
+<tr><td>Evidence</td><td>Compares sampled player coordinates, map, facing and minimap rotation.</td><td>Requires zero speed, false movement status, a stable instance ID and an unchanged movement/transition event revision.</td></tr>
+<tr><td>Actual displacement</td><td>Can detect changed coordinates at a later sample, even if no movement event was observed.</td><td>Cannot verify displacement. An instant relocation with no detectable event or sampled speed/status change could leave stale marks until another clearing condition or expiry.</td></tr>
+<tr><td>Brief motion between samples</td><td>An excursion that returns to the same pose entirely between samples can be missed.</td><td>Observed start/stop events remain remembered even if speed has returned to zero before the next sample.</td></tr>
+<tr><td>Available coverage</td><td>Works where coordinates and facing are readable. Those reads were unavailable in the tested dungeon.</td><td>Currently restricted to north-up party instances. Rotating maps and other instance types are withheld.</td></tr>
+<tr><td>Shared limits</td><td colspan="2">Both are short-lived snapshots. Neither continuously tracks a herb spawning, disappearing or changing under a stationary player. Overlapping tooltips, sample gaps and approximate region centers are scanner limitations shared by both guards.</td></tr>
+</tbody></table></div>
+
+<h2>Runtime cost</h2>
+<p>The display checks at 10Hz only while visible, for at most ten seconds. During a scan, both paths also sample before query batches. Before 0.12.0, the dungeon path retried the unavailable coordinate/facing reads, created error results and then performed five additional native reads: instance state, rotation mode, speed, movement status and instance ID.</p>
+<p>That is about 50 extra native reads per second during visible checking, plus the primary attempts and Lua work. It is an operation count, not a CPU measurement. No native timing comparison establishes a frame-time or memory advantage for either guard.</p>
+<p>Nine movement/transition event listeners remain registered whenever nearby tracking is enabled, including outdoors and while the list is absent. Their handlers only increment a revision and retain the event name; they do not poll or query positions. Disabling nearby tracking releases them. The typical 1,009-point scanner is shared by both approaches, so changing the motion guard does not eliminate that scanning work.</p>
+
+<h2>Maintenance is the clearer concern</h2>
+<p>Before consolidation, selection, scan classification and live comparison spanned <code>ScanMotion.lua</code>, <code>DungeonMotion.lua</code> and <code>NearbyList.lua</code>. The display knows which method was chosen and how to compare each one. That spread motion knowledge across callers and made it easier for scan acceptance and later clearing to diverge. In 0.12.0, MotionGuard owns both comparisons and NearbyList uses its verdict.</p>
+<p>MotionGuard now owns capture, acceptance and later validity. The scanner and display use the same small interface. It prefers readable coordinates/facing, uses the tested dungeon evidence when supported, and retains the chosen source and limitations in diagnostics. The common expiry, combat, geometry and option policies remain shared. No dependency or general provider framework is needed.</p>
+<div class="diagram" aria-label="Proposed motion guard with two private evidence sources">
+<div class="box">Readable position and facing<br><span class="small">Prefer direct displacement evidence</span></div>
+<div class="box">Supported dungeon motion signals<br><span class="small">Limited fallback when direct evidence is unavailable</span></div>
+<div class="box wide">One motion guard owns selection and validity</div>
+<div class="box wide">Scanner and nearby display share its verdict</div>
+</div>
+<p>Once a snapshot chooses the dungeon mode, its live checks read that mode directly rather than repeatedly trying known-unavailable coordinate reads. A new scan or context transition would reassess capabilities. Version 0.12.0 implements that selected-mode check. Twenty fixture checks made zero extra map/facing calls, but no game-client timing comparison has been measured.</p>
+
+<h2>Next step</h2>
+<ol>
+<li>When Brian is next in a dungeon, perform the direct display test: still scan, compare the herb name/symbol with the native pin, then walk and turn to check clearing. Check expiry and controller input before/after reload.</li>
+<li>The shared guard is implemented in 0.12.0 and local regression checks pass. Validate the outdoor macro route and the actual dungeon display before committing it.</li>
+<li>Measure native runtime only if needed to choose an optimization. Do not use synthetic Lua timing to claim game-client performance.</li>
+</ol>
+<div class="note">The native probe verified readable movement inputs in Wailing Caverns: 107 samples, 20 events and working controls. It has not yet established direct dungeon-fallback symbol placement or coverage of every passive or instant displacement. Rotating-dungeon coverage is also pending.</div>
+<p class="small">Evidence: the original 0.11.6 assessment and current <code>MotionGuard.lua</code>; <a href="research/gathering-dungeon-motion-native-2026-10-13.json">saved native probe</a>; <a href="research/gathering-dungeon-motion-probe.md">validation and scope notes</a>. The initial assessment was documentation only. The 0.12.0 follow-up changes the shared guard and awaits native testing.</p>
+</main></body></html>

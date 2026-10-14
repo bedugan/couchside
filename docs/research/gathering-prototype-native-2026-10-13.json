@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "checkedAt": "2026-10-14T00:17:37.003556+00:00",
+  "candidate": "0.11.1",
+  "sourceModifiedLocal": "2026-10-13T17:14:43.092535-07:00",
+  "sourceSha256": "a60c139153802b0bba22130768326451c2cfb1600477aec1cd9e436a59356f21",
+  "scanID": 72,
+  "build": "70374",
+  "motion": "unknown",
+  "motionUnknownSamples": 66,
+  "motionErrors": [
+    [
+      "positionError",
+      "Interface/AddOns/Couchside_Gathering/ScanMotion.lua:10: player map position unavailable"
+    ],
+    [
+      "facingError",
+      "Interface/AddOns/Couchside_Gathering/ScanMotion.lua:19: player facing unavailable"
+    ]
+  ],
+  "regions": 4,
+  "cleanupRequestSucceeded": true,
+  "report": {
+    "id": 1,
+    "provider": "Couchside prototype",
+    "classifierVersion": "0.11.1",
+    "catalogVersion": "seven-herbs-v1",
+    "scanID": 72,
+    "available": true,
+    "counts": {
+      "ambiguous": 0,
+      "unknown": 5,
+      "resource-candidate": 0,
+      "quest-text": 0
+    },
+    "entries": [
+      {
+        "text": "Flametesting Apaladin",
+        "kind": "unknown",
+        "symbol": null
+      },
+      {
+        "text": "Moozraiel Lucane",
+        "kind": "unknown",
+        "symbol": null
+      },
+      {
+        "text": "Getzapped Fourtytwo",
+        "kind": "unknown",
+        "symbol": null
+      },
+      {
+        "text": "Spirit Fingies",
+        "kind": "unknown",
+        "symbol": null
+      },
+      {
+        "text": "Rigby Skullsmasha",
+        "kind": "unknown",
+        "symbol": null
+      }
+    ]
+  },
+  "interpretation": "Native 0.11.1 prototype report persisted for unknown tracking. No herb entries in this scan; motion unknown prevents live display. Smaller symbol appearance and controller acceptance require user observation.",
+  "errorLog": {
+    "sourceModifiedLocal": "2026-10-13T17:14:43.085304-07:00",
+    "session": 70,
+    "entries": 9,
+    "newOrChanged": [
+      {
+        "message": "Interface/AddOns/Spoken_Quests/VoiceOver.lua:1196: attempted to index a table that cannot be indexed with secret keys",
+        "session": 68,
+        "count": 1,
+        "lastOccurredLocal": "2026-10-13T17:06:34-07:00",
+        "stack": "[Interface/AddOns/Spoken_Quests/VoiceOver.lua]:244: in function 'InvokeQuestHandler'\n[Interface/AddOns/Spoken_Quests/VoiceOver.lua]:846: in function <Interface/AddOns/Spoken_Quests/VoiceOver.lua:834>\n[Interface/AddOns/Spoken_Quests/VoiceOver.lua]:888: in function 'func'\n[Interface/AddOns/Spoken/Libs/AceTimer-3.0/AceTimer-3.0.lua]:57: in function <...ace/AddOns/Spoken/Libs/AceTimer-3.0/AceTimer-3.0.lua:50>\n",
+        "couchsideInRecordedStack": false
+      }
+    ],
+    "scope": "Recorded attribution only; original cause not established and no unrelated addon modified."
+  }
+}

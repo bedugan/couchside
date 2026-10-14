@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-10-14T00:58:48.438051+00:00",
+  "sourceModified": "2026-10-13T17:49:40.749150-07:00",
+  "scanID": 78,
+  "build": "70374",
+  "display": {
+    "scanID": 78,
+    "addonVersion": "0.11.2",
+    "legend": true,
+    "unknownSamples": 66,
+    "positionError": "Interface/AddOns/Couchside_Gathering/ScanMotion.lua:10: player map position unavailable",
+    "version": 1,
+    "status": "withheld",
+    "facingError": "Interface/AddOns/Couchside_Gathering/ScanMotion.lua:19: player facing unavailable",
+    "motionStatus": "unknown",
+    "reason": "scan motion is unknown"
+  },
+  "retainedRegions": 9,
+  "herbRegions": [
+    {
+      "y": 0.7083333333333334,
+      "text": "Earthroot",
+      "count": 16,
+      "x": 0.4583333333333334
+    }
+  ],
+  "motionSamples": 66,
+  "questSnapshotAvailable": true,
+  "questWarnings": 0,
+  "cleanupRequestSucceeded": true,
+  "settings": {
+    "resourceLegend": true,
+    "nearbyList": true
+  },
+  "userContext": "Brian confirmed inside a dungeon or instance; exact instance not yet recorded by API",
+  "errorLog": {
+    "session": 72,
+    "entries": 9,
+    "unchangedFromPreviousSavedCopy": true
+  },
+  "conclusion": "Whole nearby list withheld by unreadable-motion guard, despite retained Earthroot. No texture failure established. Dungeon-safe movement alternative not yet verified."
+}

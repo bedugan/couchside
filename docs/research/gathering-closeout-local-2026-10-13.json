@@ -1,0 +1,85 @@
+{
+  "checkedAt": "2026-10-14T06:37:36.044968+00:00",
+  "candidate": "0.12.0",
+  "scope": "One motion guard; seven English herb symbols and snapshot policy preserved. No macro helper, keybind or automatic mode implemented.",
+  "localValidation": {
+    "lua51Files": 9,
+    "tocInventory": "matched",
+    "checks": {
+      "gathering-classifier-check.py": "passed",
+      "gathering-legend-check.py": "passed",
+      "gathering-display-check.py": "passed",
+      "gathering-motion-probe-check.py": "passed",
+      "gathering-dungeon-display-check.py": "passed",
+      "gathering-motion-guard-check.py": "passed"
+    },
+    "distinctCases": 70,
+    "nativeAcceptance": "Requires Brian in-game"
+  },
+  "independentReview": {
+    "model": "gpt-6-luna",
+    "findings": [
+      "Stale inventory/current-vs-historical documentation",
+      "Across-scan instance ID change could pass if it returned without an event"
+    ],
+    "resolution": "Both resolved and rechecked; no concrete introduced blocker found",
+    "regression": "Instance ID change-and-return failed before fix and passes after fix"
+  },
+  "nativeAcceptedEarlier": "Brian accepted map symbols at 12 UI pixels, star16 and list24; earlier herb scans and motion-probe controls worked",
+  "nativePending": [
+    "0.12.0 outdoor display and controller macro activation",
+    "North-up party-instance display placement and motion/expiry clearing",
+    "Hover, movement, Jump, interaction, quest details and world-map controls before/after reload"
+  ],
+  "installed": {
+    "path": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/Couchside_Gathering",
+    "rollback": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns.disabled/Couchside_Gathering-pre-0.12.0-2026-10-13",
+    "matchedFiles": 17,
+    "sha256": {
+      "Couchside_Gathering.toc": "8f39a01d1d18663af62c72eb1f61dc32dd4f8cbf3d1856456e1097284b24fa51",
+      "Gathering.lua": "070f6b30633155302d0ea6ed4cc0a7cb3cf205e6f63ab19a95475ab01efdf43c",
+      "Media/circle-orange.tga": "d60f414b993a713cf727c947792b32ed51c5d29dbdab3bc22f2e83016490e7b9",
+      "Media/cross-red.tga": "9e49010bf209b6937925e60d1d0153a1ac2f54fe71e31bc02e6353256484bacc",
+      "Media/diamond-purple.tga": "48ba29adcad5792aec6003518ee1c9899ad054cb5f113e350698497ccf21de3f",
+      "Media/hexagon-teal.tga": "2ae6bc5017d706adb753ddc43679e58d64af61f734c7c583e974fa1a9df1b72f",
+      "Media/square-blue.tga": "6da9188bc3e0188e36eacad0c556b078ca6f9d73ebc593d0207691dc8bfaabb5",
+      "Media/star-yellow.tga": "e0f09131354206b29bd18dd5d59eed5f9a12ef8dc1b799d47eaebebaf0d9d01d",
+      "Media/triangle-green.tga": "37425484cbe3c037b7ef4e49d9656f05b2e577535c18fab11eb54828ed9f5279",
+      "MinimapProbe.lua": "8cbf80841b689609d1d0c95c22caccb5dadfd3f94542d67d695155dd30a9172b",
+      "MotionGuard.lua": "02dbec7bb6b2a434bffa80fc9db1ca446be23bdfaa58fcfffc37ade922e1c4a7",
+      "MotionProbe.lua": "0bb872b6681913d0e943aeb5bdab772d37b35701743d6eb6b7fb21d4b570e1e9",
+      "NearbyList.lua": "4469bda9119a186d8ec51abd64c3802c229eebb4e1672e1450672a529920c981",
+      "QuestTextFilter.lua": "c2e602fea67dca74f2a525ef9dc26d94a500dccf3102393a770e6552dc21041c",
+      "ResourceClassifier.lua": "a8dba6145f4012d0639a2bd2fc7a13bf254c71bf1752374d06f33803cf459151",
+      "ResourceLegend.lua": "471a1ba9276f5fa47ad3c2ead1f01ec1e5a020e25b535951abc737cb0fafbe9f",
+      "ScanLog.lua": "44798b5a759beb152bb9e8a014b53822d7b9ee64d3b6ef34d6006bf97fe900d9"
+    }
+  },
+  "savedErrorLog": {
+    "mtimeUTC": "2026-10-14T02:01:25.022391+00:00",
+    "entries": 11,
+    "entriesNamingCouchside": [
+      {
+        "index": 1,
+        "count": 1,
+        "session": 6
+      },
+      {
+        "index": 2,
+        "count": 3,
+        "session": 9
+      }
+    ],
+    "limit": "Saved pre-candidate log only; cannot establish original taint source or candidate safety",
+    "interpretation": "The two Couchside-naming records are historical Controller failures from sessions 6 and 9, matching the prior audit counts. No retained message or stack names Couchside_Gathering. Two later entries name a native QuestMapFrame assertion and Spoken protected interaction; this pre-candidate saved log does not establish their original taint source."
+  },
+  "launchEstimates": {
+    "macroHelper": "1-2 hours implementation/local checks plus one short native test",
+    "automatic": "4-8 hours implementation/local checks plus outdoor and dungeon native tests",
+    "constraint": "Repeated native soft-cursor changes need validation; prior cursor state is unreadable",
+    "source": "https://github.com/Gethe/wow-ui-source/blob/forever/Interface/AddOns/Blizzard_MacroUI/Blizzard_MacroIconSelector.lua"
+  },
+  "prototypeBranch": "prototype/minimap-scan-launch",
+  "prototypeCommit": "ca273e3afc714af1342bb1521098afcfda03d2a1",
+  "commitStatus": "Feature uncommitted pending Brian native acceptance"
+}
