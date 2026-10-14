@@ -1,33 +1,113 @@
+"""Saved-text classification and report lifecycle; no native identity claim."""
 from pathlib import Path
 from lupa.lua51 import LuaRuntime
-root=Path(__file__).resolve().parents[1]
-classifier=(root/'Couchside_Gathering/ResourceClassifier.lua').read_text()
-filter_source=(root/'Couchside_Gathering/QuestTextFilter.lua').read_text()
-scanlog=(root/'Couchside_Gathering/ScanLog.lua').read_text()
 
-def make():
- vm=LuaRuntime()
- vm.execute('''logs={};commands={};nativeCalls=0;ns={Print=function(fmt,...) table.insert(logs,string.format(fmt,...)) end,RegisterCommand=function(name,_,fn) commands[name]=fn end,OnReady=function(fn) fn() end}; snapshot={available=true,titles={['Centaur Bracers']=855},objectives={['Centaur Bracers']=855},warnings={}}''')
- for source in (scanlog,filter_source,classifier):vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)',source)
- return vm
+ROOT = Path(__file__).resolve().parents[1]
+FILES = ('ScanLog.lua', 'QuestTextFilter.lua', 'ResourceCatalog.lua', 'ResourceClassifier.lua')
 
-def check(name,code):
- make().execute(code);print('PASS',name)
-check('five observed names match, no broad inferred catalog', '''for _,name in ipairs({'Peacebloom','Silverleaf','Earthroot','Mageroyal','Briarthorn'}) do local r=ns.ResourceClassifier.Classify({entries={name},removed={}},snapshot,ns.ResourceClassifier.ObservedLookup);assert(r[1].kind=='resource-candidate' and r[1].category=='herb') end;local r=ns.ResourceClassifier.Classify({entries={'Kingsblood','Copper Vein'},removed={}},snapshot,ns.ResourceClassifier.ObservedLookup);assert(r[1].kind=='unknown' and r[2].kind=='unknown')''')
-check('mixed tooltip preserves resource, unknown and excluded quest evidence', '''local f=ns.QuestTextFilter.Filter({lines={{leftText='Peacebloom\\nSpirit Fingies\\nCentaur Bracers|cffffffff\\n- 0/15 Centaur Bracers|r'}}},snapshot);assert(f.text=='Peacebloom / Spirit Fingies');local r=ns.ResourceClassifier.Classify(f,snapshot,ns.ResourceClassifier.ObservedLookup);assert(#r==4 and r[1].kind=='resource-candidate' and r[2].kind=='unknown' and r[3].kind=='quest-text' and not r[3].retained and r[4].kind=='quest-text')''')
-check('resource/quest title collision is exposed despite original exclusion', '''snapshot.titles.Peacebloom=1;local f=ns.QuestTextFilter.Filter({lines={{leftText='Peacebloom'}}},snapshot);assert(f.text=='');local r=ns.ResourceClassifier.Classify(f,snapshot,ns.ResourceClassifier.ObservedLookup);assert(#r==1 and r[1].kind=='ambiguous' and r[1].questID==1 and not r[1].retained)''')
-check('older joined text stays unknown rather than inventing entries', '''local r=ns.ResourceClassifier.Classify({text='Peacebloom / NPC',removed={}},snapshot,ns.ResourceClassifier.ObservedLookup);assert(#r==1 and r[1].kind=='unknown')''')
-check('library herb and ore IDs remain category-specific', '''GatherMate2={GetIDForNode=function(_,category,name) if category=='Herb Gathering' and name=='Mageroyal' then return 402 elseif category=='Mining' and name=='Copper Vein' then return 201 end end};local h=ns.ResourceClassifier.LibraryLookup('Mageroyal');local o=ns.ResourceClassifier.LibraryLookup('Copper Vein');assert(h.key=='gathermate2:herb:402' and o.key=='gathermate2:ore:201')''')
-check('missing, erroring or malformed optional library remains diagnostic', '''local m,e=ns.ResourceClassifier.LibraryLookup('Mageroyal');assert(not m and e);GatherMate2={GetIDForNode=function() error('unavailable') end};m,e=ns.ResourceClassifier.LibraryLookup('Mageroyal');assert(not m and e);GatherMate2.GetIDForNode=function() return '201' end;m,e=ns.ResourceClassifier.LibraryLookup('Copper Vein');assert(not m and e);GatherMate2.GetIDForNode=function() return 0/0 end;m,e=ns.ResourceClassifier.LibraryLookup('Copper Vein');assert(not m and e)''')
-check('multiple category matches are ambiguous rather than arbitrarily picked', '''GatherMate2={GetIDForNode=function() return 201 end};local r=ns.ResourceClassifier.Classify({entries={'Same name'},removed={}},snapshot,ns.ResourceClassifier.LibraryLookup);assert(r[1].kind=='ambiguous' and not r[1].resourceKey)''')
-seed='''CouchsideGatheringScanDB.scans={{id=23,build='70338',pointCount=1,hitCount=1,questText=snapshot,regions={{text='Mageroyal'}},tipsByText={['Mageroyal\\nCentaur Bracers']={lines={{leftText='Mageroyal\\nCentaur Bracers'}}}}}};'''
-check('report uses saved evidence and leaves database and native state unchanged',seed+'''local original=CouchsideGatheringScanDB.scans[1];Minimap={UpdateMouseoverAtPoint=function() nativeCalls=nativeCalls+1 end};commands.classify('');assert(CouchsideGatheringScanDB.scans[1]==original and original.tipsByText['Mageroyal\\nCentaur Bracers'].lines[1].leftText=='Mageroyal\\nCentaur Bracers' and nativeCalls==0);assert(table.concat(logs,'\\n'):find('1 resource candidates, 1 quest text'))''')
-check('missing saved quest evidence stays explicit', '''CouchsideGatheringScanDB.scans={{id=2,build='70338',regions={{text='Mageroyal'}}}};commands.classify('');assert(table.concat(logs,'\\n'):find('Saved quest snapshot: false'))''')
-check('report lookup is cached once per distinct cleaned name', seed+'''snapshot.titles.OtherQuest=2;CouchsideGatheringScanDB.scans[1].tipsByText['Mageroyal\\nOtherQuest']={lines={{leftText='Mageroyal\\nOtherQuest'}}};lookups={};GatherMate2={GetIDForNode=function(_,category,name) lookups[name]=(lookups[name] or 0)+1;if category=='Herb Gathering' and name=='Mageroyal' then return 402 end end};commands.classify('library');assert(lookups.Mageroyal==2)''')
-check('explicit scan selection, invalid arguments and missing scan are bounded', seed+'''commands.classify('23');assert(table.concat(logs,'\\n'):find('saved scan 23'));logs={};commands.classify('99');assert(#logs==1 and logs[1]:find('No matching'));logs={};commands.classify('garbage');assert(#logs==1 and logs[1]:find('Usage:'));logs={};commands.classify('library 23');assert(logs[1]:find('not loaded') and #CouchsideGatheringScanDB.providerReports==1 and not CouchsideGatheringScanDB.providerReports[1].providerAvailable)''')
-check('forty-line report cap retains total counts', '''local tips={};for i=1,55 do tips['NPC '..i]={lines={{leftText='NPC '..i}}} end;CouchsideGatheringScanDB.scans={{id=1,build='70338',questText=snapshot,regions={},tipsByText=tips}};commands.classify('');local all=table.concat(logs,'\\n');assert(all:find('55 unknown') and all:find('first 40 entries printed'))''')
-check('provider history is bounded, loggable, clearable and leaves scans untouched', seed+"""GatherMate2={GetIDForNode=function(_,category,name) if category=='Herb Gathering' and name=='Mageroyal' then return 404 end end};local scan=CouchsideGatheringScanDB.scans[1];for i=1,12 do commands.classify('library 23') end;local reports=CouchsideGatheringScanDB.providerReports;assert(#reports==10 and reports[1].id==3 and reports[10].id==12 and reports[10].version==1 and reports[10].totalEntries==2);assert(CouchsideGatheringScanDB.scans[1]==scan);ns.SaveProviderReport({scanID=23,providerAvailable=false,error='unavailable',entries={}});assert(#reports==10 and reports[10].error=='unavailable');commands.log('');assert(table.concat(logs,'\\n'):find('Provider report history: 10/10'));commands.log('clear');assert(#CouchsideGatheringScanDB.scans==0 and #CouchsideGatheringScanDB.providerReports==0)""")
-check('provider reports preserve lookup errors and truncation', """local tips={};for i=1,55 do tips['NPC '..i]={lines={{leftText='NPC '..i}}} end;CouchsideGatheringScanDB.scans={{id=1,build='70338',questText=snapshot,regions={},tipsByText=tips}};GatherMate2={GetIDForNode=function() error('catalog failed') end};commands.classify('library');local r=CouchsideGatheringScanDB.providerReports[1];assert(r.providerAvailable and r.entriesTruncated and #r.entries==40 and r.totalEntries==55 and r.counts.unknown==55 and r.entries[1].catalogError:find('catalog failed'))""")
-check('texture decoration is removed per entry without changing raw evidence', """local raw='|Tnative-arrow:16|tEarthroot\\nNPC\\n|Tnative-arrow:16|tCentaur Bracers';local data={lines={{leftText=raw}}};local f=ns.QuestTextFilter.Filter(data,snapshot);assert(f.text=='Earthroot / NPC' and data.lines[1].leftText==raw and #f.removed==1);local r=ns.ResourceClassifier.Classify(f,snapshot,ns.ResourceClassifier.ObservedLookup);assert(r[1].kind=='resource-candidate' and r[2].kind=='unknown' and r[3].kind=='quest-text');local malformed=ns.QuestTextFilter.Filter({lines={{leftText='|TunfinishedEarthroot'}}},snapshot);assert(malformed.text=='|TunfinishedEarthroot')""")
-check('atlas and named colour markup preserves the resource and excludes quest text', r'''local raw='|cnGREEN_FONT_COLOR:|A:some-atlas:16:16|aEarthroot|r\n|A:quest:16:16|a|cnNORMAL_FONT_COLOR:Centaur Bracers|r';local data={lines={{leftText=raw}}};local f=ns.QuestTextFilter.Filter(data,snapshot);assert(f.text=='Earthroot' and #f.removed==1 and data.lines[1].leftText==raw);local r=ns.ResourceClassifier.Classify(f,snapshot,ns.ResourceClassifier.ObservedLookup);assert(r[1].kind=='resource-candidate' and r[2].kind=='quest-text');local broken=ns.QuestTextFilter.Filter({lines={{leftText='|AunfinishedEarthroot'}}},snapshot);assert(broken.text=='|AunfinishedEarthroot')''')
-print('16 classifier diagnostic checks passed')
+
+def make(setup=''):
+    vm = LuaRuntime()
+    vm.execute('''
+logs={};commands={};nativeCalls=0
+ns={version='test',Print=function(fmt,...) table.insert(logs,string.format(fmt,...)) end,
+ Debug=function() end,RegisterCommand=function(name,_,fn) commands[name]=fn end,OnReady=function(fn) fn() end}
+snapshot={available=true,titles={['Centaur Bracers']=855},objectives={['Centaur Bracers']=855},warnings={}}
+''')
+    vm.execute(setup)
+    for name in FILES:
+        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / 'Couchside_Gathering' / name).read_text())
+    return vm
+
+
+def check(name, code, setup=''):
+    make(setup).execute(code)
+    print('PASS', name)
+
+
+check('Purple Lotus and ore use the same static catalog as the display', r'''
+for _,name in ipairs({'Peacebloom','Silverleaf','Earthroot','Mageroyal','Briarthorn','Kingsblood','Purple Lotus'}) do
+ local r=ns.ResourceClassifier.Classify({entries={name},removed={}},snapshot,ns.ResourceCatalog.Lookup)
+ assert(r[1].kind=='resource-candidate' and r[1].category=='herb' and r[1].symbol)
+end
+local r=ns.ResourceClassifier.Classify({entries={'Copper Vein','NPC'},removed={}},snapshot,ns.ResourceCatalog.Lookup)
+assert(r[1].category=='ore' and r[2].kind=='unknown')
+''')
+check('mixed tooltip preserves resource unknown and excluded quest evidence', r'''
+local f=ns.QuestTextFilter.Filter({lines={{leftText='Peacebloom\nSpirit Fingies\nCentaur Bracers|cffffffff\n- 0/15 Centaur Bracers|r'}}},snapshot)
+assert(f.text=='Peacebloom / Spirit Fingies')
+local r=ns.ResourceClassifier.Classify(f,snapshot,ns.ResourceCatalog.Lookup)
+assert(#r==4 and r[1].kind=='resource-candidate' and r[2].kind=='unknown' and r[3].kind=='quest-text' and not r[3].retained and r[4].kind=='quest-text')
+''')
+check('resource quest-title collision is explicit despite exclusion', r'''
+snapshot.titles['Purple Lotus']=1
+local f=ns.QuestTextFilter.Filter({lines={{leftText='Purple Lotus'}}},snapshot)
+local r=ns.ResourceClassifier.Classify(f,snapshot,ns.ResourceCatalog.Lookup)
+assert(f.text=='' and #r==1 and r[1].kind=='ambiguous' and r[1].questID==1 and not r[1].retained)
+''')
+check('older joined text remains whole and unknown', r'''
+local r=ns.ResourceClassifier.Classify({text='Peacebloom / NPC',removed={}},snapshot,ns.ResourceCatalog.Lookup)
+assert(#r==1 and r[1].kind=='unknown')
+''')
+check('lookup errors and ambiguous matches never become resource icons', r'''
+local filter={entries={'Same name'},removed={}}
+local r=ns.ResourceClassifier.Classify(filter,snapshot,function() return nil,'unavailable' end)
+assert(r[1].kind=='unknown' and r[1].catalogError=='unavailable')
+r=ns.ResourceClassifier.Classify(filter,snapshot,function() return {ambiguous=true} end)
+assert(r[1].kind=='ambiguous' and not r[1].resourceKey)
+''')
+SEED = r'''
+CouchsideGatheringScanDB.scans={{id=23,build='70338',pointCount=1,hitCount=1,questText=snapshot,
+regions={{text='Purple Lotus'}},tipsByText={['Purple Lotus\nCentaur Bracers']={lines={{leftText='Purple Lotus\nCentaur Bracers'}}}}}}
+'''
+check('report saves a separate verdict without changing raw scan or native state', SEED + r'''
+local old=CouchsideGatheringScanDB.scans[1]
+Minimap={UpdateMouseoverAtPoint=function() nativeCalls=nativeCalls+1 end}
+commands.classify('')
+assert(CouchsideGatheringScanDB.scans[1]==old and old.tipsByText['Purple Lotus\nCentaur Bracers'].lines[1].leftText=='Purple Lotus\nCentaur Bracers')
+local report=CouchsideGatheringScanDB.classificationReport
+assert(report.scanID==23 and report.counts['resource-candidate']==1 and report.counts['quest-text']==1 and nativeCalls==0)
+''')
+check('missing saved quest evidence remains explicit', r'''
+CouchsideGatheringScanDB.scans={{id=2,build='70338',regions={{text='Mageroyal'}}}}
+commands.classify('');assert(table.concat(logs,'\n'):find('Saved quest snapshot: false'))
+''')
+check('report caches each cleaned name once', SEED + r'''
+CouchsideGatheringScanDB.scans[1].tipsByText['Purple Lotus\nOther']={lines={{leftText='Purple Lotus\nOther'}}}
+local original=ns.ResourceCatalog.Lookup;local calls={}
+ns.ResourceCatalog.Lookup=function(name) calls[name]=(calls[name] or 0)+1;return original(name) end
+commands.classify('');assert(calls['Purple Lotus']==1)
+''')
+check('selection compatibility alias and invalid input stay bounded', SEED + r'''
+commands.classify('23');assert(table.concat(logs,'\n'):find('saved scan 23'))
+local old=CouchsideGatheringScanDB.classificationReport
+logs={};commands.classify('99');assert(#logs==1 and logs[1]:find('No matching'))
+logs={};commands.classify('library');assert(#logs==1 and logs[1]:find('Usage:'))
+assert(CouchsideGatheringScanDB.classificationReport==old)
+commands.classify('prototype 23');assert(CouchsideGatheringScanDB.classificationReport.scanID==23)
+''')
+check('withdrawn provider cannot be called and loaded history is retired', SEED + r'''
+GatherMate2={GetIDForNode=function() error('withdrawn provider called') end}
+assert(not ns.ResourceClassifier.LibraryLookup and not ns.ResourceClassifier.ObservedLookup and not ns.SaveProviderReport)
+commands.classify('');assert(CouchsideGatheringScanDB.classificationReport)
+assert(not CouchsideGatheringScanDB.providerReports and not CouchsideGatheringScanDB.nextProviderReportID)
+''', "CouchsideGatheringScanDB={version=1,nextID=1,scans={},providerReports={{id=1}},nextProviderReportID=2}")
+check('latest report caps detail preserves counts and is cleared with the log', r'''
+local tips={};for i=1,55 do tips['NPC '..i]={lines={{leftText='NPC '..i}}} end
+CouchsideGatheringScanDB.scans={{id=1,build='70338',pointCount=55,hitCount=55,questText=snapshot,regions={},tipsByText=tips}}
+commands.classify('');local r=CouchsideGatheringScanDB.classificationReport
+assert(r.entriesTruncated and #r.entries==40 and r.totalEntries==55 and r.counts.unknown==55)
+commands.classify('');assert(CouchsideGatheringScanDB.classificationReport~=r)
+commands.log('');assert(table.concat(logs,'\n'):find('Latest classification report: scan 1'))
+commands.log('clear');assert(#CouchsideGatheringScanDB.scans==0 and not CouchsideGatheringScanDB.classificationReport)
+''')
+check('texture atlas and named-color cleanup leave original evidence intact', r'''
+local raw='|cnGREEN_FONT_COLOR:|A:atlas:16:16|a|Tarrow:16|tPurple Lotus|r\n|A:quest:16:16|aCentaur Bracers'
+local data={lines={{leftText=raw}}}
+local f=ns.QuestTextFilter.Filter(data,snapshot)
+assert(f.text=='Purple Lotus' and #f.removed==1 and data.lines[1].leftText==raw)
+local r=ns.ResourceClassifier.Classify(f,snapshot,ns.ResourceCatalog.Lookup)
+assert(r[1].symbol=='stamp-pl' and r[2].kind=='quest-text')
+assert(ns.QuestTextFilter.Filter({lines={{leftText='|AunfinishedEarthroot'}}},snapshot).text=='|AunfinishedEarthroot')
+''')
+print('12 static classifier checks passed')

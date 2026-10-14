@@ -59,6 +59,9 @@ local function Stop(reason, failed, keepDisplay)
 	activeScan = nil
 	if ns.NearbyList and not keepDisplay then ns.NearbyList.Clear("scan/probe restarted or stopped") end
 	local cleaned = CleanupSoftCursor(job and job.quiet)
+	if job and job.source == "manual" and job.quiet and reason and not failed then
+		ns.Print("Scan stopped: %s. Partial results discarded.", reason)
+	end
 	if job and job.finished then
 		job.finished({ status = (failed or not cleaned) and "failed" or "cancelled",
 			reason = reason or "scan cancelled", cleanupSucceeded = cleaned })
@@ -436,6 +439,9 @@ local function Scan(token, finished, request)
 		end
 		activeScan = nil
 		if operation ~= "watch" then operation = nil end
+		if request.quiet and request.source ~= "automatic" and cleanupSucceeded then
+			ns.Print("Scan complete. Use /cs gathering scan verbose for details.")
+		end
 		if finished then finished({ status = cleanupSucceeded and "complete" or "failed",
 			reason = cleanupSucceeded and "scan complete" or "soft-cursor cleanup failed", record = record,
 			cleanupSucceeded = cleanupSucceeded }) end
@@ -586,15 +592,15 @@ ns.RegisterCommand("probe", "[capture|test [alternate|soft]|off] - report or tes
 	end
 end)
 
-ns.RegisterCommand("scan", "[watch|off] - sample once, or three times with five-second pauses", function(arg)
+ns.RegisterCommand("scan", "[verbose|watch|off] - scan once; verbose details or three-scan watch", function(arg)
 	if arg == "off" then
 		PauseAutomatic("scan off")
 		Stop()
 		ns.Print("Scan/probe callbacks stopped. Outstanding soft-cursor cleanup was attempted; /reload after an experiment.")
-	elseif arg == "" then
+	elseif arg == "" or arg == "verbose" then
 		if not Stop() then return end
 		ns.Debug("Requested bounded gathering minimap scan.")
-		local started, reason = Scan(generation)
+		local started, reason = Scan(generation, nil, { quiet = arg ~= "verbose", source = "manual" })
 		if not started then ns.Print("Scan skipped: %s.", reason) end
 	elseif arg == "watch" then
 		PauseAutomatic("manual scan watch")
@@ -618,6 +624,6 @@ ns.RegisterCommand("scan", "[watch|off] - sample once, or three times with five-
 		end
 		Round(1)
 	else
-		ns.Print("Usage: /cs gathering scan [watch|off]")
+		ns.Print("Usage: /cs gathering scan [verbose|watch|off]")
 	end
 end)

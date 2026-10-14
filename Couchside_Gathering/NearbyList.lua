@@ -5,8 +5,7 @@ local _, ns = ...
 
 -- The one snapshot lifetime. Automatic scans refresh on this clock rather than their own.
 local MAX_ROWS, LIFETIME = 8, 60
-local MINIMAP_SYMBOL_SIZE = 12
-local MINIMAP_STAR_SIZE = 16
+local MINIMAP_SYMBOL_SIZE = 16
 
 local function MarkPosition(x, y)
 	local length = math.sqrt(x * x + y * y)
@@ -142,9 +141,9 @@ local function ShowLegend(scan)
 	local listed = {}
 	for index = 1, count do
 		local item = model.rows[index]
-		local group = item.kind == "resource-candidate" and "herbs" or "other"
+		local group = item.kind == "resource-candidate" and item.category or "other"
 		if group ~= lastGroup then
-			Heading(group, group == "herbs" and "Herbs" or "Other tracking", y)
+			Heading(group, group == "herb" and "Herbs" or group == "ore" and "Ore" or "Other tracking", y)
 			y, lastGroup = y - 19, group
 		end
 		local row = GetRow(index)
@@ -154,8 +153,8 @@ local function ShowLegend(scan)
 		row.arrow:Hide()
 		if not row.symbol then
 			row.symbol = row:CreateTexture(nil, "ARTWORK")
-			row.symbol:SetPoint("LEFT", -2, 0)
-			row.symbol:SetSize(24, 24)
+			row.symbol:SetPoint("LEFT", 0, 0)
+			row.symbol:SetSize(16, 16)
 		end
 		if item.symbol then
 			row.symbol:SetTexture("Interface\\AddOns\\Couchside_Gathering\\Media\\" .. item.symbol .. ".tga")
@@ -169,7 +168,7 @@ local function ShowLegend(scan)
 			row.letter:Show()
 		end
 		row.name:ClearAllPoints()
-		row.name:SetPoint("LEFT", 31, 0)
+		row.name:SetPoint("LEFT", 25, 0)
 		row.name:SetPoint("RIGHT")
 		row.name:SetText(item.text)
 		row:Show()
@@ -188,8 +187,8 @@ local function ShowLegend(scan)
 				badge.symbol:SetAllPoints()
 				symbolBadges[drawn] = badge
 			end
-			-- Badges are reused across scans, including between different shapes.
-			local size = mark.symbol == "star-yellow" and MINIMAP_STAR_SIZE or MINIMAP_SYMBOL_SIZE
+			-- Badges are reused across scans, including between different stamp codes.
+			local size = mark.minimapSize or MINIMAP_SYMBOL_SIZE
 			badge:SetSize(size, size)
 			local x, y = (mark.x - 0.5) * scan.geometry.width, (mark.y - 0.5) * scan.geometry.height
 			x, y = MarkPosition(x, y)
@@ -205,7 +204,7 @@ local function ShowLegend(scan)
 	local message = count == 0 and "No nearby names" or #model.rows > MAX_ROWS
 		and ("8 of " .. #model.rows .. " names - scan snapshot") or ("Scan snapshot - clears in %ds"):format(LIFETIME)
 	footer:SetText(message .. (omitted and " - some marks omitted" or ""))
-	ns.Debug("Prototype legend: %d/%d names, %d marks; %d mixed/invalid regions withheld. Unknowns retained.",
+	ns.Debug("Resource stamps: %d/%d names, %d marks; %d mixed/invalid regions withheld. Unknowns retained.",
 		count, #model.rows, drawn, model.withheldRegions)
 	return count, drawn
 end

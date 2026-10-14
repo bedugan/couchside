@@ -18,6 +18,12 @@ _Avoid_: Node count, detected object
 An observed name that matches a supported herb or ore catalog entry. The match does not prove the identity of the native object.
 _Avoid_: Confirmed resource
 
+**Resource type**:
+A kind of harvestable herb or mineral. Different observed node names can represent the same type, such as an ordinary silver vein and an ooze-covered silver vein.
+
+**Resource stamp**:
+A permanent short letter label for one resource type, shared by all of its observed locations.
+
 **Unknown tracking**:
 Observed information whose role cannot yet be established. Unknown tracking can include uncatalogued resources, creatures or services.
 

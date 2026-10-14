@@ -6,7 +6,7 @@ from pathlib import Path
 from lupa.lua51 import LuaRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = ("ScanLog.lua", "QuestTextFilter.lua", "ResourceLegend.lua", "ResourceClassifier.lua", "MotionGuard.lua", "NearbyList.lua")
+FILES = ("ScanLog.lua", "QuestTextFilter.lua", "ResourceCatalog.lua", "ResourceLegend.lua", "ResourceClassifier.lua", "MotionGuard.lua", "NearbyList.lua")
 STUB = r'''
 logs={};commands={};frames={};nativeCalls=0;clock=0;combat=false;enabled=true;legend=true;motion=false
 pose={mapID=1413,x=.5,y=.5,facing=0,rotating=false}
@@ -87,12 +87,12 @@ def check(name, code):
     print("PASS", name)
 
 
-check("partial catalog and provisional evidence remain explicit", r'''
-local m=ns.ResourceLegend.Lookup('Mageroyal');assert(m.symbol=='diamond-purple' and m.cacheLockID==9)
+check("shared catalog and provisional evidence remain explicit", r'''
+local m=ns.ResourceLegend.Lookup('Mageroyal');assert(m.symbol=='stamp-mr' and m.cacheLockID==9)
 assert(ns.ResourceLegend.Lookup('Earthroot').cacheLockID==nil)
-assert(ns.ResourceLegend.Lookup('Bruiseweed').symbol=='cross-red')
-assert(ns.ResourceLegend.Lookup('Kingsblood').symbol=='hexagon-teal')
-assert(not ns.ResourceLegend.Lookup('Copper Vein') and not ns.ResourceLegend.Lookup('NPC'))
+assert(ns.ResourceLegend.Lookup('Bruiseweed').symbol=='stamp-bw')
+assert(ns.ResourceLegend.Lookup('Kingsblood').symbol=='stamp-kb')
+assert(ns.ResourceLegend.Lookup('Copper Vein').category=='ore' and not ns.ResourceLegend.Lookup('NPC'))
 local symbols={};for _,name in ipairs({'Mageroyal','Peacebloom','Silverleaf','Earthroot','Briarthorn','Bruiseweed','Kingsblood'}) do
  local entry=ns.ResourceLegend.Lookup(name);assert(entry and not symbols[entry.symbol]);symbols[entry.symbol]=true
 end
@@ -100,9 +100,9 @@ end
 check("two same-name regions keep one row and identical symbols", r'''
 local s=scan({{text='Mageroyal',x=.8,y=.5},{text='Mageroyal',x=.2,y=.6},{text='Peacebloom',x=.3,y=.3}})
 local m=ns.ResourceLegend.Build(s);assert(#m.rows==2 and #m.marks==3)
-assert(m.marks[1].symbol==m.marks[2].symbol and m.marks[1].symbol=='diamond-purple')
+assert(m.marks[1].symbol==m.marks[2].symbol and m.marks[1].symbol=='stamp-mr')
 s.regions[1]=s.regions[2];s.regions[2]=nil;s.regions[3]=nil
-m=ns.ResourceLegend.Build(s);assert(m.marks[1].symbol=='diamond-purple')
+m=ns.ResourceLegend.Build(s);assert(m.marks[1].symbol=='stamp-mr')
 ''')
 check("mixed resource and unknown preserves both names", r'''
 local f=ns.QuestTextFilter.Filter({lines={{leftText='Mageroyal\nLizzarik\nCentaur Bracers'}}},snapshot)
@@ -131,13 +131,13 @@ for _,x in ipairs({-.1,1.1,math.huge,0/0,'invalid'}) do
  local m=ns.ResourceLegend.Build(scan({{text='Mageroyal',x=x,y=.5}}));assert(#m.rows==1 and #m.marks==0)
 end
 ''')
-check("prototype report persists evidence without native calls or scan mutation", r'''
+check("compatibility alias persists classification without native calls or scan mutation", r'''
 CouchsideGatheringScanDB.scans={{id=39,build='70338',questText=snapshot,
  tipsByText={Mageroyal={lines={{leftText='Mageroyal'}}},NPC={lines={{leftText='NPC'}}}}}}
 local old=CouchsideGatheringScanDB.scans[1];commands.classify('prototype 39')
-local report=CouchsideGatheringScanDB.providerReports[1]
-assert(report.provider=='Couchside prototype' and report.counts['resource-candidate']==1 and report.counts.unknown==1)
-assert(report.entries[1].cacheLockID==9 and report.entries[1].symbol=='diamond-purple')
+local report=CouchsideGatheringScanDB.classificationReport
+assert(report.catalogVersion==ns.ResourceCatalog.version and report.counts['resource-candidate']==1 and report.counts.unknown==1)
+assert(report.entries[1].cacheLockID==9 and report.entries[1].symbol=='stamp-mr')
 assert(old==CouchsideGatheringScanDB.scans[1] and nativeCalls==0)
 ''')
 check("classified display hides legacy letters and shows repeated symbols", r'''
@@ -173,15 +173,15 @@ local s=scan({{text='Mageroyal',x=.8,y=.5}});s.cleanupRequestSucceeded=false
 ns.NearbyList.Show(s);assert(not visiblePanel())
 s.cleanupRequestSucceeded=true;s.motion.status='moving';ns.NearbyList.Show(s);assert(not visiblePanel())
 ''')
-check("reused map badge resets star size without resizing list symbols", r'''
+check("reused map badge changes stamp without resizing map or list stamps", r'''
 ns.NearbyList.Show(scan({{text='Briarthorn',x=.8,y=.5}}))
 local badge=markers()[1];assert(badge.width==16 and badge.height==16)
-local listStar=false;for _,f in ipairs(frames) do
- if f.texture and f.texture:find('star%-yellow') and f.width==24 then listStar=true end
-end;assert(listStar)
+assert(badge.symbol.texture:find('stamp%-bt'))
+local listStamp=false;for _,f in ipairs(frames) do
+ if f.texture and f.texture:find('stamp%-bt') and f.width==16 then listStamp=true end
+end;assert(listStamp)
 ns.NearbyList.Show(scan({{text='Peacebloom',x=.8,y=.5}}))
-assert(markers()[1]==badge and badge.width==12 and badge.height==12)
-ns.NearbyList.Show(scan({{text='Briarthorn',x=.8,y=.5}}))
 assert(markers()[1]==badge and badge.width==16 and badge.height==16)
+assert(badge.symbol.texture:find('stamp%-pb'))
 ''')
-print("14 prototype legend checks passed")
+print("14 resource legend checks passed")

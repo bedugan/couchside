@@ -81,7 +81,7 @@ local first=captured.samples[1];speed=first.speed;moving=first.moving;instanceID
 local s=dungeonScan();local d=ns.NearbyList.Show(s)
 assert(visiblePanel() and #markers()==1,'native nil-coordinate case still hides the list')
 assert(s.motion.status=='unknown' and s.motion.unknownSamples>0 and d.guardMode=='dungeon-motion')
-assert(markers()[1].symbol.texture:find('circle%-orange'))
+assert(markers()[1].symbol.texture:find('stamp%-er'))
 ''')
 check("native event trace invalidates the accepted snapshot", r'''
 local s=dungeonScan();local d=ns.NearbyList.Show(s);assert(visiblePanel())

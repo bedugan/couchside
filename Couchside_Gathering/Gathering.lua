@@ -25,8 +25,8 @@ Couchside.RegisterModule(ns, {
 				{
 					key = "resourceLegend",
 					default = false,
-					name = "Prototype herb symbols and other tracking",
-					tooltip = "Use fixed symbols for seven observed English herbs in the nearby tracking list. Mageroyal stays a purple diamond. Other names remain listed without herb marks. Requires nearby tracking; mining and full catalog coverage are pending.",
+					name = "Resource letter stamps and other tracking",
+					tooltip = "Use permanent two-letter stamps for 28 herb types and 16 mineral types from a Classic English catalog. Purple Lotus is PL; Mageroyal is MR. Other names stay neutral. Requires nearby tracking; added names and 16-pixel stamps need in-game validation.",
 				},
 			},
 		},

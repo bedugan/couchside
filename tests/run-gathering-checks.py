@@ -1,7 +1,7 @@
 """Run the local Gathering checks. Requires Python and lupa with Lua 5.1.
 
 This validates Lua logic and packaging, not in-game taint or controller safety.
-The optional provider-package investigation is deliberately separate.
+No external resource provider is required.
 """
 import argparse
 import json
@@ -14,6 +14,7 @@ from lupa.lua51 import LuaRuntime
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = (
     "gathering-classifier-check.py",
+    "gathering-catalog-check.py",
     "gathering-legend-check.py",
     "gathering-display-check.py",
     "gathering-motion-probe-check.py",

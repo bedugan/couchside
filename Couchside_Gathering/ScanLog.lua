@@ -26,6 +26,8 @@ ns.OnReady(function()
 		return
 	end
 	TrimScans(db.scans)
+	-- Retire the withdrawn external-provider diagnostic, never raw scan evidence.
+	db.providerReports, db.nextProviderReportID = nil, nil
 end)
 
 -- Tooltip data may contain mixin methods, repeated tables or restricted fields.
@@ -78,33 +80,21 @@ function ns.SaveGatheringScan(record, quiet)
 	end
 end
 
--- Provider reports are separate from scan evidence, and use the same existing
--- SavedVariables file. A reload persists actual returned IDs/errors, not just
--- enough raw text for a later local replay.
-function ns.SaveProviderReport(record)
+-- Keep one current classification verdict, separate from raw observations.
+function ns.SaveClassificationReport(record)
 	local db = CouchsideGatheringScanDB
-	if not db or db.version ~= 1 or (db.providerReports ~= nil and type(db.providerReports) ~= "table") then
-		ns.Print("Provider report not saved: scan history unavailable or unsupported.")
+	if not db or db.version ~= 1 then
+		ns.Print("Classification report not saved: scan history unavailable or unsupported.")
 		return
 	end
-	record = ns.SnapshotTooltip(record)
-	if record.snapshotError then
-		ns.Print("Provider report not saved: %s.", record.snapshotError)
+	local snapshot = ns.SnapshotTooltip(record)
+	if snapshot.snapshotError then
+		ns.Print("Classification report not saved: %s.", snapshot.snapshotError)
 		return
 	end
-	db.providerReports = db.providerReports or {}
-	record.version = 1
-	record.id = db.nextProviderReportID or 1
-	db.nextProviderReportID = record.id + 1
-	db.providerReports[#db.providerReports + 1] = record
-	while #db.providerReports > LIMIT do table.remove(db.providerReports, 1) end
-	ns.Print("Provider report %d recorded in memory (%d/%d retained). /reload or logout to write it.",
-		record.id, #db.providerReports, LIMIT)
-	if ns.Debug then
-		ns.Debug("Provider report %d: scan %s, version %s, available %s, %s distinct entries.",
-			record.id, tostring(record.scanID), tostring(record.providerVersion), tostring(record.providerAvailable),
-			tostring(record.totalEntries))
-	end
+	db.classificationReport = snapshot
+	ns.Debug("Classifier report saved: scan %s, catalog %s, %s distinct entries.",
+		tostring(record.scanID), tostring(record.catalogVersion), tostring(record.totalEntries))
 end
 
 ns.RegisterCommand("log", "[clear] - report saved scan history, or clear it", function(arg)
@@ -113,11 +103,11 @@ ns.RegisterCommand("log", "[clear] - report saved scan history, or clear it", fu
 		ns.Print("Scan history unavailable or unsupported.")
 	elseif arg == "clear" then
 		db.scans = {}
-		db.providerReports = {}
+		db.classificationReport = nil
 		db.motionReport = nil
 		db.panelReport = nil
 		db.automationReport, db.macroReport = nil, nil
-		ns.Print("Scan, provider, motion, panel, automatic-scan and macro reports cleared in memory. Wait preference retained. /reload or logout to write the change.")
+		ns.Print("Scan, classification, motion, panel, automatic-scan and macro reports cleared in memory. Wait preference retained. /reload or logout to write the change.")
 	elseif arg == "" then
 		ns.Print("Scan history: %d completed scans in memory; up to %d manual and %d automatic. File: WTF/Account/<account>/SavedVariables/Couchside_Gathering.lua.", #db.scans, LIMIT, AUTOMATIC_LIMIT)
 		for _, scan in ipairs(db.scans) do
@@ -125,12 +115,12 @@ ns.RegisterCommand("log", "[clear] - report saved scan history, or clear it", fu
 				scan.id, tostring(scan.build), tostring(scan.serverTime), scan.durationSeconds or 0,
 				scan.pointCount, scan.hitCount, #scan.regions, tostring(scan.cleanupRequestSucceeded))
 		end
-		ns.Print("Provider report history: %d/%d reports in memory.", #(db.providerReports or {}), LIMIT)
-		for _, report in ipairs(db.providerReports or {}) do
-			ns.Print("Provider report %d: scan %s, version %s, available %s, %s distinct entries%s.",
-				report.id, tostring(report.scanID), tostring(report.providerVersion), tostring(report.providerAvailable),
-				tostring(report.totalEntries), report.error and ("; " .. report.error) or "")
-		end
+		local report = db.classificationReport
+		if report then
+			ns.Print("Latest classification report: scan %s, catalog %s, %s distinct entries%s.",
+				tostring(report.scanID), tostring(report.catalogVersion), tostring(report.totalEntries),
+				report.entriesTruncated and "; detail capped at 40" or "")
+		else ns.Print("No saved classification report. Run /cs gathering classify.") end
 	else
 		ns.Print("Usage: /cs gathering log [clear]")
 	end

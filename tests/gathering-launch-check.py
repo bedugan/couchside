@@ -104,6 +104,26 @@ assert(queries==0 and created==0 and #softRequests==0)
 print("PASS actual TOC load with deferred readiness registers defaults and does no native mutation")
 
 
+check("normal manual scan prints one completion line with unchanged scan results", r'''
+commands.scan('');advance(3)
+assert(#logs==1,'normal scan flooded chat: '..#logs)
+assert(logs[1]:find('Scan complete') and CouchsideGatheringScanDB.scans[1].pointCount==1009)
+assert(CouchsideGatheringScanDB.scans[1].cleanupRequestSucceeded and #softRequests==2)
+''')
+check("verbose scan keeps detailed output without changing native work", r'''
+commands.scan('verbose');advance(3)
+local s=CouchsideGatheringScanDB.scans[1]
+assert(s and s.pointCount==1009 and s.cleanupRequestSucceeded and #softRequests==2)
+assert(#logs>5 and table.concat(logs,'\n'):find('Quest%-text filter'))
+''')
+check("quiet manual scan still reports errors and interruption", r'''
+failQuery=true;commands.scan('');advance(3)
+assert(table.concat(logs,'\n'):find('Scan ERROR') and #CouchsideGatheringScanDB.scans==0 and not soft)
+logs={};failQuery=false
+queryAction=function(n) if n==10 then cursorX=100;cursorY=100 end end
+commands.scan('');advance(3)
+assert(table.concat(logs,'\n'):find('Scan stopped') and #CouchsideGatheringScanDB.scans==0 and not soft)
+''')
 check("automatic scanning defaults off and does no polling or cursor work", r'''
 advance(30);assert(queries==0 and #softRequests==0)
 assert(CouchsideGatheringScanDB.automationReport.status=='disabled')

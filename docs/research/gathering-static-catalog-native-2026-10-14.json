@@ -1,0 +1,128 @@
+{
+  "source": "Native SavedVariables parsed as data, never executed",
+  "sha256": "0fa4a980f9766f66296136f92c78fb160e2c244cc6ae2ce3d20910599ca21807",
+  "savedFileModifiedUTC": "2026-10-14T22:47:21.819214+00:00",
+  "scope": "Retained scans whose display report records Gathering 0.15.0. No claim that each scan used the final borderless asset revision.",
+  "scans": [
+    {
+      "id": 277,
+      "source": "manual",
+      "build": "70374",
+      "serverTime": 1792017436,
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "cleanupRequestSucceeded": true,
+      "display": {
+        "scanID": 277,
+        "addonVersion": "0.15.0",
+        "legend": true,
+        "rows": 1,
+        "marks": 1,
+        "unknownSamples": 0,
+        "guardUnknownSamples": 0,
+        "guardStatus": "still",
+        "guardMode": "map-pose",
+        "status": "cleared",
+        "version": 1,
+        "motionStatus": "still",
+        "reason": "scan/probe restarted or stopped"
+      }
+    },
+    {
+      "id": 278,
+      "source": "manual",
+      "build": "70374",
+      "serverTime": 1792017455,
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "cleanupRequestSucceeded": true,
+      "display": {
+        "scanID": 278,
+        "addonVersion": "0.15.0",
+        "legend": true,
+        "rows": 1,
+        "marks": 1,
+        "unknownSamples": 0,
+        "guardUnknownSamples": 0,
+        "guardStatus": "still",
+        "guardMode": "map-pose",
+        "status": "cleared",
+        "version": 1,
+        "motionStatus": "still",
+        "reason": "player position changed"
+      }
+    },
+    {
+      "id": 279,
+      "source": "manual",
+      "build": "70374",
+      "serverTime": 1792017485,
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "cleanupRequestSucceeded": true,
+      "display": {
+        "scanID": 279,
+        "addonVersion": "0.15.0",
+        "legend": true,
+        "rows": 3,
+        "marks": 3,
+        "unknownSamples": 0,
+        "guardUnknownSamples": 0,
+        "guardStatus": "still",
+        "guardMode": "map-pose",
+        "status": "cleared",
+        "version": 1,
+        "motionStatus": "still",
+        "reason": "player position changed"
+      }
+    },
+    {
+      "id": 280,
+      "source": "manual",
+      "build": "70374",
+      "serverTime": 1792017617,
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "cleanupRequestSucceeded": true,
+      "display": {
+        "scanID": 280,
+        "addonVersion": "0.15.0",
+        "legend": true,
+        "rows": 5,
+        "marks": 5,
+        "unknownSamples": 0,
+        "guardUnknownSamples": 0,
+        "guardStatus": "still",
+        "guardMode": "map-pose",
+        "status": "cleared",
+        "version": 1,
+        "motionStatus": "still",
+        "reason": "combat started"
+      }
+    },
+    {
+      "id": 281,
+      "source": "manual",
+      "build": "70374",
+      "serverTime": 1792017701,
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "cleanupRequestSucceeded": true,
+      "display": {
+        "scanID": 281,
+        "addonVersion": "0.15.0",
+        "legend": true,
+        "rows": 5,
+        "marks": 5,
+        "unknownSamples": 0,
+        "guardUnknownSamples": 0,
+        "guardStatus": "still",
+        "guardMode": "map-pose",
+        "status": "cleared",
+        "version": 1,
+        "motionStatus": "still",
+        "reason": "combat started"
+      }
+    }
+  ]
+}
