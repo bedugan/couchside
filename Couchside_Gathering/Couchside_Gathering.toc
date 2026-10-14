@@ -2,7 +2,7 @@
 ## Title: Couchside: Gathering
 ## Notes: Scanned minimap tracking names and gathering diagnostics.
 ## Author: Brian Dugan
-## Version: 0.14.0
+## Version: 0.14.1
 ## IconTexture: Interface\Icons\INV_Misc_Herb_01
 ## Dependencies: Couchside
 ## SavedVariables: CouchsideGatheringScanDB
@@ -14,6 +14,7 @@ ResourceLegend.lua
 ResourceClassifier.lua
 MotionGuard.lua
 MotionProbe.lua
+PanelProbe.lua
 NearbyList.lua
 MinimapProbe.lua
 AutomaticScan.lua

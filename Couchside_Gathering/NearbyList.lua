@@ -7,6 +7,16 @@ local _, ns = ...
 local MAX_ROWS, LIFETIME = 8, 60
 local MINIMAP_SYMBOL_SIZE = 12
 local MINIMAP_STAR_SIZE = 16
+
+local function MarkPosition(x, y)
+	local length = math.sqrt(x * x + y * y)
+	if length == 0 then return x, y end
+	-- Taper to the existing inward offset without a flat radial interval that
+	-- merges pins on the same bearing. Samples inside eight units stay in place.
+	local offset = math.min(13, math.max(0, (length - 8) / 2))
+	local radius = length - offset
+	return x * radius / length, y * radius / length
+end
 local panel, footer
 local rows, badges = {}, {}
 local symbolBadges, headings = {}, {}
@@ -182,10 +192,9 @@ local function ShowLegend(scan)
 			local size = mark.symbol == "star-yellow" and MINIMAP_STAR_SIZE or MINIMAP_SYMBOL_SIZE
 			badge:SetSize(size, size)
 			local x, y = (mark.x - 0.5) * scan.geometry.width, (mark.y - 0.5) * scan.geometry.height
-			local length = math.sqrt(x * x + y * y)
-			local nudge = length > 0 and math.min(13, length) / length or 0
+			x, y = MarkPosition(x, y)
 			badge:ClearAllPoints()
-			badge:SetPoint("CENTER", Minimap, "CENTER", x * (1 - nudge), y * (1 - nudge))
+			badge:SetPoint("CENTER", Minimap, "CENTER", x, y)
 			badge.symbol:SetTexture("Interface\\AddOns\\Couchside_Gathering\\Media\\" .. mark.symbol .. ".tga")
 			badge:Show()
 		else
@@ -258,10 +267,8 @@ local function Show(scan)
 		row.arrow:SetRotation(math.atan2(y, x) - math.pi / 2)
 		row:Show()
 		badge:ClearAllPoints()
-		-- Nudge toward the center to keep an edge letter on the minimap.
-		local length = math.sqrt(x * x + y * y)
-		local nudge = length > 0 and math.min(13, length) / length or 0
-		badge:SetPoint("CENTER", Minimap, "CENTER", x * (1 - nudge), y * (1 - nudge))
+		x, y = MarkPosition(x, y)
+		badge:SetPoint("CENTER", Minimap, "CENTER", x, y)
 		badge.letter:SetText(letter)
 		badge:Show()
 	end

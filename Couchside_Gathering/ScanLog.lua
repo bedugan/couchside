@@ -3,6 +3,20 @@
 local _, ns = ...
 
 local LIMIT = 10
+local AUTOMATIC_LIMIT = 2
+
+-- Keep the chronological lookup interface and IDs, but retain each source
+-- independently. Older records without a source are manual diagnostics.
+local function TrimScans(scans)
+	local manual, automatic = 0, 0
+	for index = #scans, 1, -1 do
+		local isAutomatic = scans[index].source == "automatic"
+		if isAutomatic then automatic = automatic + 1 else manual = manual + 1 end
+		if (isAutomatic and automatic > AUTOMATIC_LIMIT) or (not isAutomatic and manual > LIMIT) then
+			table.remove(scans, index)
+		end
+	end
+end
 
 ns.OnReady(function()
 	CouchsideGatheringScanDB = CouchsideGatheringScanDB or { version = 1, nextID = 1, scans = {} }
@@ -11,7 +25,7 @@ ns.OnReady(function()
 		ns.Print("Scan log version unsupported; scan history will not be changed.")
 		return
 	end
-	while #db.scans > LIMIT do table.remove(db.scans, 1) end
+	TrimScans(db.scans)
 end)
 
 -- Tooltip data may contain mixin methods, repeated tables or restricted fields.
@@ -57,10 +71,10 @@ function ns.SaveGatheringScan(record, quiet)
 	record.id = db.nextID
 	db.nextID = db.nextID + 1
 	db.scans[#db.scans + 1] = record
-	while #db.scans > LIMIT do table.remove(db.scans, 1) end
+	TrimScans(db.scans)
 	if not quiet then
-		ns.Print("Scan %d recorded in memory (%d/%d retained). /reload or logout to write SavedVariables; disk write not yet verified.",
-			record.id, #db.scans, LIMIT)
+		ns.Print("Scan %d recorded in memory (%d retained; up to %d manual and %d automatic). /reload or logout to write SavedVariables; disk write not yet verified.",
+			record.id, #db.scans, LIMIT, AUTOMATIC_LIMIT)
 	end
 end
 
@@ -101,10 +115,11 @@ ns.RegisterCommand("log", "[clear] - report saved scan history, or clear it", fu
 		db.scans = {}
 		db.providerReports = {}
 		db.motionReport = nil
+		db.panelReport = nil
 		db.automationReport, db.macroReport = nil, nil
-		ns.Print("Scan, provider, motion, automatic-scan and macro reports cleared in memory. Wait preference retained. /reload or logout to write the change.")
+		ns.Print("Scan, provider, motion, panel, automatic-scan and macro reports cleared in memory. Wait preference retained. /reload or logout to write the change.")
 	elseif arg == "" then
-		ns.Print("Scan history: %d/%d completed scans in memory. File: WTF/Account/<account>/SavedVariables/Couchside_Gathering.lua.", #db.scans, LIMIT)
+		ns.Print("Scan history: %d completed scans in memory; up to %d manual and %d automatic. File: WTF/Account/<account>/SavedVariables/Couchside_Gathering.lua.", #db.scans, LIMIT, AUTOMATIC_LIMIT)
 		for _, scan in ipairs(db.scans) do
 			ns.Print("Scan %d: build %s, server timestamp %s, %.3fs, %d points, %d hits, %d regions; cleanup request succeeded: %s.",
 				scan.id, tostring(scan.build), tostring(scan.serverTime), scan.durationSeconds or 0,

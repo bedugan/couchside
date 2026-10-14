@@ -4,7 +4,7 @@ local _, ns = ...
 
 local function Normalize(text)
 	return (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-		:gsub("|T.-|t", "")
+		:gsub("|T.-|t", ""):gsub("|A.-|a", ""):gsub("|cn[^:]*:", "")
 		:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", ""))
 end
 

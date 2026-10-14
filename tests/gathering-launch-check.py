@@ -67,7 +67,7 @@ end
 
 def make(setup=""):
     vm = legend["make"](STUB + setup)
-    for name in ("MinimapProbe.lua", "AutomaticScan.lua", "ScanMacro.lua"):
+    for name in ("PanelProbe.lua", "MinimapProbe.lua", "AutomaticScan.lua", "ScanMacro.lua"):
         vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / "Couchside_Gathering" / name).read_text())
     return vm
 
@@ -106,6 +106,63 @@ print("PASS actual TOC load with deferred readiness registers defaults and does 
 check("automatic scanning defaults off and does no polling or cursor work", r'''
 advance(30);assert(queries==0 and #softRequests==0)
 assert(CouchsideGatheringScanDB.automationReport.status=='disabled')
+''')
+check("large grid completes at twenty frames per second before its work-sized watchdog", r'''
+Minimap.GetRect=function() return 100,100,2000,2000 end
+Minimap.GetEffectiveScale=function() return 1 end
+C_TooltipInfo.GetMinimapMouseover=function() return nil end
+local schedule=C_Timer.After
+C_Timer.After=function(delay,fn) schedule(math.max(.05,delay),fn) end
+commands.scan('');advance(30)
+local s=CouchsideGatheringScanDB.scans[1]
+assert(s and s.pointCount>5000 and s.pointCount<=8192,'large-grid scan discarded')
+assert(s.durationSeconds>12 and s.cleanupRequestSucceeded and not soft)
+''')
+check("automatic history cannot evict manual diagnostic evidence", r'''
+ns.SaveGatheringScan({source='manual'},true)
+for i=1,11 do ns.SaveGatheringScan({source='automatic'},true) end
+local scans=CouchsideGatheringScanDB.scans
+assert(scans[1].source=='manual','automatic scans evicted manual evidence')
+assert(#scans==3 and scans[2].id==11 and scans[3].id==12)
+''')
+check("manual and legacy histories retain ten records independently from two automatic records", r'''
+for i=1,12 do ns.SaveGatheringScan({},true) end
+for i=1,12 do ns.SaveGatheringScan({source='automatic'},true) end
+local scans=CouchsideGatheringScanDB.scans
+assert(#scans==12 and scans[1].id==3 and scans[10].id==12 and scans[11].id==23 and scans[12].id==24)
+''')
+check("loaded history is trimmed by source without changing IDs or starting scans", r'''
+local scans=CouchsideGatheringScanDB.scans
+assert(#scans==12 and scans[1].id==3 and scans[10].id==12 and scans[11].id==23 and scans[12].id==24)
+assert(CouchsideGatheringScanDB.nextID==25 and #softRequests==0)
+''', r'''
+local scans={}
+for i=1,24 do scans[i]={id=i,source=i>12 and 'automatic' or nil} end
+CouchsideGatheringScanDB={version=1,nextID=25,scans=scans}
+''')
+check("panel report reads all manager slots and visible bags without native mutations", r'''
+local queried={}
+local character={GetName=function() return 'CharacterFrame' end,IsVisible=function() return true end}
+CharacterFrame=character
+ContainerFrame1={IsVisible=function() return true end}
+GetUIPanel=function(slot) queried[slot]=true;return slot=='left' and character or nil end
+commands.panels('')
+local r=CouchsideGatheringScanDB.panelReport
+assert(r.slots.left=='CharacterFrame' and r.slots.center=='none' and r.frames.ContainerFrame1=='visible')
+assert(queried.left and queried.center and queried.right and queried.doublewide and queried.fullscreen)
+assert(#softRequests==0 and queries==0 and r.addonVersion==ns.version)
+commands.log('clear');assert(not CouchsideGatheringScanDB.panelReport)
+''')
+check("missing erroring and restricted panel reads stay explicit", r'''
+commands.panels('');assert(CouchsideGatheringScanDB.panelReport.slots.left=='API unavailable')
+GetUIPanel=function() error('panel read failed') end
+commands.panels('');assert(CouchsideGatheringScanDB.panelReport.slots.left:find('panel read failed'))
+local secret={};issecretvalue=function(v) return v==secret end
+GetUIPanel=function() return secret end
+ContainerFrame1={IsVisible=function() return secret end}
+commands.panels('');local r=CouchsideGatheringScanDB.panelReport
+assert(r.slots.left=='restricted' and r.frames.ContainerFrame1=='restricted')
+assert(#softRequests==0 and queries==0)
 ''')
 check("one second quiet interval starts the shared scanner and saves a quiet snapshot", r'''
 enableAuto();advance(1);assert(#softRequests==0)

@@ -9,6 +9,22 @@ local softCleanupNeeded = false
 local activeScan
 local operation
 local cursorChange
+local BATCH_SIZE = 16
+
+local function ScanTimeout(pointCount)
+	-- Allow one batch per frame down to 20fps, plus setup/cleanup slack. This
+	-- stays bounded even at the 8192-point cap; slower or stalled work expires.
+	return 12 + math.ceil(pointCount / BATCH_SIZE) * 0.05
+end
+
+local function Grid(g)
+	local width, height = g.width * g.scale, g.height * g.scale
+	local spacing = 4
+	while (math.ceil(width / spacing) + 1) * (math.ceil(height / spacing) + 1) > 8192 do
+		spacing = spacing + 1
+	end
+	return math.ceil(width / spacing), math.ceil(height / spacing), spacing
+end
 local NATIVE_PANELS = { "WorldMapFrame", "MacroFrame", "GameMenuFrame", "SettingsPanel",
 	"QuestFrame", "GossipFrame", "MerchantFrame", "PlayerSpellsFrame", "SpellBookFrame" }
 
@@ -314,14 +330,9 @@ local function Scan(token, finished, request)
 	if InCombatLockdown() or not g or CursorInside(g, x, y) then
 		return false, "stay out of combat and move the cursor outside the minimap"
 	end
-	local width, height = g.width * g.scale, g.height * g.scale
-	local spacing = 4
 	-- Bound query count even with an unusually large minimap. Four physical
 	-- pixels is a sampling choice, not a proven gathering-pin hitbox size.
-	while (math.ceil(width / spacing) + 1) * (math.ceil(height / spacing) + 1) > 8192 do
-		spacing = spacing + 1
-	end
-	local columns, rows = math.ceil(width / spacing), math.ceil(height / spacing)
+	local columns, rows, spacing = Grid(g)
 	local stride = columns + 1
 	local points, hits, rawByText, filtersByText = {}, {}, {}, {}
 	local questText = ns.QuestTextFilter.Snapshot()
@@ -344,6 +355,8 @@ local function Scan(token, finished, request)
 	end
 	if not request.quiet then ReportText("Before scan") end
 	Say("Scanning round minimap: %d sample points, spacing at most %d physical pixels. Don't move, rotate or zoom.", #points, spacing)
+	local timeoutSeconds = ScanTimeout(#points)
+	ns.Debug("Scan budget: %d points, %.2fs watchdog.", #points, timeoutSeconds)
 	if InCombatLockdown() then return false, "combat began before cursor setup" end
 	activeScan = { quiet = request.quiet, source = request.source or "manual", finished = finished }
 	operation = operation == "watch" and "watch" or "scan"
@@ -423,7 +436,7 @@ local function Scan(token, finished, request)
 			geometry = g, grid = { columns = columns, rows = rows, spacing = spacing },
 			pointCount = #points, hitCount = hitCount, regions = regions, hits = samples,
 			retainedHitCount = retainedHitCount, questText = questText, filtersByText = filtersByText,
-			motion = motion, scanProfile = "quest-filter-motion-v1",
+			motion = motion, scanProfile = "quest-filter-motion-v1", timeoutSeconds = timeoutSeconds,
 			tipsByText = rawByText, cleanupRequestSucceeded = cleanupSucceeded, source = request.source or "manual" }
 		ns.SaveGatheringScan(record, request.quiet)
 		Say("Compare names and positions with ordinary hover. Check controller input, then /reload. Empty results can be missed samples; other tracking can produce non-herb text.")
@@ -457,7 +470,7 @@ local function Scan(token, finished, request)
 				if not valid then Stop(reason); return end
 			end
 			ns.MotionGuard.Sample(motion)
-			for _ = 1, 16 do
+			for _ = 1, BATCH_SIZE do
 				if token ~= generation then return end
 				local point = points[index]
 				if not point then
@@ -505,7 +518,7 @@ local function Scan(token, finished, request)
 		end
 	end
 	C_Timer.After(0.2, Batch)
-	C_Timer.After(12, function()
+	C_Timer.After(timeoutSeconds, function()
 		-- An automatic job reports a cleanup failure once and faults its launcher.
 		-- Do not later retry that native mutation from a completed job's watchdog.
 		if request.source == "automatic" and not activeScan then return end
@@ -539,6 +552,13 @@ end
 
 ns.MinimapScanner = {
 	Ready = ReadyForAutomatic,
+	RefreshLead = function()
+		local g = Geometry()
+		if not g then return ScanTimeout(8192) end
+		local columns, rows = Grid(g)
+		-- Rectangle count bounds the circular grid before a refresh starts.
+		return ScanTimeout((columns + 1) * (rows + 1))
+	end,
 	Start = function(guard, finished)
 		local ready, reason = ReadyForAutomatic()
 		if not ready then return false, reason end

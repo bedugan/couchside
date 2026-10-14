@@ -5,8 +5,7 @@
 -- No saved observation or pending job resumes on reload.
 local _, ns = ...
 
--- The lead matches the scanner's 12-second watchdog, its longest possible sweep.
-local REFRESH_LEAD, MIN_GAP, CHECK_INTERVAL = 12, 10, 0.2
+local MIN_GAP, CHECK_INTERVAL = 10, 0.2
 local delaySeconds = 1
 local frame = CreateFrame("Frame")
 local anchor, settledAt, retryAt, running, paused, fault
@@ -94,7 +93,7 @@ local function Tick()
 	end
 	local now = GetTime()
 	if now - settledAt < delaySeconds then Save("waiting for stationary interval"); return end
-	if ns.NearbyList.Remaining() > REFRESH_LEAD then Save("showing snapshot"); return end
+	if ns.NearbyList.Remaining() > ns.MinimapScanner.RefreshLead() then Save("showing snapshot"); return end
 	if retryAt and now < retryAt then Save("waiting to retry after a withheld scan"); return end
 	if now - lastStart < MIN_GAP then Save("waiting for minimum gap between scans"); return end
 	running, lastStart = true, now

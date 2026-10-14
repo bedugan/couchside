@@ -77,4 +77,25 @@ local d=ns.NearbyList.RecordError('texture failure')
 assert(d.status=='error' and not visiblePanel() and #markers()==0)
 commands.display('');assert(table.concat(logs,'\n'):find('texture failure'))
 ''')
-print("8 display diagnostic checks passed")
+check("near-centre herb and letter marks retain separate nonzero positions", r'''
+for _,prototype in ipairs({true,false}) do
+ legend=prototype
+ local s=scan({{text='Silverleaf',x=.53,y=.5},{text='Earthroot',x=.5,y=.55},
+  {text='Mageroyal',x=.5+10/198,y=.5},{text='Peacebloom',x=.5+18/198,y=.5}})
+ local d=ns.NearbyList.Show(s);assert(d.status=='shown')
+ local points={}
+ for _,frame in ipairs(frames) do
+  if frame.parent==Minimap and frame.shown and (frame.symbol or frame.letter) then
+   local p=frame.point;local x,y=p[4],p[5]
+   assert(x*x+y*y>0,'near-centre mark collapsed onto player arrow')
+   points[#points+1]={x,y}
+  end
+ end
+ assert(#points==4)
+ for i=1,#points do for j=i+1,#points do
+  assert(points[i][1]~=points[j][1] or points[i][2]~=points[j][2],'distinct samples collapsed to one mark')
+ end end
+ ns.NearbyList.Clear('fixture')
+end
+''')
+print("9 display diagnostic checks passed")
