@@ -101,7 +101,8 @@ ns.RegisterCommand("log", "[clear] - report saved scan history, or clear it", fu
 		db.scans = {}
 		db.providerReports = {}
 		db.motionReport = nil
-		ns.Print("Scan, provider and motion reports cleared in memory. /reload or logout to write the change.")
+		db.automationReport, db.macroReport = nil, nil
+		ns.Print("Scan, provider, motion, automatic-scan and macro reports cleared in memory. Wait preference retained. /reload or logout to write the change.")
 	elseif arg == "" then
 		ns.Print("Scan history: %d/%d completed scans in memory. File: WTF/Account/<account>/SavedVariables/Couchside_Gathering.lua.", #db.scans, LIMIT)
 		for _, scan in ipairs(db.scans) do

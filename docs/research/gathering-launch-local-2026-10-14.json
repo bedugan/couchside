@@ -1,0 +1,99 @@
+{
+  "checkedAt": "2026-10-14T08:42:27.047920+00:00",
+  "candidate": "0.13.0",
+  "scope": "Explicit native scan-macro helper and opt-in stationary automatic launch through the existing scanner; no native binding, panel, slot, focus or controller-page mutation.",
+  "defaults": {
+    "autoScan": false,
+    "delaySeconds": 1,
+    "delayMinimum": 1,
+    "delayMaximum": 4,
+    "delayWholeSeconds": true,
+    "minimumAutomaticIntervalSeconds": 10,
+    "eligibilityCheckHz": 5,
+    "displayLifetimeSeconds": 10
+  },
+  "persistence": "Account option in CouchsideDB; wait and latest macro/automatic reports in existing CouchsideGatheringScanDB. No direct SavedVariables writes by maintainer.",
+  "macro": {
+    "name": "Scan map",
+    "icon": 134269,
+    "body": "/cs gathering scan",
+    "accountWide": true,
+    "probeRequiredInCurrentSession": true,
+    "creation": "Explicit out-of-combat user command; rechecks slots/metadata/conflicts, verifies index/body; no automatic retries",
+    "preservation": "No edit/delete; exact existing macro reused with icon/text preserved; different same-name macro in either scope blocks creation"
+  },
+  "automatic": {
+    "pause": "Manual hover/point/motion probes, scan watch and scan off pause the session. Normal manual scan replaces active auto scan.",
+    "eligibility": "Existing motion guard plus speed/status, event revision, visible minimap, real cursor outside, supported scan log and no known native panel open",
+    "cancellation": "Motion/transitions, native panels, geometry/cursor/combat and setting changes discard incomplete automatic evidence",
+    "faults": "Native query, cursor enable/cleanup, dropped-callback watchdog and display failures halt auto attempts for session; resume cannot bypass fault; protected-action notifications during a job or reporting Couchside and failed observer registration also stop attempts.",
+    "cleanup": "Never calls cursor setter in combat. Prior native cursor state unreadable. No completed auto-job watchdog retries after failed cleanup. Cancellation during a native cursor call defers cleanup to explicit scan off outside combat or reload; no nested setter, later tooltip/query/save from cancelled job.",
+    "history": "Same bounded last10 raw scans with source=automatic; quiet routine output. Status snapshots saved only on changes."
+  },
+  "localValidation": {
+    "lua51Files": 11,
+    "tocInventory": "matched",
+    "checks": {
+      "gathering-classifier-check.py": "passed",
+      "gathering-legend-check.py": "passed",
+      "gathering-display-check.py": "passed",
+      "gathering-motion-probe-check.py": "passed",
+      "gathering-dungeon-display-check.py": "passed",
+      "gathering-motion-guard-check.py": "passed",
+      "gathering-launch-check.py": "passed"
+    },
+    "distinctCases": 113,
+    "nativeAcceptance": "Requires Brian in-game"
+  },
+  "independentReview": {
+    "model": "gpt-6-luna",
+    "result": "No concrete blocker; bounded rechecks passed after changes",
+    "followup": "Reviewer requested transition lifecycle coverage; added",
+    "regressionFoundDuringWork": "Completed automatic watchdog retried failed native cleanup; failed regression fixed by excluding completed auto jobs from watchdog, retaining active-job recovery",
+    "finalResult": "113 local cases passed; final bounded review found no blocking issue after synchronous-query cancellation fix. Native acceptance pending.",
+    "queryCancellationFix": "Reviewer found nested cleanup and post-cancellation tooltip read during native query. Per-call marker and immediate generation check prevent both; test verifies one callback, no watchdog cleanup retry and explicit recovery."
+  },
+  "primarySource": {
+    "commit": "735496de78ebd30ce816a0637982c556987f258c",
+    "macro": "https://github.com/Gethe/wow-ui-source/blob/735496de78ebd30ce816a0637982c556987f258c/Interface/AddOns/Blizzard_MacroUI/Blizzard_MacroIconSelector.lua",
+    "controllerEditor": "https://github.com/Gethe/wow-ui-source/blob/735496de78ebd30ce816a0637982c556987f258c/Interface/AddOns/Blizzard_MacroUI/Blizzard_MacroUI.lua",
+    "inspected": "Pinned and current branch source through web tool; direct commit-refresh endpoint unavailable",
+    "protectedEvents": "Installed !BugGrabber/BugGrabber.lua handlers and retained native error records; notification stops are not root-cause attribution."
+  },
+  "nativePending": [
+    "Read-only macro report of new API values, creation result, icon/body and native controller assignment/activation",
+    "Repeated automatic scan alignment and controls while stationary/moving/turning, interrupted sweep and explicit stopping",
+    "Wait1 through4 behavior/persistence",
+    "Known native-panel pause and post-close controls",
+    "North-up party-instance actual display alignment and clearing",
+    "Normal hover, movement, Jump, interaction, quest details and world map before/after reload; fresh saved scans/reports and BugGrabber inspection"
+  ],
+  "installed": {
+    "path": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/Couchside_Gathering",
+    "rollback": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns.disabled/Couchside_Gathering-pre-0.13.0-2026-10-14",
+    "matchedFiles": 19,
+    "sha256": {
+      "AutomaticScan.lua": "192fca4ab3e959e884300e19ae2e1b5428f07b13273fb73e8538dc9bdf81457a",
+      "Couchside_Gathering.toc": "9f1fade5b60b7c2ea57beb1668aa9a4d095cc24c9596e5e9d59f4ce9fd18c729",
+      "Gathering.lua": "2e181a3788068614350881878aaedb9bc5260f05d4714690d7e8a20e44820ba3",
+      "Media/circle-orange.tga": "d60f414b993a713cf727c947792b32ed51c5d29dbdab3bc22f2e83016490e7b9",
+      "Media/cross-red.tga": "9e49010bf209b6937925e60d1d0153a1ac2f54fe71e31bc02e6353256484bacc",
+      "Media/diamond-purple.tga": "48ba29adcad5792aec6003518ee1c9899ad054cb5f113e350698497ccf21de3f",
+      "Media/hexagon-teal.tga": "2ae6bc5017d706adb753ddc43679e58d64af61f734c7c583e974fa1a9df1b72f",
+      "Media/square-blue.tga": "6da9188bc3e0188e36eacad0c556b078ca6f9d73ebc593d0207691dc8bfaabb5",
+      "Media/star-yellow.tga": "e0f09131354206b29bd18dd5d59eed5f9a12ef8dc1b799d47eaebebaf0d9d01d",
+      "Media/triangle-green.tga": "37425484cbe3c037b7ef4e49d9656f05b2e577535c18fab11eb54828ed9f5279",
+      "MinimapProbe.lua": "3253c0d40da19bf3ad5c8dd2343c11ac8a3cbf3d7f7a44c769cf4a300c1609e1",
+      "MotionGuard.lua": "7f12022f49e9049601956d29a24b5f8be28eb4e8ee1db3cce9ea388bc6be48d9",
+      "MotionProbe.lua": "7991beedc5606f95f0094ee73e162789bf6904da6dad5ef09fcf22a4d1002b09",
+      "NearbyList.lua": "f04816a911eb90d860b068b15698b664e78e2ff5b8572aa1b5037c794a3c79a6",
+      "QuestTextFilter.lua": "c2e602fea67dca74f2a525ef9dc26d94a500dccf3102393a770e6552dc21041c",
+      "ResourceClassifier.lua": "a8dba6145f4012d0639a2bd2fc7a13bf254c71bf1752374d06f33803cf459151",
+      "ResourceLegend.lua": "471a1ba9276f5fa47ad3c2ead1f01ec1e5a020e25b535951abc737cb0fafbe9f",
+      "ScanLog.lua": "5dc35186f436c4bc92ac17fab7193075a7ef91b7494b1f1b22f1e7ba1277c90c",
+      "ScanMacro.lua": "573a953149b1d3bec0f663912413a58929f5c2010f286fc36b612699cb519f7b"
+    }
+  },
+  "nativeAcceptance": "Not performed by agent; only Brian can test in game",
+  "commitStatus": "Feature uncommitted pending Brian native acceptance per AGENTS.md"
+}

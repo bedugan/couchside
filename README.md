@@ -7,7 +7,7 @@ A family of World of Warcraft addons for playing without a mouse: from the couch
 | Couchside | `Couchside` | The base every module needs: the `/cs` command, the settings pages and debug output. Does nothing on its own. |
 | Couchside: Quests | `Couchside_Quests` | Automatic zone tracking, quest areas and nearby turn-ins, without hovering the map. |
 | Couchside: Controller | `Couchside_Controller` | Controller interface state that Blizzard only shows while you hold a button. |
-| Couchside: Gathering | `Couchside_Gathering` | Experimental on-demand minimap scans and an opt-in fixed herb-symbol list. |
+| Couchside: Gathering | `Couchside_Gathering` | Experimental manual/automatic minimap scans, a controller macro helper, and an opt-in fixed herb-symbol list. |
 
 Each module lists `Couchside` under `## Dependencies`, so WoW loads the base first and won't load a module without it.
 
@@ -67,7 +67,7 @@ Enable **Only show page 2 or 3** as well to show just the current page's tile: `
 
 ## Couchside: Gathering
 
-The Gathering module provides one-pin API experiments, a bounded minimap scanner and an optional nearby tracking display. Scans run only on request. On Brian's Mac Forever client, soft-cursor mode with physical screen coordinates read `Briarthorn` while the real cursor was outside the minimap. Repeated herbalism scans matched the visible pins and controls continued functioning. Mageroyal appeared in a later scan after Brian believed it had spawned. The scan also reads the focused quest navigation arrow. Stationary herbalism, motion observation and the nearby display have initial in-game evidence; mining and broader coverage remain untested. See the [source research](docs/research/gathering-minimap-api.md) and [display concepts](docs/gathering-minimap-exploration.html).
+The Gathering module provides one-pin API experiments, a bounded minimap scanner and an optional nearby tracking display. Scans run on request, or through the explicitly enabled automatic mode. Automatic scanning defaults to off. On Brian's Mac Forever client, soft-cursor mode with physical screen coordinates read `Briarthorn` while the real cursor was outside the minimap. Repeated herbalism scans matched the visible pins and controls continued functioning. Mageroyal appeared in a later scan after Brian believed it had spawned. The scan also reads the focused quest navigation arrow. Stationary herbalism, motion observation and the nearby display have initial in-game evidence; mining and broader coverage remain untested. See the [source research](docs/research/gathering-minimap-api.md) and [display concepts](docs/gathering-minimap-exploration.html).
 
 To test outside combat, enable herb or mining tracking and stand still with an isolated yellow pin visible:
 
@@ -123,7 +123,7 @@ The list normally accepts only still scans with no unknown motion samples, a suc
 
 The title is **Nearby tracking** because retained text is not classified as herbs. Player, NPC or other tracking names may remain after quest filtering. Empty results say **No tracking text found**, which does not prove that no herbs exist.
 
-Results expire after ten seconds. A temporary 10Hz read-only check clears them when position or facing changes, combat starts, the minimap hides, geometry/zoom/rotation changes or state becomes unreadable. A new scan/probe operation or disabling the option clears them immediately. With no live display, the check stops. No saved diagnostic scan is restored as a live list. A node can spawn or disappear before expiry, so the display labels itself a scan snapshot.
+Results expire after ten seconds. A temporary 10Hz read-only check clears them when position or facing changes, combat starts, the minimap hides, geometry/zoom/rotation changes or state becomes unreadable. A new scan/probe operation or disabling the option clears them immediately. With no live display, the check stops. No saved diagnostic scan is restored as a live list. Automatic rescans run only while the separate `gathering.autoScan` option and nearby tracking are enabled. A node can spawn or disappear before expiry, so the display labels itself a scan snapshot.
 
 Local checks cover acceptance, movement/turning invalidation, expiry, unreadable state, disabling, scan completion and cancellation. On 2026-10-12, Brian reported the nearby-list test was successful and the letters lined up with the pins. This is initial validation on the tested Mac Forever client, not coverage of every scale, zoom, overlapping pin or tracking type. To repeat, reload, enable the option, scan while still and compare letters/names/arrows with ordinary hover. Walk and turn to check clearing, repeat a still scan to check expiry, then check Jump/interaction before and after reload. Disable with `/cs option gathering.nearbyList off`.
 
@@ -131,7 +131,7 @@ The proposed [minimap reconciliation](docs/minimap-reconciliation.html) compares
 
 ### Fixed herb-symbol prototype
 
-Gathering 0.12.0 provides an opt-in test candidate on the existing nearby list. After `/reload`, run `/cs option gathering.nearbyList on` and `/cs option gathering.resourceLegend on`, then `/cs gathering scan` while stationary outside combat with the real cursor outside the minimap. It groups names under **Herbs** and **Other tracking**, with no per-location arrows. All separated matching regions of the same supported herb use the same symbol, across rescans and reloads. The existing snapshot acceptance, clearing and ten-second lifetime remain in force; moving-pin tracking is not implemented.
+Gathering 0.13.0 provides an opt-in test candidate on the existing nearby list. After `/reload`, run `/cs option gathering.nearbyList on` and `/cs option gathering.resourceLegend on`, then `/cs gathering scan` while stationary outside combat with the real cursor outside the minimap. It groups names under **Herbs** and **Other tracking**, with no per-location arrows. All separated matching regions of the same supported herb use the same symbol, across rescans and reloads. The existing snapshot acceptance, clearing and ten-second lifetime remain in force; moving-pin tracking is not implemented.
 
 | Observed English herb | Fixed symbol |
 | --- | --- |
@@ -161,6 +161,28 @@ Disable just the prototype with `/cs option gathering.resourceLegend off` to res
 
 The subsequent reload persisted prototype report 1 from native 0.11.1 for scan 72 on build `70374`: five unknown tracking names, zero resource candidates and no classifications lost from the printed report. That scan had unknown motion data, so the live display correctly remained withheld. It does not validate the revised herb-symbol size. The refreshed error log has one new `Spoken_Quests/VoiceOver.lua` secret-key indexing error with no Couchside frame in its recorded stack; original cause and input impact are not established. No unrelated addon was modified. See the [native follow-up record](docs/research/gathering-prototype-native-2026-10-13.json).
 
+### Launching a scan from a controller
+
+Gathering 0.13.0 adds a macro helper. Outside combat, run `/cs gathering macro probe` and check its read-only report of native API availability, macro capacity and name conflicts. This report is the new-API verification step required by `AGENTS.md`. If it reports **ready**, `/cs gathering macro create` creates one account-wide **Scan map** macro with the native map icon, file ID `134269`, and this body:
+
+```text
+/cs gathering scan
+```
+
+Use the native macro editor to choose its controller action slot. The helper adds no binding, picks up no cursor item and opens no native panel. It never edits or deletes a macro. An existing same-name macro with that exact command is reused and retains its icon/text. Any different same-name macro in either account or character scope blocks creation. Full account slots, unavailable/restricted metadata and combat also block it. Creation requires a successful probe in the current session, rechecks the native data immediately before calling `CreateMacro`, and verifies the returned index and saved body afterward. A failure or unverified return is reported and never automatically retried. The latest plain `macroReport` is saved in the existing Gathering history file; it records the intended icon and the existing macro's returned icon separately. The new native creation path and actual icon appearance still need Brian's test.
+
+Macro setup pauses automatic scanning for the session. Resume it with `/cs gathering auto resume` if it was already enabled. The earlier [launch comparison](docs/prototypes/minimap-launch.prototype.html) is a historical static concept, captured on branch `prototype/minimap-scan-launch`, commit `ca273e3afc714af1342bb1521098afcfda03d2a1`. The runtime now implements the macro helper and optional automatic mode described here. A dedicated keybind remains unimplemented.
+
+### Automatic stationary scans
+
+Enable nearby tracking, then `/cs option gathering.autoScan on`. The option defaults to off. It waits **one second** after stillness is observed and starts at most one automatic scan every **ten seconds**. Set the wait to a whole number from **1 to 4** with `/cs gathering auto delay N`, for example `/cs gathering auto delay 3`. This parameter is saved account-wide as `CouchsideGatheringScanDB.automaticScanSettings.delaySeconds`; invalid saved values fall back to one. It changes the wait before starting, not the sweep duration or refresh interval. A 5Hz check adds scheduling delay, and the sweep itself takes additional time. No slider or numeric setting API is added to the base.
+
+The scheduler uses the shared bounded scanner, preserves the existing ten-second snapshots and uses the same classification/symbols. It requires a readable stable motion guard, zero speed, false movement status, no observed movement/turning/looking or world/zone transition event, visible minimap, and the real cursor outside it. It also waits while known native panels are visible: world map, macro editor, game menu/settings, quest/gossip/merchant dialogue, spellbook and the default chat input. Panel visibility that is restricted or unreadable remains withheld. This is a bounded native-panel list, not detection of every third-party interface. Missing/restricted evidence stays withheld. Motion resets the wait. Automatic batches recheck motion and known native panels before queries and at completion; interrupted partial scans are discarded. The north-up party-instance limit remains. Routine automatic output is quiet, and records have `source = "automatic"` alongside manual scans in the same last-ten history. `/cs debug on` reports state changes; `/cs gathering auto` prints current session status, wait, counters and blocking reason. The latest plain `automationReport` is saved when status changes. Saved jobs/displays never resume; a persisted enabled option starts a fresh wait after reload.
+
+Manual and automatic work share one owner and cancellation generation. A normal manual scan replaces any active automatic scan. Manual hover/point/motion probes and the three-scan watch pause automatic mode for the session. `/cs gathering scan off` also pauses it, so the scheduler cannot immediately restart a stopped scan. `/cs gathering auto pause` stops automatic work, `/cs gathering auto resume` resumes a paused, enabled mode, and `/cs option gathering.autoScan off` turns it off persistently. Disabling nearby tracking also cancels automatic work and removes its polling. Changing the wait or display settings cancels an in-flight automatic scan and restarts the wait.
+
+Native query, cursor-enable, cleanup, watchdog and display errors halt automatic attempts for the session. While automatic mode is active, protected-action notifications also halt it if a scan is running or the reported addon name is Couchside; this is a stop signal, not proof of root cause. If those event listeners cannot be registered, automatic scanning stays faulted. The status report includes listener readiness. Cancellation during a native cursor call leaves cleanup pending until explicit recovery, preventing a nested setter call and further tooltip reads from the cancelled job. `resume` does not bypass that fault; check controls and reload before retrying. A completed automatic job's watchdog does not retry a failed cleanup. Cleanup is never attempted while in combat. If combat interrupts a scan with native soft-cursor mode active, cleanup remains pending and automation faults; reload, or use `/cs gathering scan off` outside combat to request cleanup. The original soft-cursor state is unreadable, so a successful false request is not proof of restoration. Repeated cursor changes, combat interruption and later controller input need Brian's native test before automatic mode is accepted for normal play.
+
 ### Follow-up: stable symbols and a shared legend
 
 Brian requested stable meanings instead of labels reassigned by proximity, and a follow-up for quest turn-ins as well. All observed locations of the same herb type should share one permanent symbol: Mageroyal should always be the purple diamond, across rescans, zone changes and reloads. A compact legend matches symbols to names; the native player arrow and minimap orientation supply direction, so this concept needs no direction arrows or per-location follow control. Quests remain specific, keyed by quest ID.
@@ -181,7 +203,7 @@ The saved display-era scans, IDs 23-25 on build `70338`, were still scans with s
 
 The next focused test is a mixed-tracking scan in town, using available NPC/service/player pins and quest offers or turn-ins, compared with ordinary hover. For the tracking comparison, choose a stationary position with at least one herb pin visible. Scan once with Find Herbs on, once off, and once on again, then reload to save the three records. Keep the cursor outside the minimap during scans and report the scan order and what ordinary hover identified. Tracking changes are manual; the addon does not toggle them. Compare actual observed changes without assuming a name alone proves a herb.
 
-Further useful node cases are two separated and two close same-name pins, a known node disappearing after gathering followed by a fresh scan, an empty area, pins near the rim and another zoom. Rotating-minimap behavior should be checked if that mode will be supported. Mining needs its own names/tooltip samples before ore classification. Combat refusal, interrupted cleanup and longer-running input behavior need explicit in-game validation before broader release; fixtures alone do not establish those native-state paths.
+Further useful node cases are two separated and two close same-name pins, a known node disappearing after gathering followed by a fresh scan, an empty area, pins near the rim and another zoom. Rotating-minimap behavior should be checked if that mode will be supported. Mining needs its own names/tooltip samples before ore classification. Combat refusal, interrupted cleanup and longer-running input behavior need explicit in-game validation before automatic scanning or broader release; fixtures alone do not establish those native-state paths.
 
 For the proposed herb-symbol display, known resource candidates need a catalog and validated tracking evidence. Unmatched or ambiguous entries should remain available as **Other tracking**, without a herb symbol, and in raw diagnostic history. They must not be silently deleted or guessed to be resources. Unknown entries may be catalog gaps rather than non-resources. The opt-in seven-herb prototype implements this separate presentation for its limited catalog; service identification and full catalog coverage remain unresolved.
 
@@ -272,6 +294,7 @@ Options are saved per account in `CouchsideDB`: the debug option at the top leve
 | `controller.pageNumbers` | off | Show action page numbers |
 | `controller.pageNumbersExtraOnly` | off | Only show page 2 or 3 |
 | `gathering.nearbyList` | off | Show scanned nearby tracking |
+| `gathering.autoScan` | off | Scan automatically while stationary; requires nearbyList |
 | `gathering.resourceLegend` | off | Prototype herb symbols and other tracking; requires nearbyList |
 
 ## Commands
@@ -301,11 +324,13 @@ Options are saved per account in `CouchsideDB`: the debug option at the top leve
 | `/cs gathering probe off` | Cancels pending diagnostic callbacks, clears the saved capture and attempts any outstanding soft-cursor cleanup outside combat. |
 | `/cs gathering scan` | Samples the round minimap once and reports approximate tooltip regions. Experimental; reload before and after. No capture required. |
 | `/cs gathering scan watch` | Runs three diagnostic scans with five-second pauses, recording motion during each. Reload before and after testing. |
-| `/cs gathering scan off` | Cancels active scan/probe callbacks and attempts outstanding soft-cursor cleanup outside combat. |
+| `/cs gathering scan off` | Cancels active scan/probe callbacks, pauses automatic mode for the session and attempts outstanding soft-cursor cleanup outside combat. |
+| `/cs gathering auto [pause\|resume\|delay 1-4]` | Reports the current automatic scan state. Pauses/resumes enabled automation, or saves a whole-second stationary wait from 1 to 4. Default wait 1; minimum automatic interval 10 seconds. |
+| `/cs gathering macro [probe\|create]` | Reports native macro APIs/capacity/conflicts, or creates one Scan map account macro with a map icon after a successful current-session probe. Never changes bindings or edits/deletes macros. |
 | `/cs gathering motion [watch\|off]` | No argument records one read-only movement snapshot. `watch` records a 12-second still/walk/turn/still trial of movement status, speed, world coordinates and movement/turning/looking events. `off` cancels it. Saves only the latest probe; no display policy or native cursor/binding changes. |
 | `/cs gathering display` | Reports the last nearby-list acceptance, error or clearing reason, including position/facing read failures. After reload, reads the saved verdict without restoring a live display. |
 | `/cs gathering log` | Reports the last 10 completed scans and the separate last 10 provider reports in memory. |
-| `/cs gathering log clear` | Clears scan/provider histories and the latest motion report in memory. Reload or logout writes the change; later activity can write fresh reports. |
+| `/cs gathering log clear` | Clears scan/provider histories and the latest motion, automatic-scan and macro reports in memory. Keeps the wait preference. Reload or logout writes the change; later activity can write fresh reports. |
 | `/cs gathering classify [scanID]` | Reports resource name candidates, quest text, unknowns and ambiguities from a retained scan. Uses five observed English herb names; leaves history, live list and native state unchanged. |
 | `/cs gathering classify prototype [scanID]` | Reports the seven-herb prototype catalog, fixed symbols and provisional cache annotations against a saved scan; records the report separately without changing raw evidence or native state. |
 | `/cs gathering classify library [scanID]` | Probes an already loaded GatherMate2's herb/ore name lookup on saved text. Reports library absence/errors and records returned results separately from scans. No dependency installation or live-display changes. |
@@ -332,7 +357,7 @@ The [provider handoff](docs/research/gathering-provider-validation.md) records p
 
 ### Current closeout checks
 
-The 0.12.0 candidate keeps the seven-herb catalog, accepted symbol sizes and ten-second snapshots, with one motion owner for scanning and display. Mining classification, service suppression, tracked-creature roles, stable quest labels and a module migration are deferred work. Unsupported names remain **Other tracking**. Direct dungeon display alignment still needs Brian's test; local fixtures do not establish taint safety or later controller input.
+The 0.13.0 candidate keeps the seven-herb catalog, accepted symbol sizes and ten-second snapshots. It adds the gated macro helper and opt-in stationary scan launcher. Mining classification, service suppression, tracked-creature roles, stable quest labels and a module migration are deferred work. Unsupported names remain **Other tracking**. Direct dungeon display alignment, native macro setup and repeated automatic scans still need Brian's test; local fixtures do not establish taint safety or later controller input.
 
 Run the durable local checks from an isolated Python environment with `lupa`:
 
@@ -342,7 +367,7 @@ python3 -m venv /tmp/couchside-checks
 /tmp/couchside-checks/bin/python tests/run-gathering-checks.py
 ```
 
-The runner checks Lua 5.1 syntax, the nine-file TOC inventory and six suites covering classification, symbols and display/probe/guard behavior. It passed 70 distinct cases on 2026-10-14. The optional withdrawn-provider investigation is separate and needs its own external package; do not reinstall GatherMate2 to run the standard checks. See the [closeout evidence](docs/research/gathering-closeout-local-2026-10-13.json). Brian confirmed the herb-symbol sizes in-game; the motion-guard consolidation was committed at his request before its dungeon test.
+The runner checks Lua 5.1 syntax, the eleven-file TOC inventory and seven suites covering classification, symbols, display/probe/guard behavior and manual/automatic/macro launch ownership. It passed 113 distinct cases on 2026-10-14. The optional withdrawn-provider investigation is separate and needs its own external package; do not reinstall GatherMate2 to run the standard checks. See the [closeout test guide](docs/gathering-prototype-test.html) and [launch candidate evidence](docs/research/gathering-launch-local-2026-10-14.json). Brian confirmed the herb-symbol sizes in-game. The motion-guard and launch work was committed at his request before native validation, as separate commits so the launch can be reverted alone.
 
 ## Reporting a problem
 
@@ -423,16 +448,18 @@ Quest area and nearby behaviour below was confirmed in-game on 12.1.x. Controlle
 | `Couchside_Controller/Controller.lua` | Registers the Controller module and its options. |
 | `Couchside_Controller/ControllerPageReport.lua` | Read-only controller page report. `/cs controller actionpage`. Polls only while diagnostic watch mode is running. |
 | `Couchside_Controller/ControllerPages.lua` | Persistent controller page tiles. Reads native page state at 10Hz only while the option is enabled. |
-| `Couchside_Gathering/Gathering.lua` | Registers Gathering and the optional nearby display and herb legend checkboxes. |
-| `Couchside_Gathering/ScanLog.lua` | Bounded scan and provider histories, plain snapshots and `/cs gathering log [clear]`. |
+| `Couchside_Gathering/Gathering.lua` | Registers Gathering and the optional nearby display, herb legend and automatic scanning checkboxes. |
+| `Couchside_Gathering/ScanLog.lua` | Bounded manual/automatic scan and provider histories, plain snapshots and `/cs gathering log [clear]`. Automatic/macro reports use the same SavedVariables file. |
 | `Couchside_Gathering/MotionProbe.lua` | Read-only bounded dungeon motion trial, with the latest report persisted separately from scans. No effect on display acceptance. |
 | `Couchside_Gathering/MotionGuard.lua` | Single interface for scan motion capture, acceptance and live validity. Owns coordinate/facing evidence and the limited option-gated dungeon evidence. Keeps raw unavailable coordinates unknown and preserves plain diagnostic verdicts. No input or map changes. |
 | `Couchside_Gathering/NearbyList.lua` | Short-lived legacy names/arrows/letters or opt-in grouped herb symbols/Other tracking from still scans. Clears stale observations and polls only while visible and enabled; reports and records display decisions. |
 | `Couchside_Gathering/QuestTextFilter.lua` | Read-only quest-title/objective snapshot and whole-entry exclusions for multiline minimap tooltip text. Removes color/complete texture markup from names and preserves raw evidence. |
 | `Couchside_Gathering/ResourceClassifier.lua` | Saved-scan classification reports using the five-name seed, explicit prototype mode or optional GatherMate2 probe; unknown/collision handling and bounded report persistence. |
 | `Couchside_Gathering/ResourceLegend.lua` | Seven observed English herb labels, fixed symbol meanings, provisional cache evidence and a pure grouped display model that preserves unknowns and withholds mixed marks. |
+| `Couchside_Gathering/AutomaticScan.lua` | Opt-in stationary wait/cooldown, shared scan requests and session pause/fault handling. `/cs gathering auto [pause\|resume\|delay 1-4]`. Polls at 5Hz only while automation and nearby tracking are enabled and not paused/faulted. |
+| `Couchside_Gathering/ScanMacro.lua` | Read-only native capability/collision report and explicit out-of-combat Scan map creation. `/cs gathering macro [probe\|create]`. No native panel, binding or action-slot changes. |
 | `Couchside_Gathering/Media/*.tga` | Seven Couchside-owned geometric symbols generated by `tools/generate-herb-symbols.py`; no copied upstream textures. |
-| `Couchside_Gathering/MinimapProbe.lua` | One-pin hover capture, point-query experiments and bounded round-minimap scan. `/cs gathering probe [capture\|test [alternate\|soft]\|off]` and `/cs gathering scan [watch\|off]`. Native state changes have explicit cleanup and bounded watchdogs. |
+| `Couchside_Gathering/MinimapProbe.lua` | One-pin hover capture, point-query experiments and bounded round-minimap scan. `/cs gathering probe [capture\|test [alternate\|soft]\|off]` and `/cs gathering scan [watch\|off]`. Native state changes have explicit cleanup and bounded watchdogs. Manual diagnostics and the shared scanner called by the automatic launcher. |
 
 A module's first file calls `Couchside.RegisterModule(ns, spec)` with its key, title and option sections. The base fills the module's namespace with `IsEnabled`, `OnOptionChanged`, `OnReady`, `RegisterCommand`, `Print` and `Debug`, so feature files use `ns.` the same way in every module.
 

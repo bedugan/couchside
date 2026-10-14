@@ -19,6 +19,7 @@ CHECKS = (
     "gathering-motion-probe-check.py",
     "gathering-dungeon-display-check.py",
     "gathering-motion-guard-check.py",
+    "gathering-launch-check.py",
 )
 
 

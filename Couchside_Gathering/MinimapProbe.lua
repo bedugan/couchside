@@ -9,6 +9,20 @@ local softCleanupNeeded = false
 local activeScan
 local operation
 local cursorChange
+local NATIVE_PANELS = { "WorldMapFrame", "MacroFrame", "GameMenuFrame", "SettingsPanel",
+	"QuestFrame", "GossipFrame", "MerchantFrame", "PlayerSpellsFrame", "SpellBookFrame", "ChatFrame1EditBox" }
+
+local function PanelBlock()
+	for _, name in ipairs(NATIVE_PANELS) do
+		local panel = _G[name]
+		if panel then
+			local visible = panel:IsVisible()
+			if issecretvalue and issecretvalue(visible) then return "native panel state restricted" end
+			if type(visible) ~= "boolean" then return "native panel state unavailable" end
+			if visible then return "native panel open: " .. name end
+		end
+	end
+end
 
 local function CleanupSoftCursor(quiet)
 	if not softCleanupNeeded then return true end
@@ -430,11 +444,25 @@ local function Scan(token, finished, request)
 				Stop("combat, geometry/zoom changed, or cursor entered minimap")
 				return
 			end
+			if request.guard then
+				local blocked = PanelBlock()
+				if blocked then Stop(blocked); return end
+				local valid, reason = ns.MotionGuard.Check(request.guard)
+				if not valid then Stop(reason); return end
+			end
 			ns.MotionGuard.Sample(motion)
 			for _ = 1, 16 do
 				if token ~= generation then return end
 				local point = points[index]
-				if not point then Finish(); return end
+				if not point then
+					if request.guard then
+						local blocked = PanelBlock()
+						if blocked then Stop(blocked); return end
+						local valid, reason = ns.MotionGuard.Check(request.guard)
+						if not valid then Stop(reason); return end
+					end
+					Finish(); return
+				end
 				cursorChange = "query"
 				local queried, queryError = pcall(function()
 					Minimap:UpdateMouseoverAtPoint((g.left + point.nx * g.width) * g.scale,
@@ -472,6 +500,9 @@ local function Scan(token, finished, request)
 	end
 	C_Timer.After(0.2, Batch)
 	C_Timer.After(12, function()
+		-- An automatic job reports a cleanup failure once and faults its launcher.
+		-- Do not later retry that native mutation from a completed job's watchdog.
+		if request.source == "automatic" and not activeScan then return end
 		if token == generation and (index <= #points or softCleanupNeeded) then
 			ns.Print("Scan watchdog ending experiment or pending cleanup. /reload if cleanup remains pending.")
 			Stop("scan watchdog expired", true)
@@ -480,17 +511,61 @@ local function Scan(token, finished, request)
 	return true
 end
 
+local function ReadyForAutomatic()
+	if activeScan or operation then return false, "manual scan or probe active" end
+	if softCleanupNeeded then return false, "soft-cursor cleanup pending" end
+	local db = CouchsideGatheringScanDB
+	if not db or db.version ~= 1 then return false, "scan history unavailable or unsupported" end
+	if InCombatLockdown() then return false, "in combat" end
+	if not Minimap:IsVisible() then return false, "minimap hidden" end
+	local blocked = PanelBlock()
+	if blocked then return false, blocked end
+	if not Minimap.UpdateMouseoverAtPoint or not Minimap.SetUsingSoftCursor
+		or not C_TooltipInfo or not C_TooltipInfo.GetMinimapMouseover then
+		return false, "scan APIs unavailable"
+	end
+	local g = Geometry()
+	if not g then return false, "minimap geometry unavailable" end
+	local x, y = GetCursorPosition()
+	if CursorInside(g, x, y) then return false, "cursor over minimap" end
+	return true
+end
+
+ns.MinimapScanner = {
+	Ready = ReadyForAutomatic,
+	Start = function(guard, finished)
+		local ready, reason = ReadyForAutomatic()
+		if not ready then return false, reason end
+		if not ns.IsEnabled("nearbyList") or not ns.IsEnabled("autoScan") then return false, "automatic scanning disabled" end
+		local valid, motionReason = ns.MotionGuard.Check(guard)
+		if not valid then return false, motionReason end
+		if not Stop(nil, nil, true) then return false, "soft-cursor cleanup pending" end
+		return Scan(generation, finished, { quiet = true, guard = guard, source = "automatic" })
+	end,
+	Cancel = function(reason, failed)
+		if activeScan and activeScan.source == "automatic" then return Stop(reason, failed) end
+		return true
+	end,
+}
+
+local function PauseAutomatic(reason)
+	if ns.AutomaticScan then ns.AutomaticScan.Pause(reason) end
+end
+
 ns.RegisterCommand("probe", "[capture|test [alternate|soft]|off] - report or test one minimap pin", function(arg)
 	if arg == "" then
 		Report()
 	elseif arg == "capture" then
+		PauseAutomatic("manual hover probe")
 		if not Stop() then return end
 		capture = nil
 		Capture(generation)
 	elseif arg == "test" or arg == "test alternate" or arg == "test soft" then
+		PauseAutomatic("manual point probe")
 		if not Stop() then return end
 		Test(generation, arg:match("^test (%S+)$"))
 	elseif arg == "off" then
+		PauseAutomatic("probe off")
 		Stop()
 		capture = nil
 		ns.Print("Probe callbacks stopped and capture cleared. Re-hover normally; /reload if hover or input is abnormal.")
@@ -501,6 +576,7 @@ end)
 
 ns.RegisterCommand("scan", "[watch|off] - sample once, or three times with five-second pauses", function(arg)
 	if arg == "off" then
+		PauseAutomatic("scan off")
 		Stop()
 		ns.Print("Scan/probe callbacks stopped. Outstanding soft-cursor cleanup was attempted; /reload after an experiment.")
 	elseif arg == "" then
@@ -509,6 +585,7 @@ ns.RegisterCommand("scan", "[watch|off] - sample once, or three times with five-
 		local started, reason = Scan(generation)
 		if not started then ns.Print("Scan skipped: %s.", reason) end
 	elseif arg == "watch" then
+		PauseAutomatic("manual scan watch")
 		local function Round(index)
 			if not Stop() then return end
 			local token = generation

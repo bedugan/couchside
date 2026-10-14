@@ -68,7 +68,7 @@ local function Begin(watch)
 	if InCombatLockdown() then ns.Print("Motion probe refused in combat."); return end
 	Finish("restarted")
 	started, lastSample, phase = GetTime(), nil, 1
-	active = { version = 1, addonVersion = "0.12.0", samples = {}, events = {}, eventRegistrationErrors = {},
+	active = { version = 1, addonVersion = "0.13.0", samples = {}, events = {}, eventRegistrationErrors = {},
 		instance = Read(function() return IsInInstance() end),
 		instanceInfo = Read(function() return GetInstanceInfo() end) }
 	local version, build, _, interface = GetBuildInfo()
@@ -115,6 +115,7 @@ frame:SetScript("OnUpdate", function()
 end)
 
 ns.RegisterCommand("motion", "[watch|off] - read or watch dungeon movement APIs; saves the latest probe", function(arg)
+	if (arg == "" or arg == "watch") and ns.AutomaticScan then ns.AutomaticScan.Pause("manual motion probe") end
 	if arg == "off" then Finish("cancelled")
 	elseif arg == "" then Begin(false)
 	elseif arg == "watch" then Begin(true)

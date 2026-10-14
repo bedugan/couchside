@@ -1,0 +1,360 @@
+"""Exercise automatic/manual scan ownership and native macro setup through commands.
+
+Lua fixtures establish lifecycle and bounds, not native input or taint safety.
+"""
+from pathlib import Path
+import runpy
+from lupa.lua51 import LuaRuntime
+
+ROOT = Path(__file__).resolve().parents[1]
+legend = runpy.run_path(str(ROOT / "tests/gathering-legend-check.py"))
+STUB = r'''
+autoEnabled=false;speed=0;moving=false;mapVisible=true;cursorX=0;cursorY=0
+local priorEnabled=ns.IsEnabled
+ns.IsEnabled=function(k) if k=='autoScan' then return autoEnabled end;return priorEnabled(k) end
+function GetUnitSpeed() return speed end
+function IsPlayerMoving() return moving end
+function GetBuildInfo() return '1.60.1','70374','date',16001 end
+function GetServerTime() return 1791940000+math.floor(clock) end
+function GetCursorPosition() return cursorX,cursorY end
+Minimap.IsVisible=function() return mapVisible end
+queue={};soft=false;softRequests={};queries=0
+Minimap.SetUsingSoftCursor=function(_,value)
+ assert(not combat,'native cursor setter in combat')
+ softRequests[#softRequests+1]=value;soft=value
+ if failEnable and value then error('native cursor enable failed') end
+ if failCleanup and not value then error('native cleanup failed') end
+end
+Minimap.UpdateMouseoverAtPoint=function()
+ queries=queries+1
+ if queryAction then queryAction(queries) end
+ if failQuery then error('native point query failed') end
+end
+C_TooltipInfo={GetMinimapMouseover=function() return {lines={{leftText='Earthroot'}}} end}
+C_QuestLog={GetInfo=function() return nil end,GetQuestObjectives=function() return {} end}
+C_Timer={After=function(delay,fn) queue[#queue+1]={at=clock+delay,fn=fn} end}
+function fire(e,...)
+ for _,f in ipairs(frames) do if f.events[e] and f.scripts.OnEvent then f.scripts.OnEvent(f,e,...) end end
+end
+function advance(seconds)
+ local target=clock+seconds;local callbacks=0
+ while clock<target-.0000001 do
+  local nextTick=math.min(clock+.05,target)
+  while true do
+   table.sort(queue,function(a,b) return a.at<b.at end)
+   if not queue[1] or queue[1].at>nextTick then break end
+   local item=table.remove(queue,1);clock=item.at;item.fn()
+   callbacks=callbacks+1;assert(callbacks<100000,'timer runaway')
+  end
+  clock=nextTick
+  for _,f in ipairs(frames) do if f.shown and f.scripts.OnUpdate then f.scripts.OnUpdate(f,.05) end end
+ end
+end
+function enableAuto() autoEnabled=true;changed('autoScan') end
+Constants={MacroConsts={MAX_ACCOUNT_MACROS=3,MAX_CHARACTER_MACROS=2}}
+macros={};accountCount=0;characterCount=0;created=0
+function GetNumMacros() return accountCount,characterCount end
+function GetMacroInfo(i)
+ local m=macros[i];if m then return m.name,m.icon,m.body end
+end
+function CreateMacro(name,icon,body,character)
+ assert(not combat and not character)
+ created=created+1;accountCount=accountCount+1
+ macros[accountCount]={name=name,icon=icon,body=body};return accountCount
+end
+'''
+
+
+def make(setup=""):
+    vm = legend["make"](STUB + setup)
+    for name in ("MinimapProbe.lua", "AutomaticScan.lua", "ScanMacro.lua"):
+        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / "Couchside_Gathering" / name).read_text())
+    return vm
+
+
+def check(name, code, setup=""):
+    make(setup).execute(code)
+    print("PASS", name)
+
+
+vm = LuaRuntime(register_eval=False, register_builtins=False)
+vm.execute(legend["STUB"])
+vm.execute(STUB)
+vm.execute(r'''
+readyCallbacks={};optionDefaults={}
+ns.OnReady=function(fn) readyCallbacks[#readyCallbacks+1]=fn end
+Couchside={RegisterModule=function(_,spec)
+ for _,section in ipairs(spec.sections) do
+  for _,option in ipairs(section.options) do optionDefaults[option.key]=option.default end
+ end
+end}
+ns.IsEnabled=function(key) return optionDefaults[key] end
+''')
+for line in (ROOT / "Couchside_Gathering/Couchside_Gathering.toc").read_text().splitlines():
+    if line.endswith(".lua"):
+        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / "Couchside_Gathering" / line).read_text())
+vm.execute(r'''
+for _,callback in ipairs(readyCallbacks) do callback() end
+advance(30)
+assert(optionDefaults.autoScan==false and optionDefaults.nearbyList==false and optionDefaults.resourceLegend==false)
+assert(commands.auto and commands.macro and commands.scan and commands.motion)
+assert(queries==0 and created==0 and #softRequests==0)
+''')
+print("PASS actual TOC load with deferred readiness registers defaults and does no native mutation")
+
+
+check("automatic scanning defaults off and does no polling or cursor work", r'''
+advance(30);assert(queries==0 and #softRequests==0)
+assert(CouchsideGatheringScanDB.automationReport.status=='disabled')
+''')
+check("one second quiet interval starts the shared scanner and saves a quiet snapshot", r'''
+enableAuto();advance(1);assert(#softRequests==0)
+advance(.6);assert(soft and #softRequests==1)
+advance(2);local s=CouchsideGatheringScanDB.scans[1]
+assert(s and s.source=='automatic' and s.display.status=='shown' and not soft)
+assert(#logs==0,'routine automatic scan spammed chat')
+''')
+check("stationary wait accepts whole seconds one through four and survives reload data", r'''
+for _,value in ipairs({1,2,3,4}) do
+ commands.auto('delay '..value);assert(CouchsideGatheringScanDB.automaticScanSettings.delaySeconds==value)
+end
+for _,value in ipairs({'0','5','-1','1.5','bad','9999999999999999999999999'}) do
+ commands.auto('delay '..value);assert(CouchsideGatheringScanDB.automaticScanSettings.delaySeconds==4)
+end
+enableAuto();advance(4);assert(#softRequests==0);advance(.6);assert(soft)
+''')
+check("saved stationary preference is loaded without restarting a saved scan", r'''
+enableAuto();advance(3);assert(#softRequests==0);advance(1);assert(soft)
+assert(CouchsideGatheringScanDB.automationReport.delaySeconds==3)
+''', "CouchsideGatheringScanDB={version=1,nextID=1,scans={},automaticScanSettings={delaySeconds=3},automationReport={status='scanning'}}")
+check("invalid saved waits fall back to one second", r'''
+commands.auto('');assert(CouchsideGatheringScanDB.automationReport.delaySeconds==1)
+''', "CouchsideGatheringScanDB={version=1,nextID=1,scans={},automaticScanSettings={delaySeconds='bad'}}")
+check("walking, turning and an excursion returning to pose restart the quiet interval", r'''
+enableAuto();advance(.7);fire('PLAYER_STARTED_TURNING');fire('PLAYER_STOPPED_TURNING')
+advance(.8);assert(#softRequests==0);advance(.7);assert(soft)
+''')
+check("moving or restricted speed signals never launch even with unchanged coordinates", r'''
+enableAuto();moving=true;advance(3);assert(#softRequests==0)
+moving=false;speed=7;advance(3);assert(#softRequests==0)
+local secret={};issecretvalue=function(v) return v==secret end;speed=secret
+advance(3);assert(#softRequests==0)
+speed=0;advance(2);assert(soft)
+''')
+check("combat, hidden minimap and actual cursor hover prevent automatic launch", r'''
+enableAuto();combat=true;advance(3);assert(#softRequests==0)
+combat=false;mapVisible=false;advance(3);assert(#softRequests==0)
+mapVisible=true;cursorX=100;cursorY=100;advance(3);assert(#softRequests==0)
+cursorX=0;cursorY=0;advance(2);assert(soft)
+''')
+check("combat beginning during preparation prevents cursor enable", r'''
+C_QuestLog.GetInfo=function() combat=true;return nil end
+enableAuto();advance(4);assert(#softRequests==0 and #CouchsideGatheringScanDB.scans==0)
+''')
+check("native panels block stationary launch and opening one cancels active work", r'''
+local macroOpen=true;MacroFrame={IsVisible=function() return macroOpen end}
+enableAuto();advance(15);assert(#softRequests==0)
+macroOpen=false;local mapOpen=false;WorldMapFrame={IsVisible=function() return mapOpen end}
+queryAction=function(n) if n==10 then mapOpen=true end end
+advance(4);assert(not soft and queries<=16 and #CouchsideGatheringScanDB.scans==0)
+''')
+check("restricted or unreadable panel visibility stays withheld", r'''
+local secret={};issecretvalue=function(v) return v==secret end
+MacroFrame={IsVisible=function() return secret end};enableAuto();advance(3);assert(#softRequests==0)
+MacroFrame.IsVisible=function() return nil end;advance(3);assert(#softRequests==0)
+''')
+check("movement inside an automatic query batch cancels partial evidence", r'''
+queryAction=function(n) if n==10 then fire('PLAYER_STARTED_MOVING');fire('PLAYER_STOPPED_MOVING') end end
+enableAuto();advance(4)
+assert(not soft and #CouchsideGatheringScanDB.scans==0 and queries<=16)
+assert(CouchsideGatheringScanDB.automationReport.cancelled==1)
+''')
+check("an event at the final query still discards the automatic snapshot", r'''
+queryAction=function(n) if n==1009 then fire('PLAYER_STARTED_TURNING');fire('PLAYER_STOPPED_TURNING') end end
+enableAuto();advance(4);assert(queries==1009 and not soft and #CouchsideGatheringScanDB.scans==0)
+''')
+check("world and zone transitions reset the wait and cancel an automatic batch", r'''
+enableAuto();advance(.7);fire('PLAYER_ENTERING_WORLD');advance(.8);assert(#softRequests==0)
+queryAction=function(n) if n==10 then fire('ZONE_CHANGED_NEW_AREA') end end
+advance(3);assert(not soft and queries<=16 and #CouchsideGatheringScanDB.scans==0)
+assert(CouchsideGatheringScanDB.automationReport.cancelled==1)
+''')
+check("automatic scans use the north-up dungeon fallback and still refuse rotating instances", r'''
+enableAuto();advance(4)
+local s=CouchsideGatheringScanDB.scans[1]
+assert(s and s.motion.status=='unknown' and s.display.guardMode=='dungeon-motion' and s.display.status=='shown')
+pose.rotating=true;advance(20);assert(#CouchsideGatheringScanDB.scans==1)
+''', r'''
+IsInInstance=function() return true,'party' end
+UnitPosition=function() return nil,nil,nil,43 end
+C_Map.GetPlayerMapPosition=function() return nil end
+GetPlayerFacing=function() return nil end
+''')
+check("automatic refresh stays bounded by ten seconds and history by ten scans", r'''
+enableAuto();advance(9);assert(#softRequests==2)
+advance(3);assert(#softRequests==3)
+advance(110);assert(#CouchsideGatheringScanDB.scans==10)
+assert(CouchsideGatheringScanDB.automationReport.completed>=11)
+''')
+check("automatic refresh preserves a still-valid display until replacement or expiry", r'''
+enableAuto();advance(4);assert(visiblePanel())
+advance(7.7);assert(soft and visiblePanel(),'automatic refresh hid the previous live snapshot immediately')
+''')
+check("manual scan replaces an automatic scan without letting its old callback finish", r'''
+enableAuto();advance(1.8);assert(soft)
+commands.scan('');advance(3)
+assert(#CouchsideGatheringScanDB.scans==1 and CouchsideGatheringScanDB.scans[1].source=='manual')
+assert(not soft and CouchsideGatheringScanDB.automationReport.cancelled==1)
+''')
+check("scan off pauses automatic mode until explicit resume", r'''
+enableAuto();advance(2);commands.scan('off');advance(30)
+assert(not soft and #CouchsideGatheringScanDB.scans==0)
+assert(CouchsideGatheringScanDB.automationReport.status=='paused')
+commands.auto('resume');advance(3);assert(#CouchsideGatheringScanDB.scans==1)
+''')
+check("manual watch owns the scanner during all pauses and stops after three scans", r'''
+enableAuto();commands.scan('watch');advance(30)
+assert(#CouchsideGatheringScanDB.scans==3 and #softRequests==6)
+assert(CouchsideGatheringScanDB.automationReport.status=='paused')
+''')
+check("disabling either automatic scanning or its display cancels work and polling", r'''
+enableAuto();advance(2);autoEnabled=false;changed('autoScan');local before=#softRequests
+advance(30);assert(not soft and #softRequests==before and #CouchsideGatheringScanDB.scans==0)
+autoEnabled=true;enabled=false;changed('nearbyList');advance(30);assert(#softRequests==before)
+''')
+check("native query errors halt automatic retries for the session", r'''
+failQuery=true;enableAuto();advance(30);local before=#softRequests
+assert(not soft and CouchsideGatheringScanDB.automationReport.status=='faulted')
+commands.auto('resume');advance(30);assert(#softRequests==before and #CouchsideGatheringScanDB.scans==0)
+''')
+check("a nonthrowing protected action stops queries immediately inside a batch", r'''
+local inQuery=false;local normalSetter=Minimap.SetUsingSoftCursor
+Minimap.SetUsingSoftCursor=function(...)
+ assert(not inQuery,'setter was nested inside the native query');normalSetter(...)
+end
+local normalTooltip=C_TooltipInfo.GetMinimapMouseover;local afterBlock=false
+C_TooltipInfo.GetMinimapMouseover=function()
+ assert(not afterBlock,'tooltip read continued after protected cancellation');return normalTooltip()
+end
+queryAction=function(n)
+ inQuery=true
+ if n==10 then fire('ADDON_ACTION_BLOCKED','Couchside_Gathering');afterBlock=true end
+ inQuery=false
+end
+enableAuto();advance(30)
+assert(queries==10 and soft and #softRequests==1 and #CouchsideGatheringScanDB.scans==0)
+assert(CouchsideGatheringScanDB.automationReport.status=='faulted' and CouchsideGatheringScanDB.automationReport.protectedAction=='ADDON_ACTION_BLOCKED')
+assert(CouchsideGatheringScanDB.automationReport.failed==1)
+commands.scan('off');assert(not soft and #softRequests==2)
+''')
+check("protected notification during enable never reenters the cursor setter", r'''
+local normal=Minimap.SetUsingSoftCursor;local depth=0
+Minimap.SetUsingSoftCursor=function(self,value)
+ depth=depth+1;assert(depth==1,'cursor setter reentered')
+ normal(self,value);if value then fire('ADDON_ACTION_FORBIDDEN','Couchside_Gathering') end
+ depth=depth-1
+end
+enableAuto();advance(30)
+assert(#softRequests==1 and queries==0 and #CouchsideGatheringScanDB.scans==0)
+assert(CouchsideGatheringScanDB.automationReport.status=='faulted')
+commands.scan('off');assert(not soft and #softRequests==2)
+''')
+check("protected notification during cleanup discards completion without retry", r'''
+local normal=Minimap.SetUsingSoftCursor;local depth=0
+Minimap.SetUsingSoftCursor=function(self,value)
+ depth=depth+1;assert(depth==1,'cursor setter reentered')
+ normal(self,value);if not value then fire('ADDON_ACTION_FORBIDDEN','Couchside_Gathering') end
+ depth=depth-1
+end
+enableAuto();advance(30)
+assert(#softRequests==2 and #CouchsideGatheringScanDB.scans==0 and not soft)
+assert(CouchsideGatheringScanDB.automationReport.status=='faulted')
+''')
+check("failed protected-action listener registration prevents automatic work", r'''
+for _,f in ipairs(frames) do
+ local old=f.RegisterEvent
+ f.RegisterEvent=function(self,event) if event=='ADDON_ACTION_BLOCKED' then error('unsupported event') end;return old(self,event) end
+end
+enableAuto();advance(30);assert(#softRequests==0 and CouchsideGatheringScanDB.automationReport.status=='faulted')
+''')
+check("cursor enable errors still clean up once and stop retries", r'''
+failEnable=true;enableAuto();advance(30)
+assert(#softRequests==2 and not soft and CouchsideGatheringScanDB.automationReport.failed==1)
+assert(CouchsideGatheringScanDB.automationReport.status=='faulted')
+''')
+check("cursor cleanup failure never triggers another automatic request", r'''
+failCleanup=true;enableAuto();advance(30);local before=#softRequests
+assert(before==2 and CouchsideGatheringScanDB.automationReport.status=='faulted')
+advance(30);assert(#softRequests==before)
+''')
+check("watchdog recovers dropped batch callbacks and halts automatic retries", r'''
+enableAuto();advance(1.6);assert(soft)
+local kept={};for _,item in ipairs(queue) do if item.at>10 then kept[#kept+1]=item end end;queue=kept
+advance(30);assert(not soft and #CouchsideGatheringScanDB.scans==0 and #softRequests==2)
+assert(CouchsideGatheringScanDB.automationReport.status=='faulted')
+''')
+check("display failure records the finished diagnostic and stops repeat scans", r'''
+ns.NearbyList.Show=function() error('display failed') end
+enableAuto();advance(30)
+assert(#CouchsideGatheringScanDB.scans==1 and #softRequests==2 and not soft)
+assert(CouchsideGatheringScanDB.scans[1].display.status=='error' and CouchsideGatheringScanDB.automationReport.status=='faulted')
+''')
+check("changing the stationary wait cancels an in-flight automatic request", r'''
+enableAuto();advance(1.8);assert(soft);commands.auto('delay 4');advance(5)
+assert(not soft and #CouchsideGatheringScanDB.scans==0 and CouchsideGatheringScanDB.automaticScanSettings.delaySeconds==4)
+''')
+check("combat interrupt never attempts a protected cleanup until manual recovery", r'''
+enableAuto();advance(1.8);combat=true;advance(3)
+assert(soft and #softRequests==1 and CouchsideGatheringScanDB.automationReport.status=='faulted')
+combat=false;commands.scan('off');assert(not soft and #softRequests==2)
+''')
+check("a manual hover probe pauses automatic work through its capture countdown", r'''
+enableAuto();commands.probe('capture');advance(20)
+assert(#softRequests==0 and CouchsideGatheringScanDB.automationReport.status=='paused')
+''')
+check("native macro probe is read only and gates creation", r'''
+commands.macro('create');assert(created==0)
+commands.macro('probe');assert(created==0 and CouchsideGatheringScanDB.macroReport.status=='ready')
+''')
+check("macro helper creates one account entry with the map icon and exact scan body", r'''
+commands.macro('probe');commands.macro('create');commands.macro('create')
+assert(created==1 and macros[1].name=='Scan map' and macros[1].icon==134269 and macros[1].body=='/cs gathering scan')
+assert(CouchsideGatheringScanDB.macroReport.status=='exists')
+''')
+check("existing scan macro retains its chosen icon and text", r'''
+commands.macro('probe');commands.macro('create')
+assert(created==0 and macros[1].icon==42 and macros[1].body==' /cs gathering scan\n')
+''', "accountCount=1;macros[1]={name='Scan map',icon=42,body=' /cs gathering scan\\n'}")
+check("name collisions on either scope are preserved instead of overwritten", r'''
+commands.macro('probe');commands.macro('create');assert(created==0)
+assert(macros[4].body=='/dance' and CouchsideGatheringScanDB.macroReport.status=='name conflict')
+''', "characterCount=1;macros[4]={name='Scan map',icon=42,body='/dance'}")
+check("full account slots and combat refuse creation", r'''
+commands.macro('probe');commands.macro('create');assert(created==0)
+accountCount=0;commands.macro('probe');combat=true;commands.macro('create');assert(created==0)
+''', "accountCount=3;for i=1,3 do macros[i]={name='Other '..i,icon=42,body='/dance'} end")
+check("unavailable or restricted macro metadata causes no mutation", r'''
+GetMacroInfo=nil;commands.macro('probe');commands.macro('create');assert(created==0)
+GetMacroInfo=function() return 'Other',42,'/dance' end
+local secret={};issecretvalue=function(v) return v==secret end
+GetNumMacros=function() return secret,0 end
+commands.macro('probe');commands.macro('create');assert(created==0)
+''')
+check("partial macro creation error does not duplicate the entry on explicit retry", r'''
+local normal=CreateMacro;CreateMacro=function(...) normal(...);error('creation returned an error') end
+commands.macro('probe');commands.macro('create');assert(created==1)
+commands.macro('create');assert(created==1 and CouchsideGatheringScanDB.macroReport.status=='exists')
+''')
+check("unexpected macro return index stays unverified and does not duplicate on retry", r'''
+local normal=CreateMacro;CreateMacro=function(...) normal(...);return 999 end
+commands.macro('probe');commands.macro('create')
+assert(created==1 and CouchsideGatheringScanDB.macroReport.status=='creation unverified')
+commands.macro('create');assert(created==1 and CouchsideGatheringScanDB.macroReport.existingIcon==134269)
+''')
+check("macro setup performs no cursor pickup, binding or native panel operation", r'''
+for _,name in ipairs({'PickupMacro','SetBinding','SetOverrideBindingClick','ShowUIPanel','EditMacro','DeleteMacro'}) do
+ _G[name]=function() error('unexpected native operation: '..name) end
+end
+commands.macro('probe');commands.macro('create');assert(created==1 and #softRequests==0)
+''')
+print("43 scan launch checks passed")

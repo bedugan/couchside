@@ -203,7 +203,7 @@ end
 local function Show(scan)
 	Clear("new scan")
 	local guard, display = ns.MotionGuard.Prepare(scan.motion)
-	display.version, display.addonVersion, display.status = 1, "0.12.0", "withheld"
+	display.version, display.addonVersion, display.status = 1, "0.13.0", "withheld"
 	display.scanID, display.legend = scan.id, ns.IsEnabled("resourceLegend")
 	lastDisplay = display
 	local reason = Rejection(scan, display)
@@ -320,7 +320,7 @@ end)
 
 local function RecordError(reason, scanID)
 	Clear("display error")
-	lastDisplay = { version = 1, addonVersion = "0.12.0", scanID = scanID, status = "error", reason = tostring(reason) }
+	lastDisplay = { version = 1, addonVersion = "0.13.0", scanID = scanID, status = "error", reason = tostring(reason) }
 	return lastDisplay
 end
 
