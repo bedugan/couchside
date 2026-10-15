@@ -1,0 +1,1032 @@
+{
+  "source": "Native SavedVariables parsed as data, never executed",
+  "savedFileModifiedUTC": "2026-10-14T23:49:01.670212+00:00",
+  "sha256": "c2f51f0df9949034457cd9f82922e45d902c6bcdc839040572f328ed2f5e653b",
+  "questReportVersion": 1,
+  "reports": [
+    {
+      "playerMapAfter": {
+        "status": "ok",
+        "value": 1413
+      },
+      "gossipActive": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      },
+      "label": "turnin",
+      "gossipAvailable": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      },
+      "questFrameVisible": {
+        "status": "ok",
+        "value": false
+      },
+      "client": {
+        "status": "ok",
+        "value": {
+          "build": "70374",
+          "version": "1.60.1",
+          "interface": 16001
+        }
+      },
+      "hover": {
+        "status": "ok",
+        "value": {
+          "dataInstanceID": 96388,
+          "lines": {
+            "1": {
+              "leftColor": {
+                "b": 0,
+                "GetHSL": "<function omitted>",
+                "g": 0.8235294222831726,
+                "GetRGBA": "<function omitted>",
+                "IsRGBEqualTo": "<function omitted>",
+                "SetRGB": "<function omitted>",
+                "GetRGB": "<function omitted>",
+                "OnLoad": "<function omitted>",
+                "GenerateHexColorMarkup": "<function omitted>",
+                "WrapTextInColorCode": "<function omitted>",
+                "GenerateHexColor": "<function omitted>",
+                "IsEqualTo": "<function omitted>",
+                "r": 1,
+                "GenerateHexColorNoAlpha": "<function omitted>",
+                "SetRGBA": "<function omitted>",
+                "GetRGBAsBytes": "<function omitted>",
+                "GetRGBAAsBytes": "<function omitted>"
+              },
+              "type": 0,
+              "leftText": "Islen Waterseer\nIsha Awak"
+            }
+          },
+          "type": 21
+        }
+      },
+      "id": 5,
+      "afterRequest": {
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.4386308789253235,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1456,
+              "isCombatAllyQuest": false,
+              "questID": 1130,
+              "isMapIndicatorQuest": false,
+              "y": 0.4478074312210083,
+              "x": 0.2712747156620026,
+              "numObjectives": 0,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 3
+        },
+        "quests": {
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 20
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 22
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1130": {
+            "title": {
+              "status": "ok",
+              "value": "Melor Sends Word"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 26
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        }
+      },
+      "requestCall": {
+        "status": "nil"
+      },
+      "mapData": {
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.4386308789253235,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1456,
+              "isCombatAllyQuest": false,
+              "questID": 1130,
+              "isMapIndicatorQuest": false,
+              "y": 0.4478074312210083,
+              "x": 0.2712747156620026,
+              "numObjectives": 0,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 3
+        },
+        "quests": {
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 20
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 22
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1130": {
+            "title": {
+              "status": "ok",
+              "value": "Melor Sends Word"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 26
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        }
+      },
+      "minimapMap": {
+        "status": "nil"
+      },
+      "version": 1,
+      "requestStatus": "event-observed",
+      "tracking": {
+        "truncated": false,
+        "count": {
+          "status": "ok",
+          "value": 24
+        },
+        "entries": {
+          "1": {
+            "status": "ok",
+            "value": {
+              "type": "spell",
+              "name": "Find Herbs",
+              "active": true,
+              "texture": 133939,
+              "subType": -1,
+              "spellID": 2383
+            }
+          },
+          "2": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Auctioneer",
+              "active": false,
+              "subType": 2,
+              "texture": 136452
+            }
+          },
+          "3": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Banker",
+              "active": false,
+              "subType": 2,
+              "texture": 136453
+            }
+          },
+          "4": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Banker",
+              "active": false,
+              "subType": 2,
+              "texture": 136453
+            }
+          },
+          "5": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Barber",
+              "active": false,
+              "subType": 2,
+              "texture": 3852099
+            }
+          },
+          "6": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Battlemaster",
+              "active": false,
+              "subType": 2,
+              "texture": 136454
+            }
+          },
+          "7": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Flight Master",
+              "active": true,
+              "subType": -1,
+              "texture": 136456
+            }
+          },
+          "8": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Food & Drink",
+              "active": false,
+              "subType": 2,
+              "texture": 136457
+            }
+          },
+          "9": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Innkeeper",
+              "active": true,
+              "subType": 2,
+              "texture": 136458
+            }
+          },
+          "10": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Item Upgrade",
+              "active": false,
+              "subType": 2,
+              "texture": 4025144
+            }
+          },
+          "11": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Mailbox",
+              "active": false,
+              "subType": 2,
+              "texture": 136459
+            }
+          },
+          "12": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Class Trainer",
+              "active": false,
+              "subType": 2,
+              "texture": 136455
+            }
+          },
+          "13": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Profession Trainers",
+              "active": false,
+              "subType": 2,
+              "texture": 136463
+            }
+          },
+          "14": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Reagents",
+              "active": false,
+              "subType": 2,
+              "texture": 136464
+            }
+          },
+          "15": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Repair",
+              "active": true,
+              "subType": 2,
+              "texture": 136465
+            }
+          },
+          "16": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Stable Master",
+              "active": false,
+              "subType": 2,
+              "texture": 136466
+            }
+          },
+          "17": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Transmogrifier",
+              "active": false,
+              "subType": 2,
+              "texture": 1598183
+            }
+          },
+          "18": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Low-Level Quests",
+              "active": false,
+              "subType": -1,
+              "texture": 237607
+            }
+          },
+          "19": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Account Completed Quests",
+              "active": true,
+              "subType": -1,
+              "texture": 4675649
+            }
+          },
+          "20": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Points of Interest",
+              "active": false,
+              "subType": -1,
+              "texture": 457292
+            }
+          },
+          "21": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Target",
+              "active": false,
+              "subType": -1,
+              "texture": 524052
+            }
+          },
+          "22": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Focus Target",
+              "active": false,
+              "subType": -1,
+              "texture": 524051
+            }
+          },
+          "23": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Track Quest POIs",
+              "active": true,
+              "subType": -1,
+              "texture": 535616
+            }
+          },
+          "24": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Track Digsites",
+              "active": false,
+              "subType": -1,
+              "texture": 535615
+            }
+          }
+        }
+      },
+      "playerMap": {
+        "status": "ok",
+        "value": 1413
+      },
+      "serverTime": {
+        "status": "ok",
+        "value": 1792021660
+      },
+      "gossipVisible": {
+        "status": "ok",
+        "value": false
+      }
+    },
+    {
+      "mapData": {
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.4386308789253235,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1456,
+              "isCombatAllyQuest": false,
+              "questID": 1130,
+              "isMapIndicatorQuest": false,
+              "y": 0.4478074312210083,
+              "x": 0.2712747156620026,
+              "numObjectives": 0,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 3
+        },
+        "quests": {
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 20
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 22
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1130": {
+            "title": {
+              "status": "ok",
+              "value": "Melor Sends Word"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 26
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        }
+      },
+      "gossipActive": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      },
+      "label": "turnin-talk",
+      "id": 6,
+      "questFrameVisible": {
+        "status": "ok",
+        "value": true
+      },
+      "gossipAvailable": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      },
+      "playerMap": {
+        "status": "ok",
+        "value": 1413
+      },
+      "minimapMap": {
+        "status": "nil"
+      },
+      "version": 1,
+      "tracking": {
+        "truncated": false,
+        "count": {
+          "status": "ok",
+          "value": 24
+        },
+        "entries": {
+          "1": {
+            "status": "ok",
+            "value": {
+              "type": "spell",
+              "name": "Find Herbs",
+              "active": true,
+              "texture": 133939,
+              "subType": -1,
+              "spellID": 2383
+            }
+          },
+          "2": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Auctioneer",
+              "active": false,
+              "subType": 2,
+              "texture": 136452
+            }
+          },
+          "3": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Banker",
+              "active": false,
+              "subType": 2,
+              "texture": 136453
+            }
+          },
+          "4": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Banker",
+              "active": false,
+              "subType": 2,
+              "texture": 136453
+            }
+          },
+          "5": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Barber",
+              "active": false,
+              "subType": 2,
+              "texture": 3852099
+            }
+          },
+          "6": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Battlemaster",
+              "active": false,
+              "subType": 2,
+              "texture": 136454
+            }
+          },
+          "7": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Flight Master",
+              "active": true,
+              "subType": -1,
+              "texture": 136456
+            }
+          },
+          "8": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Food & Drink",
+              "active": false,
+              "subType": 2,
+              "texture": 136457
+            }
+          },
+          "9": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Innkeeper",
+              "active": true,
+              "subType": 2,
+              "texture": 136458
+            }
+          },
+          "10": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Item Upgrade",
+              "active": false,
+              "subType": 2,
+              "texture": 4025144
+            }
+          },
+          "11": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Mailbox",
+              "active": false,
+              "subType": 2,
+              "texture": 136459
+            }
+          },
+          "12": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Class Trainer",
+              "active": false,
+              "subType": 2,
+              "texture": 136455
+            }
+          },
+          "13": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Profession Trainers",
+              "active": false,
+              "subType": 2,
+              "texture": 136463
+            }
+          },
+          "14": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Reagents",
+              "active": false,
+              "subType": 2,
+              "texture": 136464
+            }
+          },
+          "15": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Repair",
+              "active": true,
+              "subType": 2,
+              "texture": 136465
+            }
+          },
+          "16": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Stable Master",
+              "active": false,
+              "subType": 2,
+              "texture": 136466
+            }
+          },
+          "17": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Transmogrifier",
+              "active": false,
+              "subType": 2,
+              "texture": 1598183
+            }
+          },
+          "18": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Low-Level Quests",
+              "active": false,
+              "subType": -1,
+              "texture": 237607
+            }
+          },
+          "19": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Account Completed Quests",
+              "active": true,
+              "subType": -1,
+              "texture": 4675649
+            }
+          },
+          "20": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Points of Interest",
+              "active": false,
+              "subType": -1,
+              "texture": 457292
+            }
+          },
+          "21": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Target",
+              "active": false,
+              "subType": -1,
+              "texture": 524052
+            }
+          },
+          "22": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Focus Target",
+              "active": false,
+              "subType": -1,
+              "texture": 524051
+            }
+          },
+          "23": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Track Quest POIs",
+              "active": true,
+              "subType": -1,
+              "texture": 535616
+            }
+          },
+          "24": {
+            "status": "ok",
+            "value": {
+              "type": "other",
+              "name": "Track Digsites",
+              "active": false,
+              "subType": -1,
+              "texture": 535615
+            }
+          }
+        }
+      },
+      "hover": {
+        "status": "nil"
+      },
+      "client": {
+        "status": "ok",
+        "value": {
+          "build": "70374",
+          "version": "1.60.1",
+          "interface": 16001
+        }
+      },
+      "serverTime": {
+        "status": "ok",
+        "value": 1792021691
+      },
+      "gossipVisible": {
+        "status": "ok",
+        "value": false
+      }
+    }
+  ],
+  "limits": [
+    "No individual pin or NPC ID was captured.",
+    "QuestFrame visibility does not identify the displayed quest or prove reward collection.",
+    "Returned quest points include maps other than the explicit player map.",
+    "This sample is non-repeatable; repeatable turn-ins remain untested."
+  ]
+}

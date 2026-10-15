@@ -62,13 +62,30 @@ The observed event confirms that the request/event/report path worked. Zero map-
 
 Brian reported working controls throughout. The pointer disappeared when he interacted using the controller; he clarified that this matches the input-mode behavior he normally sees, with text-field interfaces such as the macro editor and auction house behaving differently. This is not classified as a report regression, and no cursor-restoration workaround was added. Automatic gathering scans were disabled in the synced options. The refreshed BugGrabber file was at session 103 with no recorded errors at or after the first role report; its newest recorded error was at 06:35:05 UTC, well before this test. No causal attribution is inferred from old errors or their absence.
 
-The read-only diagnostic and its reload persistence are accepted for the tested path. Completed-turn-in and repeatable comparisons remain outstanding. General minimap ownership in #11 still needs resolution before new combined list features land.
+The read-only diagnostic and its reload persistence are accepted for the tested path. The completed-turn-in comparison below adds one usable title match. Repeatable comparisons remain outstanding. General minimap ownership in #11 still needs resolution before new combined list features land.
+
+## Native turn-in result
+
+Brian completed the turn-in comparison on Forever build `70374`. Reports 5 and 6, labelled `turnin` and `turnin-talk`, were captured at 23:47:40 and 23:48:11 UTC and survived the 23:49:01 UTC reload/save. See the [data-only turn-in capture](quest-role-turnin-native-2026-10-14.json).
+
+| Evidence | Result |
+| --- | --- |
+| Ordinary hover before interaction | One multiline `leftText`, `Islen Waterseer` followed by `Isha Awak`. Generic tooltip type 21, without NPC ID, quest ID or per-pin identity. |
+| Exact quest-title match | Quest `873`, Isha Awak, returned complete, ready for turn-in and non-repeatable before and after the map request. |
+| Local point | Quest 873's returned point has map ID 1413, matching the explicit player map. |
+| Other points | Quests 1060 and 1130 returned map IDs 1442 and 1456. An explicit player-map query can contain nonlocal points. |
+| Map offers and force-visible IDs | Successful empty reads before and after the request. This does not establish absence of offers. |
+| Dialogue sample | QuestFrame shown, GossipFrame hidden, both gossip lists empty, hover nil. The probe does not capture direct QuestFrame quest identity. |
+
+This supports exact-title recognition of one observed ordinary ready turn-in. It does not establish a role for `Islen Waterseer` from its name, associate the hover with an individual pin, or prove the displayed dialogue was quest 873. The dialogue sample also does not prove a reward was collected. No repeatable turn-in or learned/unlearned flight-path conclusion follows.
+
+Independent GPT-6-Astra review agreed with this interpretation and its limits. The result can inform a conservative quest-title classifier after the minimap ownership boundary is resolved. It does not justify a generic NPC-name or tooltip-color classifier. No quest-role display or filter was added in this batch.
 
 ## Initial native comparison
 
-Quests 0.7.1 is copied into the actual game AddOns folder. The installed Quests 0.7.0 baseline was verified against the repository and backed up first; all twelve candidate files match source byte-for-byte. Gathering remains the accepted committed 0.15.0. No options were changed by the copy.
+Quests 0.7.1 was copied into the actual game AddOns folder. The installed Quests 0.7.0 baseline was verified against the repository and backed up first; all twelve candidate files matched source byte-for-byte. No options were changed by the copy.
 
-This is the repeatable report-first comparison required by `AGENTS.md`, before filters or icons are built. The ordinary-offer pair has now run; the completed-turn-in pair is next. Turn automatic gathering scans off so they cannot replace ordinary minimap hover during the comparison. Reload Quests 0.7.1, then:
+This is the report-first comparison required by `AGENTS.md`, before filters or icons are built. Both ordinary-offer and completed-turn-in pairs have now run. The original procedure is retained below. Turn automatic gathering scans off so they cannot replace ordinary minimap hover during a future comparison, then:
 
 1. Stand near an ordinary visible gold quest-offer marker with no dialogue open. Hover that native marker with the pointer and run `/cs quests roles request offer`. Wait for the brief saved-report message, up to ten seconds. Note the native marker and hover title.
 2. Interact manually with that NPC and run `/cs quests roles offer-talk` while its dialogue is open. Note whether the game opened gossip, a greeting or quest details and the offered title. The addon opens none of these frames.

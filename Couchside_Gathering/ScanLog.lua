@@ -61,7 +61,8 @@ function ns.SnapshotTooltip(data)
 		return result
 	end
 	local ok, snapshot = pcall(Copy, data, 0)
-	return ok and snapshot or { snapshotError = tostring(snapshot) }
+	if ok then return snapshot end
+	return { snapshotError = tostring(snapshot) }
 end
 
 function ns.SaveGatheringScan(record, quiet)
@@ -106,8 +107,9 @@ ns.RegisterCommand("log", "[clear] - report saved scan history, or clear it", fu
 		db.classificationReport = nil
 		db.motionReport = nil
 		db.panelReport = nil
+		db.skillReports = nil
 		db.automationReport, db.macroReport = nil, nil
-		ns.Print("Scan, classification, motion, panel, automatic-scan and macro reports cleared in memory. Wait preference retained. /reload or logout to write the change.")
+		ns.Print("Scan, classification, motion, panel, skill, automatic-scan and macro reports cleared in memory. Wait preference retained. /reload or logout to write the change.")
 	elseif arg == "" then
 		ns.Print("Scan history: %d completed scans in memory; up to %d manual and %d automatic. File: WTF/Account/<account>/SavedVariables/Couchside_Gathering.lua.", #db.scans, LIMIT, AUTOMATIC_LIMIT)
 		for _, scan in ipairs(db.scans) do
@@ -121,6 +123,10 @@ ns.RegisterCommand("log", "[clear] - report saved scan history, or clear it", fu
 				tostring(report.scanID), tostring(report.catalogVersion), tostring(report.totalEntries),
 				report.entriesTruncated and "; detail capped at 40" or "")
 		else ns.Print("No saved classification report. Run /cs gathering classify.") end
+		if db.skillReports and #db.skillReports > 0 then
+			local skill = db.skillReports[#db.skillReports]
+			ns.Print("Skill reports: %d retained; latest %d (%s).", #db.skillReports, skill.id, skill.label)
+		end
 	else
 		ns.Print("Usage: /cs gathering log [clear]")
 	end

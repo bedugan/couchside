@@ -1,0 +1,97 @@
+{
+  "source": "Native SavedVariables parsed as data, never executed",
+  "sha256": "6988f271dd6b2bc5ad605228538aee07ba70ed57b33f0a716fbae083ae4d31d2",
+  "savedFileModifiedUTC": "2026-10-14T23:40:41.503683+00:00",
+  "redactions": [
+    "player GUID replaced; unrelated enumerated skill rows omitted"
+  ],
+  "reports": [
+    {
+      "addonVersion": "0.15.1",
+      "label": "baseline",
+      "id": 1,
+      "tooltip": {
+        "status": "not-shown-or-unknown"
+      },
+      "enumerationTruncated": false,
+      "minimapHover": {
+        "status": "nil"
+      },
+      "enumeration": {
+        "9": {
+          "status": "ok",
+          "value": {
+            "isAbandonable": true,
+            "stepCost": 0,
+            "description": "Higher herbalism skill allows you to harvest more difficult herbs around the world.  If you cannot harvest a specific herb, then increase your skill by harvesting easier to gather herbs in lower level areas.",
+            "isCollapsed": false,
+            "skillID": 182,
+            "isHeader": false,
+            "maxRank": 225,
+            "tempPoints": 0,
+            "skillLineCategoryID": 11,
+            "parentSkillLineID": 0,
+            "minLevel": 0,
+            "modifier": 0,
+            "rankCost": 0,
+            "name": "Herbalism",
+            "costType": 0,
+            "rank": 138
+          }
+        }
+      },
+      "character": {
+        "status": "ok",
+        "value": "<redacted player GUID>"
+      },
+      "version": 1,
+      "skillCount": {
+        "status": "ok",
+        "value": 31
+      },
+      "client": {
+        "interface": 16001,
+        "version": "1.60.1",
+        "build": "70374"
+      },
+      "skills": {
+        "Herbalism": {
+          "requestedSkillID": 182,
+          "result": {
+            "status": "ok",
+            "value": {
+              "isAbandonable": true,
+              "stepCost": 0,
+              "description": "Higher herbalism skill allows you to harvest more difficult herbs around the world.  If you cannot harvest a specific herb, then increase your skill by harvesting easier to gather herbs in lower level areas.",
+              "isCollapsed": false,
+              "skillID": 182,
+              "isHeader": false,
+              "maxRank": 225,
+              "tempPoints": 0,
+              "skillLineCategoryID": 11,
+              "parentSkillLineID": 0,
+              "minLevel": 0,
+              "modifier": 0,
+              "rankCost": 0,
+              "name": "Herbalism",
+              "costType": 0,
+              "rank": 138
+            }
+          }
+        },
+        "Mining": {
+          "requestedSkillID": 186,
+          "result": {
+            "status": "nil"
+          }
+        }
+      },
+      "serverTime": 1792021206,
+      "tooltipVisible": {
+        "status": "unreadable"
+      }
+    }
+  ],
+  "userConfirmation": "Printed values match native Skills panel.",
+  "limits": "Validates Herbalism rank138/max225/modifier0/temp0 and a nil Mining read on this character, not learned Mining, nonzero bonuses, node thresholds or exact skill-up chance. The pre-fix false-snapshot helper misreported hidden tooltip visibility as unreadable; the artifact preserves that outcome."
+}

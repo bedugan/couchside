@@ -21,7 +21,7 @@ local rows, badges = {}, {}
 local symbolBadges, headings = {}, {}
 local observation
 local lastDisplay
-local elapsed = 0
+local elapsed, skillElapsed = 0, 0
 local driver = CreateFrame("Frame")
 driver:Hide()
 
@@ -135,10 +135,10 @@ local function Heading(key, text, y)
 	heading:Show()
 end
 
-local function ShowLegend(scan)
+local function ShowLegend(scan, profile)
 	local model = ns.ResourceLegend.Build(scan)
 	local count, y, lastGroup = math.min(#model.rows, MAX_ROWS), -34, nil
-	local listed = {}
+	local listed, difficulties = {}, {}
 	for index = 1, count do
 		local item = model.rows[index]
 		local group = item.kind == "resource-candidate" and item.category or "other"
@@ -156,20 +156,33 @@ local function ShowLegend(scan)
 			row.symbol:SetPoint("LEFT", 0, 0)
 			row.symbol:SetSize(16, 16)
 		end
+		if not row.difficulty then
+			row.difficulty = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+			row.difficulty:SetPoint("RIGHT")
+			row.difficulty:SetWordWrap(false)
+		end
 		if item.symbol then
+			local difficulty = ns.ResourceDifficulty.Evaluate(item.text, profile)
+			difficulties[item.resourceKey] = difficulty
 			row.symbol:SetTexture("Interface\\AddOns\\Couchside_Gathering\\Media\\" .. item.symbol .. ".tga")
+			row.symbol:SetVertexColor(difficulty.r, difficulty.g, difficulty.b)
 			row.symbol:Show()
+			row.difficulty:SetText(difficulty.label)
+			row.difficulty:SetTextColor(difficulty.r, difficulty.g, difficulty.b)
+			row.difficulty:Show()
 			row.letter:Hide()
 			listed[item.resourceKey] = true
 		else
 			row.symbol:Hide()
+			row.difficulty:Hide()
 			row.letter:SetText("?")
 			row.letter:SetTextColor(0.76, 0.81, 0.80)
 			row.letter:Show()
 		end
 		row.name:ClearAllPoints()
 		row.name:SetPoint("LEFT", 25, 0)
-		row.name:SetPoint("RIGHT")
+		if item.symbol then row.name:SetPoint("RIGHT", row.difficulty, "LEFT", -8, 0)
+		else row.name:SetPoint("RIGHT") end
 		row.name:SetText(item.text)
 		row:Show()
 	end
@@ -195,6 +208,8 @@ local function ShowLegend(scan)
 			badge:ClearAllPoints()
 			badge:SetPoint("CENTER", Minimap, "CENTER", x, y)
 			badge.symbol:SetTexture("Interface\\AddOns\\Couchside_Gathering\\Media\\" .. mark.symbol .. ".tga")
+			local difficulty = difficulties[mark.resourceKey]
+			badge.symbol:SetVertexColor(difficulty.r, difficulty.g, difficulty.b)
 			badge:Show()
 		else
 			omitted = true
@@ -202,7 +217,7 @@ local function ShowLegend(scan)
 	end
 	panel:SetHeight(30 - y)
 	local message = count == 0 and "No nearby names" or #model.rows > MAX_ROWS
-		and ("8 of " .. #model.rows .. " names - scan snapshot") or ("Scan snapshot - clears in %ds"):format(LIFETIME)
+		and ("8 of " .. #model.rows .. " names - Classic estimates") or ("Snapshot %ds - Classic estimates"):format(LIFETIME)
 	footer:SetText(message .. (omitted and " - some marks omitted" or ""))
 	ns.Debug("Resource stamps: %d/%d names, %d marks; %d mixed/invalid regions withheld. Unknowns retained.",
 		count, #model.rows, drawn, model.withheldRegions)
@@ -230,11 +245,14 @@ local function Show(scan)
 		display.guardMode, display.guardStatus, tostring(display.motionStatus), tostring(display.unknownSamples))
 	if not panel then CreatePanel() end
 	if ns.IsEnabled("resourceLegend") then
-		display.rows, display.marks = ShowLegend(scan)
+		local profile = ns.ResourceDifficulty.Capture()
+		display.rows, display.marks = ShowLegend(scan, profile)
+		display.difficultyModel = ns.ResourceDifficulty.version
 		panel:Show()
 		display.status, display.reason = "shown", "accepted still scan"
-		observation = { geometry = scan.geometry, guard = guard, expires = GetTime() + LIFETIME, display = display }
-		elapsed = 0
+		observation = { geometry = scan.geometry, guard = guard, expires = GetTime() + LIFETIME, display = display,
+			scan = scan, profile = profile }
+		elapsed, skillElapsed = 0, 0
 		driver:Show()
 		return display
 	end
@@ -253,6 +271,7 @@ local function Show(scan)
 		row:ClearAllPoints()
 		row:SetPoint("TOPLEFT", 12, -34 - (index - 1) * 27)
 		if row.symbol then row.symbol:Hide() end
+		if row.difficulty then row.difficulty:Hide() end
 		row.letter:SetTextColor(1, 0.82, 0)
 		row.letter:Show()
 		row.arrow:Show()
@@ -285,6 +304,7 @@ end
 
 driver:SetScript("OnUpdate", function(_, delta)
 	elapsed = elapsed + delta
+	skillElapsed = skillElapsed + delta
 	if elapsed < 0.1 or not observation then return end
 	elapsed = 0
 	local ok, reason = pcall(function()
@@ -295,6 +315,15 @@ driver:SetScript("OnUpdate", function(_, delta)
 		if not GeometryMatches(observation.geometry) then return "minimap geometry or zoom changed" end
 		local matches, failure = ns.MotionGuard.Check(observation.guard)
 		if not matches then return failure end
+		if observation.profile and skillElapsed >= 1 then
+			skillElapsed = 0
+			local profile = ns.ResourceDifficulty.Capture()
+			if profile.signature ~= observation.profile.signature then
+				observation.display.rows, observation.display.marks = ShowLegend(observation.scan, profile)
+				observation.profile = profile
+				ns.Debug("Gathering difficulty refreshed from current character skill; snapshot expiry unchanged.")
+			end
+		end
 	end)
 	if not ok then reason = "display state read failed: " .. tostring(reason) end
 	if reason then Clear(reason) end

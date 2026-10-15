@@ -26,7 +26,7 @@ Couchside.RegisterModule(ns, {
 					key = "resourceLegend",
 					default = false,
 					name = "Resource letter stamps and other tracking",
-					tooltip = "Use permanent two-letter stamps for 28 herb types and 16 mineral types from a Classic English catalog. Purple Lotus is PL; Mageroyal is MR. Other names stay neutral. Requires nearby tracking; added names and 16-pixel stamps need in-game validation.",
+					tooltip = "Use permanent two-letter stamps for a Classic English resource catalog. Color and a short word show Classic skill-up estimates when current skill and reference bands are available. Unknowns stay neutral. Requires nearby tracking; native difficulty coverage needs validation.",
 				},
 			},
 		},

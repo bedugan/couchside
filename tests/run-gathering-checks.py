@@ -13,6 +13,8 @@ from lupa.lua51 import LuaRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = (
+    "gathering-difficulty-check.py",
+    "gathering-skill-probe-check.py",
     "gathering-classifier-check.py",
     "gathering-catalog-check.py",
     "gathering-legend-check.py",

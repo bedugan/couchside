@@ -6,7 +6,7 @@ from pathlib import Path
 from lupa.lua51 import LuaRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = ("ScanLog.lua", "QuestTextFilter.lua", "ResourceCatalog.lua", "ResourceLegend.lua", "ResourceClassifier.lua", "MotionGuard.lua", "NearbyList.lua")
+FILES = ("ScanLog.lua", "QuestTextFilter.lua", "ResourceCatalog.lua", "ResourceDifficulty.lua", "ResourceLegend.lua", "ResourceClassifier.lua", "MotionGuard.lua", "NearbyList.lua")
 STUB = r'''
 logs={};commands={};frames={};nativeCalls=0;clock=0;combat=false;enabled=true;legend=true;motion=false
 pose={mapID=1413,x=.5,y=.5,facing=0,rotating=false}
@@ -36,6 +36,8 @@ function CreateFrame(_,_,parent)
  function f:CreateTexture() return CreateFrame(nil,nil,self) end
  function f:CreateFontString() return CreateFrame(nil,nil,self) end
  for _,k in ipairs({'EnableMouse','SetWidth','SetHeight','SetColorTexture','SetAllPoints','SetVertexColor','SetTextColor','SetWordWrap','SetAtlas','SetFrameLevel'}) do f[k]=function() end end
+ function f:SetVertexColor(...) self.tint={...} end
+ function f:SetTextColor(...) self.textColor={...} end
  frames[#frames+1]=f;return f
 end
 Minimap={GetRect=function() return 100,100,198,198 end,GetEffectiveScale=function() return .711 end,

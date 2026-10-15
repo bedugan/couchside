@@ -12,6 +12,8 @@ The selected model B replaces the earlier permanent-shape meanings. The prototyp
 
 Quest labels remain attached to quest IDs and require their own grouping and stable assignment. Unknown NPC names do not establish quest or flight-master roles. No new quest-role icon meaning is assigned by this resource decision.
 
+Brian later selected difficulty model C: tint the same letters and add a short status word alongside the neutral resource name, retaining a non-color explanation. Identity codes do not change as skill rises. Version 0.16.0 labels its bands as Classic estimates and preserves Unknown when skill or reference data is unsupported. The validated 0.15.1 skill read supplies current character data; saved diagnostic reports do not drive colors. Brian accepted the colored stamp appearance in-game and specifically noted the black edge's readability. Word fit and broader gathering behavior remain subject to playtesting. See the [difficulty source and limits](../research/gathering-difficulty-2026-10-14.md).
+
 ## Superseded seven-shape trial
 
 The earlier design gave seven observed herbs permanent geometric marks, including Mageroyal's purple diamond. Brian approved the tested 12-pixel ordinary shapes and 16-pixel yellow star, with 24-pixel list shapes. Those native size results remain evidence for that old design; they do not prove the new letter stamps readable. The earlier comparison is captured on branch `prototype/minimap-symbol-legend`, and the [trial guide](../gathering-prototype-test.html) preserves its history.
