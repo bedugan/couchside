@@ -67,6 +67,8 @@ Quest-offer/turn-in filters, quest-role/flight-discovery icons, service suppress
 
 ## Settings
 
+Base 0.7.1 moves checkboxes to a wider column on every Couchside page so long option names have more room. Labels end beside the checkbox, and released rows return to Blizzard's default layout before reuse. Brian accepted the visual result in the combined 0.8.1 migration candidate; names, defaults, tooltips and saved values are unchanged. See [settings layout validation](docs/research/settings-label-spacing-2026-10-14.md) for evidence and remaining input checks.
+
 Defaults apply when no preference is saved. Module settings live account-wide in `CouchsideDB.modules`; debug is `CouchsideDB.debug`.
 
 | Option | Default | Setting |

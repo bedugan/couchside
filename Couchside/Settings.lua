@@ -9,6 +9,27 @@ local ADDON_NAME, ns = ...
 
 local category
 
+-- Settings rows share a Blizzard frame pool. Widen only our initializers, and
+-- restore the template anchors before a row can be reused by another page.
+local function WidenCheckboxColumn(initializer)
+	if not initializer or type(initializer.InitFrame) ~= "function" or type(initializer.Resetter) ~= "function" then
+		return
+	end
+
+	hooksecurefunc(initializer, "InitFrame", function(_, row)
+		row.Checkbox:ClearAllPoints()
+		row.Checkbox:SetPoint("RIGHT", row, "RIGHT", -160, 0)
+		row.Text:SetPoint("RIGHT", row.Checkbox, "LEFT", -12, 0)
+		row.Tooltip:SetPoint("BOTTOMRIGHT", row.Checkbox, "BOTTOMLEFT", 0, 0)
+	end)
+	hooksecurefunc(initializer, "Resetter", function(_, row)
+		row.Checkbox:ClearAllPoints()
+		row.Checkbox:SetPoint("LEFT", row, "CENTER", -80, 0)
+		row.Text:SetPoint("RIGHT", row, "CENTER", -85, 0)
+		row.Tooltip:SetPoint("BOTTOMRIGHT", row, "BOTTOM", -80, 0)
+	end)
+end
+
 local function AddOptions(pageCategory, layout, page)
 	for _, section in ipairs(page.sections) do
 		layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(section.title))
@@ -18,7 +39,7 @@ local function AddOptions(pageCategory, layout, page)
 			setting:SetValueChangedCallback(function(_, value)
 				ns.NotifyOptionChanged(page, option.key, value)
 			end)
-			Settings.CreateCheckbox(pageCategory, setting, option.tooltip)
+			WidenCheckboxColumn(Settings.CreateCheckbox(pageCategory, setting, option.tooltip))
 		end
 	end
 end
