@@ -3,7 +3,7 @@
 A family of World of Warcraft addons for WoW Forever 1.60.1 and the Retail 12.1.x client. Plain Lua, no build step. The repo holds one folder per addon:
 
 - `Couchside/`: the required base. The `/cs` command, options, settings pages, chat and debug output.
-- `Couchside_Quests/`, `Couchside_Controller/`: modules. Each lists `## Dependencies: Couchside` and registers with `Couchside.RegisterModule` from its first file.
+- `Couchside_Quests/`, `Couchside_Controller/`, `Couchside_Gathering/`: modules. Each lists `## Dependencies: Couchside` and registers with `Couchside.RegisterModule` from its first file.
 
 A feature goes in the module whose purpose it serves. A new purpose gets a new `Couchside_<Purpose>/` module, not a file in an existing one. Code moves into the base only when more than one module needs it.
 
@@ -12,6 +12,8 @@ A feature goes in the module whose purpose it serves. A new purpose gets a new `
 `README.md` is the single source of truth for what the addon does, its settings, its commands, its files, and the game behaviour it relies on. A change that adds, removes or alters any of those updates `README.md` in the same commit.
 
 The update is done when every feature, option, command and `.toc` file in the committed code appears in the README, and nothing the README describes is gone from the code. New facts about how the game behaves go under "How the game behaves" once they've been confirmed in-game.
+
+Keep the README focused on current behavior, setup, commands, limits and concise validation status. Put detailed test procedures, build/scan IDs, case counts and validation history in `docs/research/`, and decision rationale in ADRs. Link that evidence from the relevant README feature. Archived records describe their captured version; consult the current code and README before following old procedures.
 
 ## Adding an option
 

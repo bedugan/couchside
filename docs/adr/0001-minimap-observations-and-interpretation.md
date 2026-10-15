@@ -8,7 +8,7 @@ The gathering experiments revealed useful NPC and quest text alongside herbs. A 
 
 Observation and interpretation remain separate. Preserve raw tooltip entries and approximate regions before applying display policies. Include herbs, ore and tracked creatures whose names explain otherwise similar pins. Suppress confirmed service entries that already have meaningful native icons, while preserving supported quest roles at the same NPC. Keep unknown or ambiguous names and diagnostic evidence. A generic tooltip name does not prove an NPC role or quest-objective association.
 
-See the [README scope and current behavior](../../README.md#proposed-ownership-couchside-minimap), [design sketch](../minimap-reconciliation.html#ownership) and [town evidence](../research/minimap-town-scans-2026-10-12-summary.json). Service suppression, creature classification and a combined display remain unimplemented.
+See the [README scope and current behavior](../../README.md#gathering), [design sketch](../minimap-reconciliation.html#ownership) and [town evidence](../research/minimap-town-scans-2026-10-12-summary.json). Service suppression, creature classification and a combined display remain unimplemented.
 
 ## Freshness evidence in the current prototype
 
