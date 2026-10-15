@@ -6,6 +6,7 @@ local _, ns = ...
 -- The one snapshot lifetime. Automatic scans refresh on this clock rather than their own.
 local MAX_ROWS, LIFETIME = 8, 60
 local MINIMAP_SYMBOL_SIZE = 16
+local ROW_HEIGHT, ROW_PITCH, HEADING_PITCH = 16, 18, 14
 
 local function MarkPosition(x, y)
 	local length = math.sqrt(x * x + y * y)
@@ -74,8 +75,8 @@ local function GetRow(index)
 	if rows[index] then return rows[index], badges[index] end
 	local row = CreateFrame("Frame", nil, panel)
 	row:EnableMouse(false)
-	row:SetSize(236, 27)
-	row:SetPoint("TOPLEFT", 12, -34 - (index - 1) * 27)
+	row:SetSize(236, ROW_HEIGHT)
+	row:SetPoint("TOPLEFT", 12, -34 - (index - 1) * ROW_PITCH)
 	row.letter = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	row.letter:SetPoint("LEFT", 0, 0)
 	row.arrow = row:CreateTexture(nil, "ARTWORK")
@@ -144,12 +145,12 @@ local function ShowLegend(scan, profile)
 		local group = item.kind == "resource-candidate" and item.category or "other"
 		if group ~= lastGroup then
 			Heading(group, group == "herb" and "Herbs" or group == "ore" and "Ore" or "Other tracking", y)
-			y, lastGroup = y - 19, group
+			y, lastGroup = y - HEADING_PITCH, group
 		end
 		local row = GetRow(index)
 		row:ClearAllPoints()
 		row:SetPoint("TOPLEFT", 12, y)
-		y = y - 29
+		y = y - ROW_PITCH
 		row.arrow:Hide()
 		if not row.symbol then
 			row.symbol = row:CreateTexture(nil, "ARTWORK")
@@ -221,6 +222,7 @@ local function ShowLegend(scan, profile)
 	footer:SetText(message .. (omitted and " - some marks omitted" or ""))
 	ns.Debug("Resource stamps: %d/%d names, %d marks; %d mixed/invalid regions withheld. Unknowns retained.",
 		count, #model.rows, drawn, model.withheldRegions)
+	ns.Debug("Nearby list layout: %d-pixel row pitch, %d-pixel rows, %d-pixel group pitch.", ROW_PITCH, ROW_HEIGHT, HEADING_PITCH)
 	return count, drawn
 end
 
@@ -269,7 +271,7 @@ local function Show(scan)
 		local spot = spots[index]
 		local row, badge = GetRow(index)
 		row:ClearAllPoints()
-		row:SetPoint("TOPLEFT", 12, -34 - (index - 1) * 27)
+		row:SetPoint("TOPLEFT", 12, -34 - (index - 1) * ROW_PITCH)
 		if row.symbol then row.symbol:Hide() end
 		if row.difficulty then row.difficulty:Hide() end
 		row.letter:SetTextColor(1, 0.82, 0)
@@ -291,7 +293,7 @@ local function Show(scan)
 		badge:Show()
 	end
 	for index = count + 1, #rows do rows[index]:Hide(); badges[index]:Hide() end
-	panel:SetHeight(64 + math.max(count, 1) * 27)
+	panel:SetHeight(64 + math.max(count, 1) * ROW_PITCH)
 	footer:SetText(count == 0 and "No tracking text found" or #spots > MAX_ROWS and "First 8 results - scan snapshot" or ("Scan snapshot - clears in %ds"):format(LIFETIME))
 	panel:Show()
 	display.status, display.reason, display.rows, display.marks = "shown", "accepted still scan", count, count
