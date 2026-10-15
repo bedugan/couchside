@@ -30,4 +30,12 @@ The installed 0.16.0 inventory matched its prior SHA-256 manifest and was backed
 
 Brian reported "Looks good" after testing 0.16.1 and supplied `410214DB-2AF5-41B0-8C84-5AC190FE59BA_1_102_o.jpeg`. The screenshot shows three herb rows and three Other tracking rows with separate headings and a wrapped footer. This accepts the tested compact spacing; it does not establish all font sizes, categories or UI scales.
 
-He also requested left-aligned resource and NPC names. Their shared font string currently inherits centered text alignment. That small follow-up changes the name column's alignment while retaining the accepted spacing.
+He also requested left-aligned resource and NPC names. Their shared font string inherited centered text alignment. The follow-up changes the name column's alignment while retaining the accepted spacing.
+
+## Left-aligned names follow-up
+
+Version 0.16.2 sets the shared row name font string to `SetJustifyH("LEFT")` at creation. It covers resource, NPC/player and ordinary letter/arrow names. Existing anchors still bound the column, and reused rows retain the property. Difficulty words keep their separate column; spacing and marker placement stay fixed.
+
+The method was checked in the pinned [Forever font-string documentation](https://github.com/Gethe/wow-ui-source/blob/9465cb273b5513495d8ecc12fbb19930dd6b8957/Interface/AddOns/Blizzard_APIDocumentationGenerated/SimpleFontStringAPIDocumentation.lua) before use. This sets an addon-owned text property and reads no new gameplay state. The existing frame fixture recognizes the property. All 156 existing cases pass, and independent GPT-6-Astra review found no substantive findings.
+
+The installed 0.16.1 inventory was verified and backed up before copying 0.16.2. All 60 installed files matched the repository byte-for-byte. Brian then reported "Much better. Thanks", accepting the native name alignment. The spacing and alignment work in issue #17 is complete for the tested path; broader UI-scale and font coverage remain subject to playtesting.

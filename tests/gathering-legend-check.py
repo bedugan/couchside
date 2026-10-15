@@ -35,7 +35,7 @@ function CreateFrame(_,_,parent)
  function f:UnregisterAllEvents() self.events={} end
  function f:CreateTexture() return CreateFrame(nil,nil,self) end
  function f:CreateFontString() return CreateFrame(nil,nil,self) end
- for _,k in ipairs({'EnableMouse','SetWidth','SetHeight','SetColorTexture','SetAllPoints','SetVertexColor','SetTextColor','SetWordWrap','SetAtlas','SetFrameLevel'}) do f[k]=function() end end
+ for _,k in ipairs({'EnableMouse','SetWidth','SetHeight','SetColorTexture','SetAllPoints','SetVertexColor','SetTextColor','SetWordWrap','SetJustifyH','SetAtlas','SetFrameLevel'}) do f[k]=function() end end
  function f:SetVertexColor(...) self.tint={...} end
  function f:SetTextColor(...) self.textColor={...} end
  frames[#frames+1]=f;return f
