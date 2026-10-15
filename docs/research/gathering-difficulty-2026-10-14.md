@@ -48,13 +48,13 @@ All 156 distinct Gathering cases pass across ten suites, including the fifteen-f
 
 The native sample also exposed a shared snapshot helper that misclassified a successful false result as an error. The helper now preserves false. A hidden-tooltip regression failed before that correction and passes afterward. The saved native artifact retains the original diagnostic result rather than rewriting history.
 
-Independent GPT-6-Astra review found missing character provenance in the first diagnostic draft. Sanitized player identity and a two-character regression addressed it. The complete 0.16.0 review found no substantive code findings and passed all 156 cases, plus adversarial checks for option gates, bonus changes, expiry and absence of cursor work. Native stamp appearance was subsequently accepted below; word fit, later controller input and Mining remain unverified.
+Independent GPT-6-Astra review found missing character provenance in the first diagnostic draft. Sanitized player identity and a two-character regression addressed it. The complete 0.16.0 review found no substantive code findings and passed all 156 cases, plus adversarial checks for option gates, bonus changes, expiry and absence of cursor work. Native stamp appearance, word fit and working controls were subsequently confirmed below. Mining and broader gameplay remain unverified.
 
 ## Native appearance acceptance
 
 The report-only 0.15.1 candidate was copied and verified as 59 files before Brian's accepted baseline. Version 0.16.0 adds `ResourceDifficulty.lua`, for 60 files. The installed 0.15.1 inventory matched its prior SHA-256 manifest and was backed up before copying. All 60 installed files match the repository byte-for-byte, without symlinks. No new option is required; the existing resource legend controls this presentation.
 
-Brian reported that the stamps look good and specifically noted their black edge's visibility against minimap backgrounds. The feedback accepts the observed stamp presentation. It does not claim all possible terrain, status-word fit or controller-input coverage.
+Brian reported that the stamps look good and specifically noted their black edge's visibility against minimap backgrounds. He then confirmed that the difficulty words fit and controls remain functional. This accepts the tested presentation and input path, without claiming all terrain or broader controller coverage. His request to reduce excess vertical spacing is tracked separately in [#17](https://github.com/bedugan/couchside/issues/17).
 
 The refreshed saved file contains five 0.16.0 displays, scans 301–305, on Forever build `70374`. All identify `classic-reference-v1` and successful cleanup requests. Scan 301 contains town names and no resource marks. Scans 302–303 include Wild Steelbloom alongside town names, with one resource mark; scans 304–305 contain Bruiseweed with one mark. The records show expiry or movement clearing. See the [data-only native summary](gathering-difficulty-native-2026-10-14.json).
 
@@ -62,4 +62,4 @@ Saved display records do not retain the actual current skill, tint or rendered w
 
 ## Remaining validation
 
-Check status-word fit and normal hover/controller input during ordinary play, and compare with native node tooltip difficulty when convenient. No quest is required and there is no need to change professions. Mining on a learned Mining character and any nonzero-bonus interpretation remain later validation work. Do not treat a matching Herbalism input, an accepted stamp appearance or passing Lua checks as proof of Forever's gathering thresholds.
+Compare with native node tooltip difficulty when convenient. No quest is required and there is no need to change professions. Mining on a learned Mining character and any nonzero-bonus interpretation remain later validation work. Do not treat a matching Herbalism input, an accepted presentation or passing Lua checks as proof of Forever's gathering thresholds.

@@ -190,6 +190,7 @@
   "limits": [
     "User feedback confirms the stamp appearance in the tested context, not every terrain or every resource.",
     "Saved displays identify the difficulty model but do not retain the actual current skill, tint or rendered status word.",
-    "Native word fit, exact Forever threshold agreement, learned Mining, bonuses and later controller input are not independently established by these samples."
-  ]
+    "Exact Forever threshold agreement, learned Mining, bonuses and broader controller coverage are not established by these samples."
+  ],
+  "userFunctionalAcceptance": "Brian confirmed that the difficulty words fit and controls remain functional, then requested less vertical spacing as a separate change."
 }
