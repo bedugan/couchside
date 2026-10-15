@@ -22,7 +22,7 @@ local function Persist(report)
 	report.serverTime = GetServerTime()
 	local version, build, _, interface = GetBuildInfo()
 	report.clientVersion, report.build, report.interface = version, build, interface
-	local db = CouchsideGatheringScanDB
+	local db = ns.ScanHistory()
 	if db and db.version == 1 then db.macroReport = ns.SnapshotTooltip(report) end
 end
 
@@ -68,7 +68,7 @@ local function Print(report)
 	if report.status == "name conflict" then ns.Print("A different macro is named '%s'. Choose another name for that macro before setup; it was preserved.", NAME)
 	elseif report.status == "account macros full" then ns.Print("Account macro slots are full. Free a slot in the native editor, then retry.")
 	elseif report.existingIndex then ns.Print("'%s' already runs %s at macro index %d. Its icon and text were preserved.", NAME, BODY, report.existingIndex)
-	else ns.Print("Body: %s. Check this read-only report before /cs gathering macro create.", BODY) end
+	else ns.Print("Body: %s. Check this read-only report before /cs minimap macro create.", BODY) end
 end
 
 ns.RegisterCommand("macro", "[probe|create] - report native macro APIs or create Scan map with a map icon", function(arg)
@@ -78,9 +78,9 @@ ns.RegisterCommand("macro", "[probe|create] - report native macro APIs or create
 		Print(report)
 		return
 	end
-	if arg ~= "create" then ns.Print("Usage: /cs gathering macro [probe|create]"); return end
+	if arg ~= "create" then ns.Print("Usage: /cs minimap macro [probe|create]"); return end
 	if InCombatLockdown() then ns.Print("Scan macro setup requires being out of combat."); return end
-	if not probeReady then ns.Print("First /cs gathering macro probe and check its native API report. No macro changed."); return end
+	if not probeReady then ns.Print("First /cs minimap macro probe and check its native API report. No macro changed."); return end
 	local report = Probe() -- Recheck slots and collisions immediately before mutation.
 	if report.error or (report.status ~= "ready" and report.status ~= "exists") then Print(report); return end
 	if report.existingIndex then Print(report); return end
@@ -105,5 +105,5 @@ ns.RegisterCommand("macro", "[probe|create] - report native macro APIs or create
 	Persist(verified)
 	ns.Debug("Created account scan macro %d with map icon %d.", index, ICON)
 	ns.Print("Created '%s' with a map icon. Use the native macro editor to assign its controller slot. Check controls before/after reload.", NAME)
-	if ns.IsEnabled("autoScan") then ns.Print("Automatic scanning paused for macro setup. /cs gathering auto resume when ready.") end
+	if ns.IsEnabled("autoScan") then ns.Print("Automatic scanning paused for macro setup. /cs minimap auto resume when ready.") end
 end)

@@ -53,8 +53,10 @@ frame:SetScript("OnEvent", function()
 	AddOptions(category, layout, ns.base)
 
 	for _, module in ipairs(ns.modules) do
-		local subcategory, subLayout = Settings.RegisterVerticalLayoutSubcategory(category, module.title)
-		AddOptions(subcategory, subLayout, module)
+		if #module.sections > 0 then
+			local subcategory, subLayout = Settings.RegisterVerticalLayoutSubcategory(category, module.title)
+			AddOptions(subcategory, subLayout, module)
+		end
 	end
 
 	Settings.RegisterAddOnCategory(category)

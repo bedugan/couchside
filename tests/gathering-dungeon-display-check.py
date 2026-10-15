@@ -67,7 +67,7 @@ def make(setup=""):
     vm = legend["make"](STUB + setup)
     vm.globals().captured = to_lua(vm, fixture)
     if vm.globals().loadScanner:
-        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / "Couchside_Gathering/MinimapProbe.lua").read_text())
+        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / "Couchside_Minimap/MinimapProbe.lua").read_text())
     return vm
 
 
@@ -167,7 +167,7 @@ end
 ''')
 check("complete scanner persists the accepted dungeon guard and later clearing", SCANNER_STUB + r'''
 commands.scan('');drainTimers()
-local records=CouchsideGatheringScanDB.scans;local s=records[#records]
+local records=CouchsideMinimapDB.scans;local s=records[#records]
 assert(s and s.display.status=='shown' and s.display.guardMode=='dungeon-motion' and s.motion.status=='unknown')
 assert(not soft and visiblePanel() and #markers()==1)
 fire('PLAYER_STARTED_MOVING');tick(.1)
@@ -175,7 +175,7 @@ assert(s.display.status=='cleared' and not visiblePanel())
 ''', "loadScanner=true")
 check("actual scanner cancellation cleans up and adds no finished evidence", SCANNER_STUB + r'''
 commands.scan('');assert(soft);commands.scan('off');drainTimers()
-assert(not soft and #CouchsideGatheringScanDB.scans==0 and not visiblePanel())
+assert(not soft and #CouchsideMinimapDB.scans==0 and not visiblePanel())
 ''', "loadScanner=true")
 check("movement within a query batch rejects the completed display", SCANNER_STUB + r'''
 local queried=0
@@ -184,7 +184,7 @@ Minimap.UpdateMouseoverAtPoint=function()
  if queried==100 then fire('PLAYER_STARTED_MOVING');fire('PLAYER_STOPPED_MOVING') end
 end
 commands.scan('');drainTimers()
-local s=CouchsideGatheringScanDB.scans[1]
+local s=CouchsideMinimapDB.scans[1]
 assert(s and s.display.status=='withheld' and s.motion.dungeonGuard.status=='changed')
 assert(not soft and not visiblePanel())
 ''', "loadScanner=true")

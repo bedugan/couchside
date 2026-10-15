@@ -49,7 +49,7 @@ check('display uses live skill not saved reports and reused tints reset to neutr
 function GetBuildInfo() return '1.60.1' end
 local rank=138
 C_SkillInfo={GetSkillLineInfoByID=function(id) if rank then return {skillID=id,rank=rank,maxRank=225,modifier=0,tempPoints=0} end end}
-CouchsideGatheringScanDB.skillReports={{skills={Herbalism={result={value={rank=300}}}}}}
+CouchsideMinimapDB.skillReports={{skills={Herbalism={result={value={rank=300}}}}}}
 local d=ns.NearbyList.Show(scan({{text='Mageroyal',x=.8,y=.5}}))
 local badge=markers()[1];assert(badge.symbol.tint[1]<1 and d.difficultyModel=='classic-reference-v1')
 local low=false;for _,f in ipairs(frames) do if f.text=='Low' and f.shown then low=true end end;assert(low)

@@ -69,7 +69,7 @@ end
 ns.PanelGuard = { Block = Block }
 
 ns.RegisterCommand("panels", "- read native panel slots, bags and keyboard focus without changing them", function(arg)
-	if arg ~= "" then ns.Print("Usage: /cs gathering panels"); return end
+	if arg ~= "" then ns.Print("Usage: /cs minimap panels"); return end
 	local version, build, _, interface = GetBuildInfo()
 	local report = { version = 1, addonVersion = ns.version, clientVersion = version,
 		build = build, interface = interface, serverTime = GetServerTime(), slots = {}, frames = {} }
@@ -77,7 +77,7 @@ ns.RegisterCommand("panels", "- read native panel slots, bags and keyboard focus
 		if not GetCurrentKeyBoardFocus then return "API unavailable" end
 		return Describe(GetCurrentKeyBoardFocus())
 	end)
-	ns.Print("Panel probe: client %s build %s, Gathering %s. Keyboard focus: %s.",
+	ns.Print("Panel probe: client %s build %s, Minimap %s. Keyboard focus: %s.",
 		tostring(version), tostring(build), tostring(ns.version), report.focus)
 	for _, slot in ipairs(slots) do
 		local value = Read(function()
@@ -97,7 +97,7 @@ ns.RegisterCommand("panels", "- read native panel slots, bags and keyboard focus
 		end
 	end
 	if visible == 0 then ns.Print("No visible or unreadable frames in the explicit panel/bag sample.") end
-	local db = CouchsideGatheringScanDB
+	local db = ns.ScanHistory()
 	if db and db.version == 1 then db.panelReport = ns.SnapshotTooltip(report) end
 	ns.Debug("Panel probe: build %s, focus %s, %d visible/unreadable explicit frames.", tostring(build), report.focus, visible)
 	ns.Print("Read-only sample of the automatic panel guard. Repeat with panels open, then /reload to save the latest report.")

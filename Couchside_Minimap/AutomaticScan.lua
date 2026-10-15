@@ -23,7 +23,7 @@ local function Save(reason)
 	report.delaySeconds, report.lifetimeSeconds = delaySeconds, ns.NearbyList.LIFETIME
 	report.enabled, report.nearbyList, report.status = enabled, nearby, status
 	report.serverTime = GetServerTime()
-	local db = CouchsideGatheringScanDB
+	local db = ns.ScanHistory()
 	if db and db.version == 1 then db.automationReport = ns.SnapshotTooltip(report) end
 end
 
@@ -143,7 +143,7 @@ end
 ns.AutomaticScan = { Pause = Pause }
 
 ns.OnReady(function()
-	local db = CouchsideGatheringScanDB
+	local db = ns.ScanHistory()
 	local saved = db and db.automaticScanSettings
 	local value = type(saved) == "table" and saved.delaySeconds
 	if type(value) == "number" and value == math.floor(value) and value >= 1 and value <= 4 then delaySeconds = value end
@@ -173,18 +173,18 @@ ns.RegisterCommand("auto", "[pause|resume|delay 1-4] - automatic scan status and
 		local value = tonumber(arg:match("^delay (%d+)$"))
 		if value < 1 or value > 4 then ns.Print("Stationary wait must be a whole number from 1 to 4 seconds."); return end
 		delaySeconds = value
-		local db = CouchsideGatheringScanDB
+		local db = ns.ScanHistory()
 		if db and db.version == 1 then db.automaticScanSettings = { delaySeconds = value } end
 		Reset()
 		ns.MinimapScanner.Cancel("stationary wait changed")
 		Save("stationary wait changed")
 	elseif arg ~= "" then
-		ns.Print("Usage: /cs gathering auto [pause|resume|delay 1-4]")
+		ns.Print("Usage: /cs minimap auto [pause|resume|delay 1-4]")
 		return
 	end
 	Save(report.reason or "ready")
 	ns.Print("Automatic scans %s: %s. Wait %ds; snapshots last %ds and refresh before expiry while still. Attempts %d, completed %d, cancelled %d, failed %d.",
 		report.status, report.reason, delaySeconds, ns.NearbyList.LIFETIME, report.attempts, report.completed, report.cancelled, report.failed)
 	ns.Print("Protected-action notifications registered: %s.", tostring(report.protectionEventsReady))
-	ns.Print("Enable with /cs option gathering.autoScan on and gathering.nearbyList on. Pause with /cs gathering auto pause; turn off with /cs option gathering.autoScan off.")
+	ns.Print("Enable with /cs option minimap.autoScan on and minimap.nearbyList on. Pause with /cs minimap auto pause; turn off with /cs option minimap.autoScan off.")
 end)

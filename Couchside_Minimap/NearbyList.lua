@@ -231,7 +231,8 @@ local function Show(scan)
 	Clear("new scan")
 	local guard, display = ns.MotionGuard.Prepare(scan.motion)
 	display.version, display.addonVersion, display.status = 1, ns.version, "withheld"
-	display.scanID, display.legend = scan.id, ns.IsEnabled("resourceLegend")
+	display.addon = "Couchside_Minimap"
+	display.scanID, display.legend = scan.id, (ns.ResourceCatalog ~= nil and ns.IsEnabled("resourceLegend"))
 	lastDisplay = display
 	local reason = Rejection(scan, display)
 	if not reason then
@@ -241,13 +242,13 @@ local function Show(scan)
 	end
 	if reason then
 		display.reason = reason
-		if scan.source ~= "automatic" then ns.Print("Nearby list withheld: %s. /cs gathering display reports details.", reason) end
+		if scan.source ~= "automatic" then ns.Print("Nearby list withheld: %s. /cs minimap display reports details.", reason) end
 		return display
 	end
 	ns.Debug("Nearby tracking accepted %s guard (%s); raw motion %s, unreadable coordinate samples %s.",
 		display.guardMode, display.guardStatus, tostring(display.motionStatus), tostring(display.unknownSamples))
 	if not panel then CreatePanel() end
-	if ns.IsEnabled("resourceLegend") then
+	if (ns.ResourceCatalog ~= nil and ns.IsEnabled("resourceLegend")) then
 		local profile = ns.ResourceDifficulty.Capture()
 		display.rows, display.marks = ShowLegend(scan, profile)
 		display.difficultyModel = ns.ResourceDifficulty.version
@@ -333,19 +334,19 @@ driver:SetScript("OnUpdate", function(_, delta)
 end)
 
 ns.RegisterCommand("display", "report the last nearby-list acceptance or clearing reason", function(arg)
-	if arg ~= "" then ns.Print("Usage: /cs gathering display"); return end
-	local db = CouchsideGatheringScanDB
+	if arg ~= "" then ns.Print("Usage: /cs minimap display"); return end
+	local db = ns.ScanHistory()
 	local scan = db and db.scans and db.scans[#db.scans]
 	local display = lastDisplay or (scan and scan.display)
 	if not display then
-		ns.Print("No display verdict recorded. Run a fresh /cs gathering scan with Gathering 0.11.2 or later.")
+		ns.Print("No display verdict recorded. Run a fresh /cs minimap scan.")
 		return
 	end
-	ns.Print("Nearby list %s: %s. Scan %s; Gathering %s; %s.", display.status, display.reason,
-		tostring(display.scanID), tostring(display.addonVersion),
+	ns.Print("Nearby list %s: %s. Scan %s; %s %s; %s.", display.status, display.reason,
+		tostring(display.scanID), display.addon or "Couchside_Gathering", tostring(display.addonVersion),
 		lastDisplay and "current session" or "saved previous session, not a live display")
 	ns.Print("Settings now: nearbyList %s, resourceLegend %s. Scan motion %s, unreadable samples %s; drawn rows %s, marks %s.",
-		tostring(ns.IsEnabled("nearbyList")), tostring(ns.IsEnabled("resourceLegend")),
+		tostring(ns.IsEnabled("nearbyList")), tostring((ns.ResourceCatalog ~= nil and ns.IsEnabled("resourceLegend"))),
 		tostring(display.motionStatus), tostring(display.unknownSamples), tostring(display.rows), tostring(display.marks))
 	if display.positionError then ns.Print("Position read: %s.", display.positionError) end
 	if display.facingError then ns.Print("Facing read: %s.", display.facingError) end
@@ -359,7 +360,7 @@ end)
 
 local function RecordError(reason, scanID)
 	Clear("display error")
-	lastDisplay = { version = 1, addonVersion = ns.version, scanID = scanID, status = "error", reason = tostring(reason) }
+	lastDisplay = { version = 1, addon = "Couchside_Minimap", addonVersion = ns.version, scanID = scanID, status = "error", reason = tostring(reason) }
 	return lastDisplay
 end
 

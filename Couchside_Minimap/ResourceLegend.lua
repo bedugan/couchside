@@ -72,4 +72,6 @@ local function Build(scan)
 	return model
 end
 
-ns.ResourceLegend = { Lookup = ns.ResourceCatalog.Lookup, Build = Build, version = ns.ResourceCatalog.version }
+ns.ResourceLegend = { Lookup = function(text)
+	return ns.ResourceCatalog and ns.ResourceCatalog.Lookup(text)
+end, Build = Build }

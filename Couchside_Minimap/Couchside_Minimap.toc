@@ -1,0 +1,21 @@
+## Interface: 16001, 120100, 120105
+## Title: Couchside: Minimap
+## Notes: Scanned minimap names, nearby tracking and observation diagnostics.
+## Author: Brian Dugan
+## Version: 0.1.0
+## IconTexture: Interface\Icons\INV_Misc_Map_01
+## Dependencies: Couchside
+## SavedVariables: CouchsideMinimapDB
+
+Minimap.lua
+ScanLog.lua
+QuestTextFilter.lua
+ResourceClassifier.lua
+ResourceLegend.lua
+MotionGuard.lua
+MotionProbe.lua
+PanelGuard.lua
+NearbyList.lua
+MinimapProbe.lua
+AutomaticScan.lua
+ScanMacro.lua

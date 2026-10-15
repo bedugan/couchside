@@ -42,7 +42,7 @@ local function Classify(filter, snapshot, lookup)
 end
 
 local function FindScan(id)
-	local db = CouchsideGatheringScanDB
+	local db = ns.ScanHistory()
 	if not db or db.version ~= 1 or #db.scans == 0 then return end
 	if not id then return db.scans[#db.scans] end
 	for _, scan in ipairs(db.scans) do
@@ -53,16 +53,17 @@ end
 ns.ResourceClassifier = { Classify = Classify }
 
 ns.RegisterCommand("classify", "[prototype] [scanID] - classify saved text with the shared static catalog", function(arg)
+	if not ns.ResourceCatalog then ns.Print("Resource classification requires Couchside: Gathering."); return end
 	-- Keep the former prototype spelling as a compatibility alias. Both paths
 	-- use the same catalog; the withdrawn library adapter is no longer callable.
 	local legacy = arg == "prototype" or arg:match("^prototype %d+$") ~= nil
 	local idText = legacy and arg:match("^prototype (%d+)$") or arg:match("^(%d+)$")
 	if arg ~= "" and arg ~= "prototype" and not idText then
-		ns.Print("Usage: /cs gathering classify [scanID] (prototype remains an alias)")
+		ns.Print("Usage: /cs minimap classify [scanID] (prototype remains an alias)")
 		return
 	end
 	local scan = FindScan(idText and tonumber(idText))
-	if not scan then ns.Print("No matching retained scan. Run /cs gathering scan first."); return end
+	if not scan then ns.Print("No matching retained scan. Run /cs minimap scan first."); return end
 	local snapshot = scan.questText or { available = false, titles = {}, objectives = {}, warnings = {} }
 	ns.Print("Classifier report for saved scan %d, build %s. Catalog: %s, %d types / %d English node names. Saved quest snapshot: %s.",
 		scan.id, tostring(scan.build), ns.ResourceCatalog.version, ns.ResourceCatalog.typeCount, ns.ResourceCatalog.nameCount, tostring(snapshot.available))

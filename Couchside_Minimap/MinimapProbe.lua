@@ -32,7 +32,7 @@ local function CleanupSoftCursor(quiet)
 	-- a native cursor call. Never invoke cleanup inside that call's event callback.
 	if cursorChange then return false end
 	if InCombatLockdown() then
-		ns.Print("Soft-cursor cleanup pending: entered combat. /reload, or /cs gathering probe off after combat.")
+		ns.Print("Soft-cursor cleanup pending: entered combat. /reload, or /cs minimap probe off after combat.")
 		return false
 	end
 	local before = generation
@@ -165,15 +165,15 @@ local function Capture(token)
 		capture = { geometry = g, x = x, y = y, text = text }
 		ns.Print("Captured cursor %.2f/%.2f. Minimap left/bottom %.2f/%.2f, size %.2fx%.2f, scale %.3f, zoom %s.",
 			x, y, g.left, g.bottom, g.width, g.height, g.scale, tostring(g.zoom))
-		ns.Debug("Saved gathering probe cursor %.2f/%.2f, scale %.3f.", x, y, g.scale)
-		ns.Print("Saved. Move the cursor outside the minimap, wait for the tooltip to disappear, then /cs gathering probe test.")
+		ns.Debug("Saved minimap probe cursor %.2f/%.2f, scale %.3f.", x, y, g.scale)
+		ns.Print("Saved. Move the cursor outside the minimap, wait for the tooltip to disappear, then /cs minimap probe test.")
 	end)
 end
 
 local function Test(token, mode)
 	local alternate, soft = mode == "alternate", mode == "soft"
 	if not capture then
-		ns.Print("First /cs gathering probe capture and hover an isolated pin during the countdown.")
+		ns.Print("First /cs minimap probe capture and hover an isolated pin during the countdown.")
 		return
 	end
 	if not Minimap.UpdateMouseoverAtPoint then
@@ -266,7 +266,7 @@ local function Test(token, mode)
 		end
 		ReportText(candidate[1] .. " before query", saved.text)
 		ns.Print("%s point: %.4f/%.4f.", candidate[1], candidate[2], candidate[3])
-		ns.Debug("Gathering point query %s %.4f/%.4f.", candidate[1], candidate[2], candidate[3])
+		ns.Debug("Minimap point query %s %.4f/%.4f.", candidate[1], candidate[2], candidate[3])
 		local ok, err = pcall(Minimap.UpdateMouseoverAtPoint, Minimap, candidate[2], candidate[3])
 		if not ok then
 			ns.Print("%s query ERROR: %s", candidate[1], tostring(err))
@@ -301,6 +301,7 @@ end
 
 local function Scan(token, finished, request)
 	request = request or {}
+	if not ns.ScanHistory() then return false, "scan history unavailable or unsupported" end
 	local function Say(...)
 		if not request.quiet then ns.Print(...) end
 	end
@@ -427,7 +428,7 @@ local function Scan(token, finished, request)
 			retainedHitCount = retainedHitCount, questText = questText, filtersByText = filtersByText,
 			motion = motion, scanProfile = "quest-filter-motion-v1", timeoutSeconds = timeoutSeconds,
 			tipsByText = rawByText, cleanupRequestSucceeded = cleanupSucceeded, source = request.source or "manual" }
-		ns.SaveGatheringScan(record, request.quiet)
+		ns.SaveMinimapScan(record, request.quiet)
 		Say("Compare names and positions with ordinary hover. Check controller input, then /reload. Empty results can be missed samples; other tracking can produce non-herb text.")
 		if ns.NearbyList then
 			local shown, displayError = pcall(ns.NearbyList.Show, record)
@@ -440,7 +441,7 @@ local function Scan(token, finished, request)
 		activeScan = nil
 		if operation ~= "watch" then operation = nil end
 		if request.quiet and request.source ~= "automatic" and cleanupSucceeded then
-			ns.Print("Scan complete. Use /cs gathering scan verbose for details.")
+			ns.Print("Scan complete. Use /cs minimap scan verbose for details.")
 		end
 		if finished then finished({ status = cleanupSucceeded and "complete" or "failed",
 			reason = cleanupSucceeded and "scan complete" or "soft-cursor cleanup failed", record = record,
@@ -525,7 +526,7 @@ end
 local function ReadyForAutomatic()
 	if activeScan or operation then return false, "manual scan or probe active" end
 	if softCleanupNeeded then return false, "soft-cursor cleanup pending" end
-	local db = CouchsideGatheringScanDB
+	local db = ns.ScanHistory()
 	if not db or db.version ~= 1 then return false, "scan history unavailable or unsupported" end
 	if InCombatLockdown() then return false, "in combat" end
 	if not Minimap:IsVisible() then return false, "minimap hidden" end
@@ -588,7 +589,7 @@ ns.RegisterCommand("probe", "[capture|test [alternate|soft]|off] - report or tes
 		capture = nil
 		ns.Print("Probe callbacks stopped and capture cleared. Re-hover normally; /reload if hover or input is abnormal.")
 	else
-		ns.Print("Usage: /cs gathering probe [capture|test [alternate|soft]|off]")
+		ns.Print("Usage: /cs minimap probe [capture|test [alternate|soft]|off]")
 	end
 end)
 
@@ -599,7 +600,7 @@ ns.RegisterCommand("scan", "[verbose|watch|off] - scan once; verbose details or 
 		ns.Print("Scan/probe callbacks stopped. Outstanding soft-cursor cleanup was attempted; /reload after an experiment.")
 	elseif arg == "" or arg == "verbose" then
 		if not Stop() then return end
-		ns.Debug("Requested bounded gathering minimap scan.")
+		ns.Debug("Requested bounded minimap scan.")
 		local started, reason = Scan(generation, nil, { quiet = arg ~= "verbose", source = "manual" })
 		if not started then ns.Print("Scan skipped: %s.", reason) end
 	elseif arg == "watch" then
@@ -608,7 +609,7 @@ ns.RegisterCommand("scan", "[verbose|watch|off] - scan once; verbose details or 
 			if not Stop() then return end
 			local token = generation
 			operation = "watch"
-			ns.Print("Bounded scan watch: %d/3. Stay still for the first scan, then walk/turn for comparison. /cs gathering scan off stops it.", index)
+			ns.Print("Bounded scan watch: %d/3. Stay still for the first scan, then walk/turn for comparison. /cs minimap scan off stops it.", index)
 			local started, reason = Scan(token, function(outcome)
 				if outcome.status ~= "complete" then operation = nil; return end
 				if index == 3 then
@@ -624,6 +625,6 @@ ns.RegisterCommand("scan", "[verbose|watch|off] - scan once; verbose details or 
 		end
 		Round(1)
 	else
-		ns.Print("Usage: /cs gathering scan [verbose|watch|off]")
+		ns.Print("Usage: /cs minimap scan [verbose|watch|off]")
 	end
 end)

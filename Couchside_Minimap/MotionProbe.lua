@@ -34,7 +34,7 @@ local function Sample()
 end
 
 local function Save(record)
-	local db = CouchsideGatheringScanDB
+	local db = ns.ScanHistory()
 	if not db or db.version ~= 1 then
 		ns.Print("Motion probe not saved: scan database unavailable.")
 		return
@@ -119,5 +119,5 @@ ns.RegisterCommand("motion", "[watch|off] - read or watch dungeon movement APIs;
 	if arg == "off" then Finish("cancelled")
 	elseif arg == "" then Begin(false)
 	elseif arg == "watch" then Begin(true)
-	else ns.Print("Usage: /cs gathering motion [watch|off]") end
+	else ns.Print("Usage: /cs minimap motion [watch|off]") end
 end)

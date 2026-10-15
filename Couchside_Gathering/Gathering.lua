@@ -1,34 +1,15 @@
 local ADDON_NAME, ns = ...
-
 ns.version = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
+ns.Minimap = Couchside.Minimap
 
 Couchside.RegisterModule(ns, {
-	addon = ADDON_NAME,
-	key = "gathering",
-	title = "Gathering",
-	sections = {
-		{
-			title = "Nearby tracking",
-			options = {
-				{
-					key = "nearbyList",
-					default = false,
-					name = "Show scanned nearby tracking",
-					tooltip = "Show names, arrows and gold minimap letters after a still /cs gathering scan. Clears when you move or turn, or after a minute. Quest text is excluded; other tracking text may remain.",
-				},
-				{
-					key = "autoScan",
-					default = false,
-					name = "Scan automatically while stationary",
-					tooltip = "Scan once after you stop moving or turning, then refresh the snapshot each minute while you stay put. Default wait is one second; set 1-4 with /cs gathering auto delay N. Requires nearby tracking. Experimental; verify normal hover and controller input before and after reload.",
-				},
-				{
-					key = "resourceLegend",
-					default = false,
-					name = "Resource letter stamps and other tracking",
-					tooltip = "Use permanent two-letter stamps for a Classic English resource catalog. Color and a short word show Classic skill-up estimates when current skill and reference bands are available. Unknowns stay neutral. Requires nearby tracking; native difficulty coverage needs validation.",
-				},
-			},
-		},
-	},
+	addon = ADDON_NAME, key = "gathering", title = "Gathering", sections = {},
 })
+
+-- Resource facts stay with Gathering; Minimap owns observation and display.
+ns.OnReady(function()
+	ns.Minimap.RegisterGathering({
+		catalog = ns.ResourceCatalog, difficulty = ns.ResourceDifficulty,
+		legacyHistory = function() return CouchsideGatheringScanDB end,
+	})
+end)

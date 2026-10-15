@@ -1,5 +1,6 @@
 """Saved-text classification and report lifecycle; no native identity claim."""
 from pathlib import Path
+from gathering_sources import source_path
 from lupa.lua51 import LuaRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -9,6 +10,7 @@ FILES = ('ScanLog.lua', 'QuestTextFilter.lua', 'ResourceCatalog.lua', 'ResourceC
 def make(setup=''):
     vm = LuaRuntime()
     vm.execute('''
+Couchside={Minimap={}}
 logs={};commands={};nativeCalls=0
 ns={version='test',Print=function(fmt,...) table.insert(logs,string.format(fmt,...)) end,
  Debug=function() end,RegisterCommand=function(name,_,fn) commands[name]=fn end,OnReady=function(fn) fn() end}
@@ -16,7 +18,7 @@ snapshot={available=true,titles={['Centaur Bracers']=855},objectives={['Centaur 
 ''')
     vm.execute(setup)
     for name in FILES:
-        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / 'Couchside_Gathering' / name).read_text())
+        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', source_path(name).read_text())
     return vm
 
 
@@ -57,49 +59,49 @@ r=ns.ResourceClassifier.Classify(filter,snapshot,function() return {ambiguous=tr
 assert(r[1].kind=='ambiguous' and not r[1].resourceKey)
 ''')
 SEED = r'''
-CouchsideGatheringScanDB.scans={{id=23,build='70338',pointCount=1,hitCount=1,questText=snapshot,
+CouchsideMinimapDB.scans={{id=23,build='70338',pointCount=1,hitCount=1,questText=snapshot,
 regions={{text='Purple Lotus'}},tipsByText={['Purple Lotus\nCentaur Bracers']={lines={{leftText='Purple Lotus\nCentaur Bracers'}}}}}}
 '''
 check('report saves a separate verdict without changing raw scan or native state', SEED + r'''
-local old=CouchsideGatheringScanDB.scans[1]
+local old=CouchsideMinimapDB.scans[1]
 Minimap={UpdateMouseoverAtPoint=function() nativeCalls=nativeCalls+1 end}
 commands.classify('')
-assert(CouchsideGatheringScanDB.scans[1]==old and old.tipsByText['Purple Lotus\nCentaur Bracers'].lines[1].leftText=='Purple Lotus\nCentaur Bracers')
-local report=CouchsideGatheringScanDB.classificationReport
+assert(CouchsideMinimapDB.scans[1]==old and old.tipsByText['Purple Lotus\nCentaur Bracers'].lines[1].leftText=='Purple Lotus\nCentaur Bracers')
+local report=CouchsideMinimapDB.classificationReport
 assert(report.scanID==23 and report.counts['resource-candidate']==1 and report.counts['quest-text']==1 and nativeCalls==0)
 ''')
 check('missing saved quest evidence remains explicit', r'''
-CouchsideGatheringScanDB.scans={{id=2,build='70338',regions={{text='Mageroyal'}}}}
+CouchsideMinimapDB.scans={{id=2,build='70338',regions={{text='Mageroyal'}}}}
 commands.classify('');assert(table.concat(logs,'\n'):find('Saved quest snapshot: false'))
 ''')
 check('report caches each cleaned name once', SEED + r'''
-CouchsideGatheringScanDB.scans[1].tipsByText['Purple Lotus\nOther']={lines={{leftText='Purple Lotus\nOther'}}}
+CouchsideMinimapDB.scans[1].tipsByText['Purple Lotus\nOther']={lines={{leftText='Purple Lotus\nOther'}}}
 local original=ns.ResourceCatalog.Lookup;local calls={}
 ns.ResourceCatalog.Lookup=function(name) calls[name]=(calls[name] or 0)+1;return original(name) end
 commands.classify('');assert(calls['Purple Lotus']==1)
 ''')
 check('selection compatibility alias and invalid input stay bounded', SEED + r'''
 commands.classify('23');assert(table.concat(logs,'\n'):find('saved scan 23'))
-local old=CouchsideGatheringScanDB.classificationReport
+local old=CouchsideMinimapDB.classificationReport
 logs={};commands.classify('99');assert(#logs==1 and logs[1]:find('No matching'))
 logs={};commands.classify('library');assert(#logs==1 and logs[1]:find('Usage:'))
-assert(CouchsideGatheringScanDB.classificationReport==old)
-commands.classify('prototype 23');assert(CouchsideGatheringScanDB.classificationReport.scanID==23)
+assert(CouchsideMinimapDB.classificationReport==old)
+commands.classify('prototype 23');assert(CouchsideMinimapDB.classificationReport.scanID==23)
 ''')
 check('withdrawn provider cannot be called and loaded history is retired', SEED + r'''
 GatherMate2={GetIDForNode=function() error('withdrawn provider called') end}
 assert(not ns.ResourceClassifier.LibraryLookup and not ns.ResourceClassifier.ObservedLookup and not ns.SaveProviderReport)
-commands.classify('');assert(CouchsideGatheringScanDB.classificationReport)
-assert(not CouchsideGatheringScanDB.providerReports and not CouchsideGatheringScanDB.nextProviderReportID)
-''', "CouchsideGatheringScanDB={version=1,nextID=1,scans={},providerReports={{id=1}},nextProviderReportID=2}")
+commands.classify('');assert(CouchsideMinimapDB.classificationReport)
+assert(not CouchsideMinimapDB.providerReports and not CouchsideMinimapDB.nextProviderReportID)
+''', "CouchsideMinimapDB={version=1,nextID=1,scans={},providerReports={{id=1}},nextProviderReportID=2}")
 check('latest report caps detail preserves counts and is cleared with the log', r'''
 local tips={};for i=1,55 do tips['NPC '..i]={lines={{leftText='NPC '..i}}} end
-CouchsideGatheringScanDB.scans={{id=1,build='70338',pointCount=55,hitCount=55,questText=snapshot,regions={},tipsByText=tips}}
-commands.classify('');local r=CouchsideGatheringScanDB.classificationReport
+CouchsideMinimapDB.scans={{id=1,build='70338',pointCount=55,hitCount=55,questText=snapshot,regions={},tipsByText=tips}}
+commands.classify('');local r=CouchsideMinimapDB.classificationReport
 assert(r.entriesTruncated and #r.entries==40 and r.totalEntries==55 and r.counts.unknown==55)
-commands.classify('');assert(CouchsideGatheringScanDB.classificationReport~=r)
+commands.classify('');assert(CouchsideMinimapDB.classificationReport~=r)
 commands.log('');assert(table.concat(logs,'\n'):find('Latest classification report: scan 1'))
-commands.log('clear');assert(#CouchsideGatheringScanDB.scans==0 and not CouchsideGatheringScanDB.classificationReport)
+commands.log('clear');assert(#CouchsideMinimapDB.scans==0 and not CouchsideMinimapDB.classificationReport)
 ''')
 check('texture atlas and named-color cleanup leave original evidence intact', r'''
 local raw='|cnGREEN_FONT_COLOR:|A:atlas:16:16|a|Tarrow:16|tPurple Lotus|r\n|A:quest:16:16|aCentaur Bracers'

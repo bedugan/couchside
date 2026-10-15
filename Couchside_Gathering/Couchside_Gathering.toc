@@ -1,24 +1,13 @@
 ## Interface: 16001, 120100, 120105
 ## Title: Couchside: Gathering
-## Notes: Scanned minimap tracking names and gathering diagnostics.
+## Notes: Gathering resource catalog, difficulty estimates and skill diagnostics.
 ## Author: Brian Dugan
-## Version: 0.16.2
+## Version: 0.17.0
 ## IconTexture: Interface\Icons\INV_Misc_Herb_01
-## Dependencies: Couchside
+## Dependencies: Couchside, Couchside_Minimap
 ## SavedVariables: CouchsideGatheringScanDB
 
 Gathering.lua
-ScanLog.lua
-SkillProbe.lua
-QuestTextFilter.lua
 ResourceCatalog.lua
 ResourceDifficulty.lua
-ResourceLegend.lua
-ResourceClassifier.lua
-MotionGuard.lua
-MotionProbe.lua
-PanelGuard.lua
-NearbyList.lua
-MinimapProbe.lua
-AutomaticScan.lua
-ScanMacro.lua
+SkillProbe.lua

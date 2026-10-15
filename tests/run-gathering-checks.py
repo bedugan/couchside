@@ -13,6 +13,7 @@ from lupa.lua51 import LuaRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = (
+    "minimap-migration-check.py",
     "gathering-difficulty-check.py",
     "gathering-skill-probe-check.py",
     "gathering-classifier-check.py",
@@ -31,16 +32,19 @@ def main():
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     vm = LuaRuntime(register_eval=False, register_builtins=False)
-    addon = ROOT / "Couchside_Gathering"
-    lua_files = sorted(addon.glob("*.lua"))
-    for path in lua_files:
-        vm.execute("assert(loadstring(...))", path.read_text())
-    toc = (addon / "Couchside_Gathering.toc").read_text()
-    entries = [line.strip() for line in toc.splitlines() if line.strip() and not line.startswith("#")]
-    assert len(entries) == len(set(entries)), "Duplicate TOC load entry"
-    assert {path.name for path in lua_files} == set(entries), "TOC and Lua file inventory differ"
-    assert all((addon / entry).is_file() for entry in entries)
-    print(f"PASS Lua 5.1 syntax and TOC inventory: {len(lua_files)} files")
+    lua_files = []
+    for name in ('Couchside', 'Couchside_Minimap', 'Couchside_Gathering'):
+        addon = ROOT / name
+        files = sorted(addon.glob('*.lua'))
+        lua_files.extend(files)
+        for path in files:
+            vm.execute("assert(loadstring(...))", path.read_text())
+        toc = (addon / (name + '.toc')).read_text()
+        entries = [line.strip() for line in toc.splitlines() if line.strip() and not line.startswith('#')]
+        assert len(entries) == len(set(entries)), f'Duplicate TOC entry: {name}'
+        assert {path.name for path in files} == set(entries), f'TOC/Lua inventory differs: {name}'
+        assert all((addon / entry).is_file() for entry in entries)
+    print(f"PASS Lua 5.1 syntax and TOC inventory: {len(lua_files)} files across three addons")
     cases, results = set(), {}
     for check in CHECKS:
         completed = subprocess.run([sys.executable, str(ROOT / "tests" / check)], cwd=ROOT, text=True, capture_output=True)

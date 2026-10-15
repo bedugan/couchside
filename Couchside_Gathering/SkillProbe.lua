@@ -7,9 +7,9 @@ local function Read(fn, ...)
 	if type(fn) ~= "function" then return { status = "missing" } end
 	local ok, value = pcall(fn, ...)
 	if issecretvalue and issecretvalue(value) then return { status = "restricted" } end
-	if not ok then return { status = "error", detail = ns.SnapshotTooltip(value) } end
+	if not ok then return { status = "error", detail = ns.Minimap.SnapshotTooltip(value) } end
 	if value == nil then return { status = "nil" } end
-	local snapshot = ns.SnapshotTooltip(value)
+	local snapshot = ns.Minimap.SnapshotTooltip(value)
 	if type(snapshot) == "table" and snapshot.snapshotError then return { status = "unreadable" } end
 	return { status = "ok", value = snapshot }
 end
@@ -24,8 +24,8 @@ ns.RegisterCommand("skills", "[label] - read-only Herbalism/Mining skill report;
 		ns.Print("Usage: /cs gathering skills [label]. Labels: letters, digits, hyphen or underscore, up to 32 characters.")
 		return
 	end
-	local db = CouchsideGatheringScanDB
-	if not db or db.version ~= 1 then ns.Print("Skill report unavailable: unsupported scan history."); return end
+	local available = ns.Minimap.HistoryStatus()
+	if not available then ns.Print("Skill report unavailable: unsupported scan history."); return end
 	local report = { version = 1, addonVersion = ns.version, label = label,
 		serverTime = GetServerTime(), character = Read(UnitGUID, "player"), skills = {}, enumeration = {} }
 	local version, build, _, interface = GetBuildInfo()
@@ -49,11 +49,9 @@ ns.RegisterCommand("skills", "[label] - read-only Herbalism/Mining skill report;
 		report.tooltip = Read(GameTooltip and GameTooltip.GetPrimaryTooltipData, GameTooltip)
 	else report.tooltip = { status = "not-shown-or-unknown" } end
 	report.minimapHover = Read(C_TooltipInfo and C_TooltipInfo.GetMinimapMouseover)
-	db.skillReports = db.skillReports or {}
-	report.id = db.nextSkillReportID or 1
-	db.nextSkillReportID = report.id + 1
-	db.skillReports[#db.skillReports + 1] = report
-	while #db.skillReports > 3 do table.remove(db.skillReports, 1) end
+	local id, reason = ns.Minimap.SaveSkillReport(report)
+	if not id then ns.Print("Skill report not saved: %s.", reason); return end
+	report.id = id
 	for _, profession in ipairs(professions) do
 		local result = report.skills[profession.name].result
 		local value = result.status == "ok" and type(result.value) == "table" and result.value or {}

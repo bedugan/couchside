@@ -3,7 +3,7 @@
 A family of World of Warcraft addons for WoW Forever 1.60.1 and the Retail 12.1.x client. Plain Lua, no build step. The repo holds one folder per addon:
 
 - `Couchside/`: the required base. The `/cs` command, options, settings pages, chat and debug output.
-- `Couchside_Quests/`, `Couchside_Controller/`, `Couchside_Gathering/`: modules. Each lists `## Dependencies: Couchside` and registers with `Couchside.RegisterModule` from its first file.
+- `Couchside_Quests/`, `Couchside_Controller/`, `Couchside_Minimap/`, `Couchside_Gathering/`: modules. Each lists `## Dependencies: Couchside` and registers with `Couchside.RegisterModule` from its first file. Gathering additionally depends on Minimap.
 
 A feature goes in the module whose purpose it serves. A new purpose gets a new `Couchside_<Purpose>/` module, not a file in an existing one. Code moves into the base only when more than one module needs it.
 

@@ -1,16 +1,18 @@
 ---
-status: proposed
+status: accepted
 ---
 
 # Give general minimap information its own module
 
-The gathering experiments revealed useful NPC and quest text alongside herbs. A proposed `Couchside_Minimap` module will own the single scanner, observation history and freshness, classification, nearby list and marks. Quests will retain quest state and tracking decisions and can supply structured facts through a small optional interface. This avoids competing scanners and prevents general minimap work from accumulating inside Gathering. The module migration is not implemented; command and SavedVariables compatibility need explicit treatment before retiring the current module.
+The gathering experiments revealed useful NPC and quest text alongside herbs. Brian authorized the migration in issue #11, tested it and reported it working well on 2026-10-14. `Couchside_Minimap` owns the single scanner, observation history and freshness, classification, nearby list and marks. Gathering keeps the resource catalog, difficulty rules, stamps and skill diagnostic; Quests retains quest state and tracking decisions. Initial native acceptance, local checks and independent review are complete.
+
+For the first compatibility release all Nearby display options live on the Minimap page and retain their saved `modules.gathering` table. Old command and option names remain aliases, including scan macros when Gathering is absent. Minimap imports supported history into its own SavedVariables file without deleting the original. Pending imports and conflicts are explicit; no histories are silently merged. A small explicit Gathering interface supplies resource facts and bounded report saving, rather than a general provider framework. See the [migration implementation and native test](../research/minimap-migration-2026-10-14.md).
 
 Observation and interpretation remain separate. Preserve raw tooltip entries and approximate regions before applying display policies. Include herbs, ore and tracked creatures whose names explain otherwise similar pins. Suppress confirmed service entries that already have meaningful native icons, while preserving supported quest roles at the same NPC. Keep unknown or ambiguous names and diagnostic evidence. A generic tooltip name does not prove an NPC role or quest-objective association.
 
-See the [README scope and current behavior](../../README.md#gathering), [design sketch](../minimap-reconciliation.html#ownership) and [town evidence](../research/minimap-town-scans-2026-10-12-summary.json). Service suppression, creature classification and a combined display remain unimplemented.
+See the [README scope and current behavior](../../README.md#minimap-migration), [design sketch](../minimap-reconciliation.html#ownership) and [town evidence](../research/minimap-town-scans-2026-10-12-summary.json). Service suppression, creature classification and a combined display remain unimplemented.
 
-## Freshness evidence in the current prototype
+## Historical groundwork: freshness evidence
 
 Native Wailing Caverns tests on Forever build `70374` retained Earthroot but lacked player coordinates and facing. Speed, movement status and movement/turning/looking events remained readable. The Gathering 0.11.4 candidate therefore separates the unavailable coordinate trace from a limited dungeon display guard. It preserves the raw unknown state and reports which guard accepted the snapshot, rather than inventing coordinates or calling the original trace still.
 

@@ -3,11 +3,13 @@
 These fixtures cannot establish WoW taint safety or native texture appearance.
 """
 from pathlib import Path
+from gathering_sources import source_path
 from lupa.lua51 import LuaRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
 FILES = ("ScanLog.lua", "QuestTextFilter.lua", "ResourceCatalog.lua", "ResourceDifficulty.lua", "ResourceLegend.lua", "ResourceClassifier.lua", "MotionGuard.lua", "NearbyList.lua")
 STUB = r'''
+Couchside={Minimap={}}
 logs={};commands={};frames={};nativeCalls=0;clock=0;combat=false;enabled=true;legend=true;motion=false
 pose={mapID=1413,x=.5,y=.5,facing=0,rotating=false}
 focus=nil;function GetCurrentKeyBoardFocus() return focus end
@@ -80,7 +82,7 @@ def make(extra_stub=""):
     if extra_stub:
         vm.execute(extra_stub)
     for name in FILES:
-        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', (ROOT / "Couchside_Gathering" / name).read_text())
+        vm.execute('assert(loadstring(...))("Couchside_Gathering",ns)', source_path(name).read_text())
     return vm
 
 
@@ -134,13 +136,13 @@ for _,x in ipairs({-.1,1.1,math.huge,0/0,'invalid'}) do
 end
 ''')
 check("compatibility alias persists classification without native calls or scan mutation", r'''
-CouchsideGatheringScanDB.scans={{id=39,build='70338',questText=snapshot,
+CouchsideMinimapDB.scans={{id=39,build='70338',questText=snapshot,
  tipsByText={Mageroyal={lines={{leftText='Mageroyal'}}},NPC={lines={{leftText='NPC'}}}}}}
-local old=CouchsideGatheringScanDB.scans[1];commands.classify('prototype 39')
-local report=CouchsideGatheringScanDB.classificationReport
+local old=CouchsideMinimapDB.scans[1];commands.classify('prototype 39')
+local report=CouchsideMinimapDB.classificationReport
 assert(report.catalogVersion==ns.ResourceCatalog.version and report.counts['resource-candidate']==1 and report.counts.unknown==1)
 assert(report.entries[1].cacheLockID==9 and report.entries[1].symbol=='stamp-mr')
-assert(old==CouchsideGatheringScanDB.scans[1] and nativeCalls==0)
+assert(old==CouchsideMinimapDB.scans[1] and nativeCalls==0)
 ''')
 check("classified display hides legacy letters and shows repeated symbols", r'''
 ns.NearbyList.Show(scan({{text='Mageroyal',x=.8,y=.5},{text='Mageroyal',x=.2,y=.6},{text='NPC',x=.4,y=.4}}))

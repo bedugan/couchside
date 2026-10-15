@@ -11,7 +11,7 @@ s.motion={status='unknown',unknownSamples=66,trace={{positionError='player map p
 local d=ns.NearbyList.Show(s)
 assert(not visiblePanel() and d.status=='withheld')
 assert(d.reason:find('unknown') and d.positionError and d.facingError)
-CouchsideGatheringScanDB.scans={s};s.display=d
+CouchsideMinimapDB.scans={s};s.display=d
 commands.display('')
 local text=table.concat(logs,'\n');assert(text:find('player map position unavailable') and text:find('player facing unavailable'))
 assert(nativeCalls==0)
@@ -54,12 +54,12 @@ for _,why in ipairs({'position','facing','expired','combat'}) do
 end
 ''')
 check("display report after reload reads history without reviving it", r'''
-CouchsideGatheringScanDB.scans={{id=91,display={status='cleared',reason='snapshot expired',addonVersion='0.11.2'}}}
+CouchsideMinimapDB.scans={{id=91,display={status='cleared',reason='snapshot expired',addonVersion='0.11.2'}}}
 commands.display('');assert(not visiblePanel() and nativeCalls==0)
 assert(table.concat(logs,'\n'):find('previous session'))
 ''')
 check("old history without a verdict remains explicit", r'''
-CouchsideGatheringScanDB.scans={{id=72}}
+CouchsideMinimapDB.scans={{id=72}}
 commands.display('');assert(table.concat(logs,'\n'):find('No display verdict'))
 assert(not visiblePanel() and nativeCalls==0)
 ''')

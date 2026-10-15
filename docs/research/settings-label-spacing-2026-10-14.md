@@ -2,7 +2,7 @@
 
 Issue: [#18](https://github.com/bedugan/couchside/issues/18).
 
-Status: visually accepted by Brian on 2026-10-14 with “That looks much better” after testing the combined base 0.8.1 candidate. The layout fix is committed separately as base 0.7.1; the Minimap migration remains a base 0.8.1 candidate. No option names, defaults, tooltips, saved preferences or input handlers change.
+Status: visually accepted by Brian on 2026-10-14 with “That looks much better” after testing the combined base 0.8.1 candidate. The layout fix is committed separately as base 0.7.1, followed by the accepted Minimap migration as base 0.8.1. No option names, defaults, tooltips, saved preferences or input handlers change.
 
 ## Report and cause
 
@@ -49,7 +49,7 @@ The combined candidate's existing 170 distinct migration and Gathering cases, pl
 
 Independent GPT-6-Astra review identified the missing hover/click-region adjustment and the fixture's incorrect 26-pixel checkbox assumption. Both were corrected. The strengthened fixture failed on the original hotspot before the fix. The follow-up review found no remaining blocker within this change.
 
-Base 0.8.1 was copied to `/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/Couchside` after backing up the previous candidate. All 65 prepared runtime files across base, Minimap and Gathering matched the repo; Quests and Controller were unchanged. No saved variables were edited. Brian subsequently accepted the visual result. The migration remains uncommitted pending its separate native acceptance.
+Base 0.8.1 was copied to `/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/Couchside` after backing up the previous candidate. All 65 prepared runtime files across base, Minimap and Gathering matched the repo; Quests and Controller were unchanged. No saved variables were edited. Brian subsequently accepted the visual result and separately reported the Minimap migration working well.
 
 The selected comparison is archived on the [prototype/settings-label-spacing branch](https://github.com/bedugan/couchside/blob/f94291aa95b7fdbd89f9cda4f9aa63dfc735888a/docs/prototypes/settings-label-spacing.prototype.html). It is not part of the runtime candidate.
 

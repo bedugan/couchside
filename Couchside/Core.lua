@@ -48,6 +48,7 @@ ns.base = CreatePage("Couchside", "COUCHSIDE_", {
 -- Registration order, which is load order: WoW loads modules alphabetically.
 ns.modules = {}
 local modulesByKey = {}
+local modulesByAlias = {}
 
 -- Saved as CouchsideDB.debug and CouchsideDB.modules[moduleKey][optionKey]. Only called once
 -- this addon's saved variables have loaded: at its own ADDON_LOADED, or a module's later one.
@@ -103,12 +104,17 @@ function Couchside.RegisterModule(moduleNS, spec)
 	assert(not modulesByKey[spec.key], "Couchside module registered twice: " .. spec.key)
 	local module = CreatePage(spec.title, "COUCHSIDE_" .. spec.key:upper() .. "_", spec.sections)
 	module.key = spec.key
+	module.legacyKey = spec.legacyKey
 	module.addon = spec.addon
 	module.commands = {}
 	module.commandOrder = {}
 	local readyCallbacks = {}
 	table.insert(ns.modules, module)
 	modulesByKey[spec.key] = module
+	for _, alias in ipairs(spec.aliases or {}) do
+		assert(not modulesByAlias[alias], "Couchside command alias registered twice: " .. alias)
+		modulesByAlias[alias] = module
+	end
 
 	local prefix = PREFIX_COLOR .. "Couchside " .. spec.title .. "|r "
 
@@ -145,8 +151,11 @@ function Couchside.RegisterModule(moduleNS, spec)
 
 	EventUtil.ContinueOnAddOnLoaded(spec.addon, function()
 		local saved = EnsureDB().modules
-		saved[module.key] = saved[module.key] or {}
-		module.db = saved[module.key]
+		-- Retain the existing saved table during a module rename. Only this
+		-- module's declared options are exposed, including the old option prefix.
+		local savedKey = module.legacyKey or module.key
+		saved[savedKey] = saved[savedKey] or {}
+		module.db = saved[savedKey]
 		for _, callback in ipairs(readyCallbacks) do
 			callback()
 		end
@@ -209,7 +218,8 @@ local function OptionNames()
 		end
 		table.sort(keys)
 		for _, key in ipairs(keys) do
-			table.insert(names, { module = module, key = key, name = module.key .. "." .. key })
+			table.insert(names, { module = module, key = key, name = module.key .. "." .. key,
+				alias = module.legacyKey and (module.legacyKey .. "." .. key):lower() })
 		end
 	end
 	return names
@@ -227,7 +237,7 @@ ns.RegisterCommand("option", "[module.name] [on|off] - list options, or turn one
 	for _, candidate in ipairs(OptionNames()) do
 		if name == "" then
 			PrintOption(candidate)
-		elseif candidate.name:lower() == name then
+		elseif candidate.name:lower() == name or candidate.alias == name then
 			option = candidate
 		end
 	end
@@ -258,10 +268,13 @@ SlashCmdList.COUCHSIDE = function(input)
 		return
 	end
 
-	local module = modulesByKey[name]
+	local module = modulesByKey[name] or modulesByAlias[name]
 	if module then
 		local commandName, arg = rest:match("^(%S*)%s*(.*)$")
-		local moduleCommand = module.commands[commandName]
+		-- A real module's own commands win; its historical prefix can also
+		-- route moved commands, even when the old addon is not installed.
+		local fallback = modulesByAlias[name]
+		local moduleCommand = module.commands[commandName] or (fallback and fallback.commands[commandName])
 		if moduleCommand then
 			moduleCommand.run(arg)
 			return
@@ -270,6 +283,10 @@ SlashCmdList.COUCHSIDE = function(input)
 			Print("Unknown command \"%s %s\".", name, commandName)
 		end
 		ShowModuleHelp(module)
+		if fallback and fallback ~= module then
+			Print("Moved commands remain available through /cs %s; canonical help follows.", name)
+			ShowModuleHelp(fallback)
+		end
 		return
 	end
 
