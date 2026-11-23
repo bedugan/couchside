@@ -16,7 +16,7 @@ Every module requires the base; Gathering additionally requires Minimap. The TOC
 
 Copy `Couchside` and the module folders you want into `Interface/AddOns`, keeping each folder's name. Include `Couchside_Minimap` whenever installing Gathering. Use real copies during development so the game loads a prepared candidate. `/reload` loads changed Lua and files listed in a TOC; restart the client if a new addon folder does not appear.
 
-For the tested Mac client, the directory is `/Applications/World of Warcraft/_classic_beta_/Interface/AddOns`. Back up existing copies before replacing them.
+For the tested Mac client, the directory is `/Applications/World of Warcraft/_forever_/Interface/Addons`. Back up existing copies before replacing them.
 
 Run `/cs option` to list module options, then use `/cs option <module.name> on` or `off`. On the tested Forever gamepad UI, closing the settings panel froze the client; use these commands or keyboard/mouse settings. `/cs settings` opens **Options > AddOns > Couchside**.
 
