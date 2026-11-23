@@ -13,9 +13,9 @@ initializers={};settings={};pages={};notifications={};debugMessages={}
 ns={base={sections={{title='General',options={
  {key='debug',name='Enable debug output',default=false,tooltip='Debug tooltip'},
 }}},variablePrefix='BASE_',db={}},modules={
- {title='Minimap',sections={{title='Nearby tracking',options={
-  {key='resourceLegend',name='Resource letter stamps and other tracking',default=false,tooltip='Resource tooltip'},
- }}},variablePrefix='MINIMAP_',db={}},
+ {title='Gathering',sections={{title='Tooltips',options={
+  {key='tooltipDifficulty',name='Show gathering difficulty in tooltips',default=true,tooltip='Difficulty tooltip'},
+ }}},variablePrefix='GATHERING_',db={}},
 }}
 ns.NotifyOptionChanged=function(page,key,value)
  notifications[#notifications+1]={page=page,key=key,value=value}
@@ -111,7 +111,7 @@ def check(name, code):
 
 
 check('all Couchside checkbox rows widen their label and checkbox columns', '''
-assert(#initializers==2 and #pages==2 and pages[2]=='Minimap')
+assert(#initializers==2 and #pages==2 and pages[2]=='Gathering')
 for _,initializer in ipairs(initializers) do
  local row=newRow(700);initializer:InitFrame(row);assertWide(row)
  assert(row.initCount==1)
@@ -137,10 +137,10 @@ row:Init({name='Unrelated setting'});assertDefault(row)
 local unrelated=newRow(700);unrelated:Init({});assertDefault(unrelated)
 ''')
 check('settings retain names defaults tooltips and value callbacks', '''
-local setting=settings.MINIMAP_RESOURCELEGEND
-assert(setting.name=='Resource letter stamps and other tracking' and setting.default==false)
-assert(initializers[2].tooltip=='Resource tooltip')
-setting.callback(setting,true)
+local setting=settings.GATHERING_TOOLTIPDIFFICULTY
+assert(setting.name=='Show gathering difficulty in tooltips' and setting.default==true)
+assert(initializers[2].tooltip=='Difficulty tooltip')
+setting.callback(setting,false)
 assert(#notifications==1 and notifications[1].page==ns.modules[1])
-assert(notifications[1].key=='resourceLegend' and notifications[1].value==true)
+assert(notifications[1].key=='tooltipDifficulty' and notifications[1].value==false)
 ''')

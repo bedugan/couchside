@@ -17,7 +17,7 @@ Keep the README focused on current behavior, setup, commands, limits and concise
 
 ## Adding an option
 
-1. Add an entry with `key`, `default`, `name` and `tooltip` to the module's sections in its `Couchside.RegisterModule` call (`Quests.lua`, `Controller.lua`). The settings page and `/cs option` pick it up from there.
+1. Add an entry with `key`, `default`, `name` and `tooltip` to the module's sections in its `Couchside.RegisterModule` call (`Quests.lua`, `Controller.lua`, `Gathering.lua`). The settings page and `/cs option` pick it up from there.
 2. Gate the feature's display and its background work with `ns.IsEnabled(key)`.
 
 ## Working against the game

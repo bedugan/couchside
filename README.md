@@ -7,9 +7,9 @@ World of Warcraft addons for playing from the couch, on a handheld or with a con
 | Couchside | `Couchside` | Required base: commands, saved options, settings and debug output. |
 | Quests | `Couchside_Quests` | Quest areas, nearby turn-ins and optional zone-based tracking. |
 | Controller | `Couchside_Controller` | Keep native controller action-page numbers visible. |
-| Gathering | `Couchside_Gathering` | Resource catalog, difficulty rules and skill diagnostics. |
+| Gathering | `Couchside_Gathering` | Gathering difficulty in herb and ore tooltips. |
 
-Every module requires only the base. The TOCs declare Forever 1.60.1 and Retail 12.1.x interfaces; feature validation varies by client.
+Every module requires only the base. The TOCs declare Forever 1.60.1 and Retail 12.1.x interfaces; feature validation varies by client. Gathering difficulty is Forever only.
 
 ## Install and configure
 
@@ -37,7 +37,23 @@ Status: the page display has native acceptance. Automatic page switching was wit
 
 ## Gathering
 
-Gathering keeps the curated English catalog (44 resource types across 50 node labels), the Classic difficulty reference bands and the current-skill read. It has no display of its own while the minimap stamps are retired.
+**Show gathering difficulty in tooltips** adds one colored line to the world tooltip of a known herb or ore node (mouse hover or controller soft target):
+
+| Line | Meaning |
+| --- | --- |
+| gray `No gain · Herbalism 138` | At or above the Classic gray threshold. |
+| green `Low · …` | Classic green band. |
+| yellow `Medium · …` | Classic yellow band. |
+| orange `High · …` | Classic orange band. |
+| red `Too difficult · needs Herbalism 210 (you have 138)` | Below the Classic minimum. |
+| gray `At cap · Herbalism 150/150` | Current training maximum reached. |
+| white `Mining difficulty unknown` | Skill unreadable or not learned, a nonzero bonus, or one of three quest-only minerals. |
+
+The curated English catalog covers 44 resource types across 50 node labels. These are reference bands, not exact skill-up chances or proof of every gathering prerequisite. Minimap pin tooltips get no line, and Retail shows none. Skill is reread at most once a second.
+
+The addon reads tooltip text two ways: Blizzard's tooltip-data post-call for data-built tooltips, and `GameTooltip` `OnShow` for tooltips the client fills natively. It only reads text and adds a line. Secret text is skipped.
+
+Status: Brian confirmed the line on world Copper and Silver tooltips at Mining 136 (gray No gain and green Low). It never appeared on minimap tooltips in two tests, so minimap support was dropped. The difficulty bands and the zero-bonus Herbalism read have earlier native acceptance; learned Mining, nonzero bonuses and exact Forever thresholds remain unverified. See [difficulty limits](docs/research/gathering-difficulty-2026-10-14.md) and [catalog coverage](docs/research/gathering-static-catalog-2026-10-14.md).
 
 The earlier Couchside Minimap module (scanned nearby names, letter stamps, automatic scans) was retired after Blizzard removed the minimap capability it relied on. See [ADR 0004](docs/adr/0004-retire-minimap-scanning.md).
 
@@ -58,6 +74,7 @@ Checkboxes use a wider column on every Couchside page so long option names have 
 | `quests.nearbyTurnIns` | on | List untracked turn-ins. |
 | `controller.pageNumbers` | off | Show action page numbers. |
 | `controller.pageNumbersExtraOnly` | off | Only show page 2 or 3; requires pageNumbers. |
+| `gathering.tooltipDifficulty` | on | Show gathering difficulty in tooltips. |
 
 Disabling a display option also stops its feature-specific background work. Explicit report commands run when requested.
 
@@ -93,13 +110,14 @@ Disabling a display option also stops its feature-specific background work. Expl
 
 | Command | Action |
 | --- | --- |
+| `/cs gathering tooltip` | Report the last five tooltips: read path, data type, owner, text (secret lines marked), known nodes and lines added. |
 | `/cs gathering skills` | Read-only raw Herbalism/Mining values and what the difficulty model sees. |
 
 ## Saved data and troubleshooting
 
-`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. Gathering saves nothing. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
+`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
 
-For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, or Gathering's `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
+For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, or Gathering's `tooltip` and `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
 
 ## How the game behaves
 
@@ -115,7 +133,7 @@ These are confirmed observations in the sampled clients, not guarantees for ever
 - The controller page remains readable while its numbered strip is hidden. Controller input normally hides the pointer in Brian's tested workflow, with text-field exceptions.
 - A native minimap tooltip can combine a herb, quest text and NPC names. Generic tooltip type/color did not establish their roles.
 - The sampled zero-bonus Herbalism rank matched Skills; Mining returned nil when not learned.
-- Blizzard removed the minimap capability the retired Minimap scanner relied on.
+- Blizzard removed the minimap capability the retired Minimap scanner relied on. Lines added to the minimap pin tooltip did not appear.
 - Offer-map reads were empty despite an available quest in gossip. One ready non-repeatable turn-in supplied an exact quest-title match in hover. NPC/pin identity, repeatable and flight-discovery coverage remain unresolved.
 - Timer-driven controller paging and the full GatherMate2 trial broke later controller input. Both were withdrawn; no automatic page-switching or external collection addon is required.
 
@@ -147,9 +165,10 @@ Run local Lua checks in an isolated environment with `lupa`, using `tests/run-ga
 | `Couchside_Controller/Controller.lua` | Register controller display options. |
 | `Couchside_Controller/ControllerPageReport.lua` | Read-only native page report/watch. |
 | `Couchside_Controller/ControllerPages.lua` | Persistent page-number tiles. |
-| `Couchside_Gathering/Gathering.lua` | Register Gathering. |
+| `Couchside_Gathering/Gathering.lua` | Register Gathering and its tooltip option. |
 | `Couchside_Gathering/SkillProbe.lua` | Read-only raw skill report. |
 | `Couchside_Gathering/ResourceCatalog.lua` | Curated node names and Classic reference bands. |
+| `Couchside_Gathering/Tooltip.lua` | Tooltip difficulty line and `/cs gathering tooltip` report. |
 | `Couchside_Gathering/ResourceDifficulty.lua` | Current skill capture and conservative difficulty evaluation. |
 | `Couchside/Couchside.toc` | Load order, declared interfaces and dependencies; account-wide options. |
 | `Couchside_Quests/Couchside_Quests.toc` | Load order, declared interfaces and dependencies; per-character quest state/reports. |
