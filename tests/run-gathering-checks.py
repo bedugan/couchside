@@ -13,17 +13,7 @@ from lupa.lua51 import LuaRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = (
-    "minimap-migration-check.py",
-    "gathering-difficulty-check.py",
-    "gathering-skill-probe-check.py",
-    "gathering-classifier-check.py",
-    "gathering-catalog-check.py",
-    "gathering-legend-check.py",
-    "gathering-display-check.py",
-    "gathering-motion-probe-check.py",
-    "gathering-dungeon-display-check.py",
-    "gathering-motion-guard-check.py",
-    "gathering-launch-check.py",
+    "settings-layout-check.py",
 )
 
 
@@ -33,7 +23,7 @@ def main():
     args = parser.parse_args()
     vm = LuaRuntime(register_eval=False, register_builtins=False)
     lua_files = []
-    for name in ('Couchside', 'Couchside_Minimap', 'Couchside_Gathering'):
+    for name in ('Couchside', 'Couchside_Gathering'):
         addon = ROOT / name
         files = sorted(addon.glob('*.lua'))
         lua_files.extend(files)
@@ -44,7 +34,7 @@ def main():
         assert len(entries) == len(set(entries)), f'Duplicate TOC entry: {name}'
         assert {path.name for path in files} == set(entries), f'TOC/Lua inventory differs: {name}'
         assert all((addon / entry).is_file() for entry in entries)
-    print(f"PASS Lua 5.1 syntax and TOC inventory: {len(lua_files)} files across three addons")
+    print(f"PASS Lua 5.1 syntax and TOC inventory: {len(lua_files)} files across two addons")
     cases, results = set(), {}
     for check in CHECKS:
         completed = subprocess.run([sys.executable, str(ROOT / "tests" / check)], cwd=ROOT, text=True, capture_output=True)

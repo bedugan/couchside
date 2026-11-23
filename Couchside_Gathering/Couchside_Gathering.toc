@@ -4,8 +4,7 @@
 ## Author: Brian Dugan
 ## Version: 0.17.0
 ## IconTexture: Interface\Icons\INV_Misc_Herb_01
-## Dependencies: Couchside, Couchside_Minimap
-## SavedVariables: CouchsideGatheringScanDB
+## Dependencies: Couchside
 
 Gathering.lua
 ResourceCatalog.lua

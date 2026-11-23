@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by 0004
 ---
 
 # Give general minimap information its own module
