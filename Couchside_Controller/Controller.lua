@@ -25,5 +25,16 @@ Couchside.RegisterModule(ns, {
 				},
 			},
 		},
+		{
+			title = "Character sheet",
+			options = {
+				{
+					key = "equipmentSets",
+					default = true,
+					name = "Fix the equipment set list",
+					tooltip = "Show your equipment sets on the character sheet with the controller interface on, where Forever leaves the list empty. Turning it off takes effect after /reload.",
+				},
+			},
+		},
 	},
 })

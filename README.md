@@ -6,7 +6,7 @@ World of Warcraft addons for playing from the couch, on a handheld or with a con
 | --- | --- | --- |
 | Couchside | `Couchside` | Required base: commands, saved options, settings and debug output. |
 | Quests | `Couchside_Quests` | Quest areas, nearby turn-ins and optional zone-based tracking. |
-| Controller | `Couchside_Controller` | Keep native controller action-page numbers visible. |
+| Controller | `Couchside_Controller` | Keep native controller action-page numbers visible; fix the equipment set list. |
 | Gathering | `Couchside_Gathering` | Gathering difficulty in herb and ore tooltips. |
 
 Every module requires only the base. The TOCs declare Forever 1.60.1 and Retail 12.1.x interfaces; feature validation varies by client. Gathering difficulty is Forever only.
@@ -34,6 +34,10 @@ Status: the initial zone filter passed native testing; broader zone transitions,
 **Show action page numbers** keeps `1 2 3` visible with the selected page highlighted. Couchside's copy hides while LB+RB shows Blizzard's strip; special controller pages use the native display. **Only show page 2 or 3** instead shows just the current `2` or `3`, with nothing on page 1. Both options default off.
 
 Status: the page display has native acceptance. Automatic page switching was withdrawn after it broke later controller input; it is not an available feature. See the [controller findings](docs/research/controller-page-idle-api.md).
+
+**Fix the equipment set list** (default on) shows your sets on the character sheet with the controller interface on. Forever's controller layout anchors the list to `CharacterFrame.InsetRight`, which Forever's sheet doesn't have, leaving the list 0 wide (forever-bugs #494). The addon restores the list's XML anchors while it is hidden and out of combat, after login and after each controller/mouse switch; it hooks nothing. It acts only on that broken layout, so Retail and a fixed client are left alone. Reach the list with D-pad right from the gear column; A on a set opens Equip, Save, Bind and Delete. The name and icon window still needs the mouse. Turning the option off takes effect after `/reload`. Report: `/cs controller equipmentsets`.
+
+Status: Brian confirmed the set list and its controller actions in game. Ported from a local EasyController patch.
 
 ## Gathering
 
@@ -117,7 +121,7 @@ Disabling a display option also stops its feature-specific background work. Expl
 
 `CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
 
-For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, or Gathering's `tooltip` and `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
+For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, `controller equipmentsets`, or Gathering's `tooltip` and `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
 
 ## How the game behaves
 
@@ -130,6 +134,7 @@ These are confirmed observations in the sampled clients, not guarantees for ever
 - A dungeon tag can lack a destination. A quest's log group was readable while collapsed, but its header sort key is not a map ID. Watch add/remove passed the sampled round trip; POI `inProgress` did not mean incomplete.
 - Tested Forever dungeons lacked map coordinates/facing while speed and movement/turning/looking events remained readable. Direct fallback display coverage is still pending.
 - Closing settings in the tested Forever gamepad UI froze macOS and SteamOS clients. `/cs option` avoided that close path.
+- With the controller interface on, Forever's equipment set list is 0 wide and empty: its controller layout anchors to `CharacterFrame.InsetRight`, which Forever's character sheet lacks. Restoring the XML anchors while the list is hidden brings back the sets and the game's own controller actions.
 - The controller page remains readable while its numbered strip is hidden. Controller input normally hides the pointer in Brian's tested workflow, with text-field exceptions.
 - A native minimap tooltip can combine a herb, quest text and NPC names. Generic tooltip type/color did not establish their roles.
 - The sampled zero-bonus Herbalism rank matched Skills; Mining returned nil when not learned.
@@ -165,6 +170,7 @@ Run local Lua checks in an isolated environment with `lupa`, using `tests/run-ga
 | `Couchside_Controller/Controller.lua` | Register controller display options. |
 | `Couchside_Controller/ControllerPageReport.lua` | Read-only native page report/watch. |
 | `Couchside_Controller/ControllerPages.lua` | Persistent page-number tiles. |
+| `Couchside_Controller/EquipmentSets.lua` | Restore the equipment set list's anchors; `/cs controller equipmentsets` report. |
 | `Couchside_Gathering/Gathering.lua` | Register Gathering and its tooltip option. |
 | `Couchside_Gathering/SkillProbe.lua` | Read-only raw skill report. |
 | `Couchside_Gathering/ResourceCatalog.lua` | Curated node names and Classic reference bands. |

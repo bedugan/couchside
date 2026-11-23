@@ -2,10 +2,11 @@
 ## Title: Couchside: Controller
 ## Notes: Keeps the controller interface's hidden state on screen.
 ## Author: Brian Dugan
-## Version: 0.7.0
+## Version: 0.8.0
 ## IconTexture: Interface\Icons\INV_Misc_Gear_01
 ## Dependencies: Couchside
 
 Controller.lua
 ControllerPageReport.lua
 ControllerPages.lua
+EquipmentSets.lua
