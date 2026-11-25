@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "checkedAt": "2026-10-13T21:14:28.467056+00:00",
+  "build": "1.60.1.70338",
+  "locale": "enUS",
+  "access": "T3 collaborative browser; public CSV links offered by table pages",
+  "workDirectory": "/Users/briandugan/Documents/Codex/2026-10-13/couchside-wago-exports",
+  "tables": [
+    {
+      "bytes": 23203,
+      "contentType": "text/csv; charset=UTF-8",
+      "status": 200,
+      "url": "https://wago.tools/db2/Lock/csv?build=1.60.1.70338",
+      "sha256": "49e83152bcfb71d5125464e617a91e0001b3e73bf938f4cf624552f3a9e2801d",
+      "retrievedAt": "2026-10-13T21:09:02.791702+00:00",
+      "table": "Lock",
+      "build": "1.60.1.70338",
+      "rows": 311,
+      "uniqueIDs": 311,
+      "observedPageTotal": 311,
+      "columns": [
+        "ID",
+        "Flags",
+        "_Index_0",
+        "_Index_1",
+        "_Index_2",
+        "_Index_3",
+        "_Index_4",
+        "_Index_5",
+        "_Index_6",
+        "_Index_7",
+        "Skill_0",
+        "Skill_1",
+        "Skill_2",
+        "Skill_3",
+        "Skill_4",
+        "Skill_5",
+        "Skill_6",
+        "Skill_7",
+        "Type_0",
+        "Type_1",
+        "Type_2",
+        "Type_3",
+        "Type_4",
+        "Type_5",
+        "Type_6",
+        "Type_7",
+        "Action_0",
+        "Action_1",
+        "Action_2",
+        "Action_3",
+        "Action_4",
+        "Action_5",
+        "Action_6",
+        "Action_7"
+      ]
+    },
+    {
+      "build": "1.60.1.70338",
+      "bytes": 11412,
+      "contentType": "text/csv; charset=UTF-8",
+      "status": 200,
+      "total": 180,
+      "url": "https://wago.tools/db2/Creature/csv?build=1.60.1.70338",
+      "sha256": "b1b36f26fa59f49fc8c653bf68f94e94995e1b832834e96f1fc8bd64129c498d",
+      "retrievedAt": "2026-10-13T21:09:02.864579+00:00",
+      "table": "Creature",
+      "rows": 180,
+      "uniqueIDs": 180,
+      "observedPageTotal": 180,
+      "columns": [
+        "ID",
+        "Name_lang",
+        "NameAlt_lang",
+        "Title_lang",
+        "TitleAlt_lang",
+        "Classification",
+        "CreatureType",
+        "CreatureFamily",
+        "StartAnimState",
+        "DisplayID_0",
+        "DisplayID_1",
+        "DisplayID_2",
+        "DisplayID_3",
+        "DisplayProbability_0",
+        "DisplayProbability_1",
+        "DisplayProbability_2",
+        "DisplayProbability_3",
+        "AlwaysItem_0",
+        "AlwaysItem_1",
+        "AlwaysItem_2"
+      ]
+    },
+    {
+      "build": "1.60.1.70338",
+      "bytes": 1037,
+      "contentType": "text/csv; charset=UTF-8",
+      "hotfixChecked": false,
+      "status": 200,
+      "total": 23,
+      "url": "https://wago.tools/db2/LockType/csv?build=1.60.1.70338",
+      "sha256": "1170a97be32714f1e56c41839917182858b605e5ac78826dc5559e88285b7552",
+      "retrievedAt": "2026-10-13T21:09:02.932471+00:00",
+      "table": "LockType",
+      "rows": 23,
+      "uniqueIDs": 23,
+      "observedPageTotal": 23,
+      "columns": [
+        "ID",
+        "Name_lang",
+        "ResourceName_lang",
+        "Verb_lang",
+        "CursorName",
+        "EnumID",
+        "TrackingIcon"
+      ]
+    }
+  ],
+  "runtimeChanged": false,
+  "catalogAdopted": false,
+  "lockTypeMatchesLocal": true,
+  "lockRequirementCounts": {
+    "2": 34,
+    "3": 19
+  },
+  "creatureNameMatches": {
+    "Innkeeper Boorand Plainswind": [],
+    "Devrak": [],
+    "Lizzarik": [],
+    "Thork": [],
+    "Halija Whitestrider": [],
+    "Ronma Millwright": [],
+    "Jorn Skyseer": []
+  },
+  "provisionalCacheJoin": {
+    "source": "Previously captured Oct12 object cache, not current spawns",
+    "cacheSha256": "926369b6fd17594fb88b2b2f3e59ebbdd6243c69149f30f82c5eb9a2437c0b73",
+    "schemaVerified": false,
+    "method": "24-byte header; key/length records; type/display u32; seven NUL strings; following u32 treated as candidate lock ID",
+    "rows": [
+      {
+        "name": "Briarthorn",
+        "candidateCacheEntryID": 3729,
+        "payloadOffset": 32,
+        "payloadLength": 182,
+        "candidateLockWordOffset": 25,
+        "candidateLockID": 31,
+        "requirements": [
+          {
+            "lockTypeID": 2,
+            "name": "Herbalism",
+            "skill": 70
+          }
+        ]
+      },
+      {
+        "name": "Silverleaf",
+        "candidateCacheEntryID": 3725,
+        "payloadOffset": 791,
+        "payloadLength": 182,
+        "candidateLockWordOffset": 25,
+        "candidateLockID": 29,
+        "requirements": [
+          {
+            "lockTypeID": 2,
+            "name": "Herbalism",
+            "skill": 1
+          }
+        ]
+      },
+      {
+        "name": "Weapon Crate",
+        "candidateCacheEntryID": 3661,
+        "payloadOffset": 1170,
+        "payloadLength": 180,
+        "candidateLockWordOffset": 27,
+        "candidateLockID": 57,
+        "requirements": [
+          {
+            "lockTypeID": 5,
+            "name": "Open",
+            "skill": 0
+          },
+          {
+            "lockTypeID": 6,
+            "name": "Treasure (DND)",
+            "skill": 0
+          }
+        ]
+      },
+      {
+        "name": "Food Crate",
+        "candidateCacheEntryID": 3662,
+        "payloadOffset": 1543,
+        "payloadLength": 178,
+        "candidateLockWordOffset": 25,
+        "candidateLockID": 43,
+        "requirements": [
+          {
+            "lockTypeID": 13,
+            "name": "Open Kneeling",
+            "skill": 0
+          }
+        ]
+      },
+      {
+        "name": "Peacebloom",
+        "candidateCacheEntryID": 3724,
+        "payloadOffset": 1918,
+        "payloadLength": 182,
+        "candidateLockWordOffset": 25,
+        "candidateLockID": 29,
+        "requirements": [
+          {
+            "lockTypeID": 2,
+            "name": "Herbalism",
+            "skill": 1
+          }
+        ]
+      },
+      {
+        "name": "Mageroyal",
+        "candidateCacheEntryID": 3727,
+        "payloadOffset": 2293,
+        "payloadLength": 181,
+        "candidateLockWordOffset": 24,
+        "candidateLockID": 9,
+        "requirements": [
+          {
+            "lockTypeID": 2,
+            "name": "Herbalism",
+            "skill": 50
+          }
+        ]
+      },
+      {
+        "name": "Barrel of Milk",
+        "candidateCacheEntryID": 3705,
+        "payloadOffset": 2860,
+        "payloadLength": 182,
+        "candidateLockWordOffset": 29,
+        "candidateLockID": 43,
+        "requirements": [
+          {
+            "lockTypeID": 13,
+            "name": "Open Kneeling",
+            "skill": 0
+          }
+        ]
+      }
+    ],
+    "wholeCacheFramingConsumed": true
+  },
+  "interpretation": "Wago removes the local decryption blocker for exported Lock/Creature data. Provisional cache joins support four herb candidates and three container controls; mining and exact disk schema remain unverified. No complete resource or NPC catalog established."
+}

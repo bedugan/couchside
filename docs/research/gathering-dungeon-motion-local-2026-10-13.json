@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-13",
+  "candidate": "0.11.3",
+  "scope": "read-only movement probe only; dungeon display remains withheld pending verification",
+  "nativeEvidence": "gathering-dungeon-display-native-2026-10-13.json",
+  "source": {
+    "repo": "Gethe/wow-ui-source",
+    "branch": "forever",
+    "commit": "735496de78ebd30ce816a0637982c556987f258c",
+    "commitMessage": "1.60.1 (70374)",
+    "files": {
+      "UnitDocumentation.lua": "e62816d9f8edc63ac3b80c5a50540a62caba77586fcc4827f684fd74e0257c1e",
+      "PlayerScriptDocumentation.lua": "dc89d9491b0cede19eaa951d2a95dc4a72b489a1bb4e864ef50859a5cf99cabf",
+      "InstanceDocumentation.lua": "136d6554c346ce090324ac905e086a149a7b7f6a23193c03262a17a0ee85719f"
+    }
+  },
+  "localChecks": {
+    "motionProbe": 9,
+    "displayDiagnostics": 8,
+    "prototypeLegend": 13,
+    "scannerAndMotion": 60,
+    "allAddonLua51Parse": true
+  },
+  "pending": "Brian dungeon still/walk/turn/still watch and reload; normal hover and controls; actual herb symbol appearance",
+  "installed": {
+    "path": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/Couchside_Gathering",
+    "matchedFiles": 17,
+    "rollback": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns.disabled/Couchside_Gathering-pre-0.11.3-2026-10-13",
+    "sha256": {
+      "Couchside_Gathering.toc": "92f0d3cc0353529bdb76ee033076921a2833353c8180843417729c2760b9a35d",
+      "Gathering.lua": "070f6b30633155302d0ea6ed4cc0a7cb3cf205e6f63ab19a95475ab01efdf43c",
+      "Media/circle-orange.tga": "d60f414b993a713cf727c947792b32ed51c5d29dbdab3bc22f2e83016490e7b9",
+      "Media/cross-red.tga": "9e49010bf209b6937925e60d1d0153a1ac2f54fe71e31bc02e6353256484bacc",
+      "Media/diamond-purple.tga": "48ba29adcad5792aec6003518ee1c9899ad054cb5f113e350698497ccf21de3f",
+      "Media/hexagon-teal.tga": "2ae6bc5017d706adb753ddc43679e58d64af61f734c7c583e974fa1a9df1b72f",
+      "Media/square-blue.tga": "6da9188bc3e0188e36eacad0c556b078ca6f9d73ebc593d0207691dc8bfaabb5",
+      "Media/star-yellow.tga": "e0f09131354206b29bd18dd5d59eed5f9a12ef8dc1b799d47eaebebaf0d9d01d",
+      "Media/triangle-green.tga": "37425484cbe3c037b7ef4e49d9656f05b2e577535c18fab11eb54828ed9f5279",
+      "MinimapProbe.lua": "518d54f4a10754cbd65bbdfea613ad5e7077a544f58ff382bf1d4d40f73e2785",
+      "MotionProbe.lua": "5178b9f591b7b766bf7f7c0d3a46137ca545d7d5ee44a62af4ddfec951e4afb4",
+      "NearbyList.lua": "ca30384c9c60666e1113668cbffb0fce7d6ffaba25b222be1d9805b639f50757",
+      "QuestTextFilter.lua": "c2e602fea67dca74f2a525ef9dc26d94a500dccf3102393a770e6552dc21041c",
+      "ResourceClassifier.lua": "a8dba6145f4012d0639a2bd2fc7a13bf254c71bf1752374d06f33803cf459151",
+      "ResourceLegend.lua": "471a1ba9276f5fa47ad3c2ead1f01ec1e5a020e25b535951abc737cb0fafbe9f",
+      "ScanLog.lua": "44798b5a759beb152bb9e8a014b53822d7b9ee64d3b6ef34d6006bf97fe900d9",
+      "ScanMotion.lua": "18543de54447a039c488a2fe1e9e33aa2270da63712b2421a98dbda441373c42"
+    }
+  }
+}

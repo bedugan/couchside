@@ -1,0 +1,155 @@
+{
+  "checkedAt": "2026-10-14T00:02:15.184505+00:00",
+  "sourceModifiedAt": "2026-10-14T00:00:21.049972+00:00",
+  "sourceSha256": "77a70f976a80e990103889c17d6fd4b216b6e5c44efdb7cc2b3c1fef8c5bcbdc",
+  "scanID": 71,
+  "build": "70374",
+  "motion": "still",
+  "cleanupRequestSucceeded": true,
+  "regions": [
+    {
+      "text": "Silverleaf",
+      "x": 0.4027777777777779,
+      "y": 0.2361111111111111
+    },
+    {
+      "text": "Silverleaf",
+      "x": 0.5547385620915033,
+      "y": 0.3267973856209149
+    },
+    {
+      "text": "Mageroyal",
+      "x": 0.2083333333333333,
+      "y": 0.4583333333333334
+    },
+    {
+      "text": "Spirit Fingies",
+      "x": 0.4963768115942029,
+      "y": 0.5048309178743962
+    },
+    {
+      "text": "Spirit Fingies / Silverleaf",
+      "x": 0.5416666666666667,
+      "y": 0.4444444444444444
+    },
+    {
+      "text": "Briarthorn",
+      "x": 0.3717948717948718,
+      "y": 0.5320512820512819
+    },
+    {
+      "text": "Briarthorn / Flametesting Apaladin",
+      "x": 0.3888888888888889,
+      "y": 0.5833333333333334
+    },
+    {
+      "text": "Flametesting Apaladin",
+      "x": 0.4111111111111111,
+      "y": 0.6055555555555556
+    },
+    {
+      "text": "Flametesting Apaladin / Bruiseweed",
+      "x": 0.4027777777777778,
+      "y": 0.6527777777777778
+    },
+    {
+      "text": "Rigby Skullsmasha",
+      "x": 0.5416666666666666,
+      "y": 0.6388888888888888
+    },
+    {
+      "text": "Moozraiel Lucane / Rigby Skullsmasha",
+      "x": 0.5416666666666666,
+      "y": 0.6805555555555556
+    },
+    {
+      "text": "Bruiseweed",
+      "x": 0.4027777777777778,
+      "y": 0.7083333333333334
+    },
+    {
+      "text": "Moozraiel Lucane / Rigby Skullsmasha / Bruiseweed",
+      "x": 0.5416666666666666,
+      "y": 0.7222222222222222
+    },
+    {
+      "text": "Moozraiel Lucane / Bruiseweed",
+      "x": 0.5416666666666666,
+      "y": 0.75
+    },
+    {
+      "text": "Bruiseweed",
+      "x": 0.5416666666666666,
+      "y": 0.7916666666666666
+    },
+    {
+      "text": "Mageroyal",
+      "x": 0.4166666666666667,
+      "y": 0.875
+    }
+  ],
+  "modelRows": [
+    {
+      "text": "Briarthorn",
+      "kind": "resource-candidate",
+      "symbol": "star-yellow"
+    },
+    {
+      "text": "Bruiseweed",
+      "kind": "resource-candidate",
+      "symbol": "cross-red"
+    },
+    {
+      "text": "Mageroyal",
+      "kind": "resource-candidate",
+      "symbol": "diamond-purple"
+    },
+    {
+      "text": "Silverleaf",
+      "kind": "resource-candidate",
+      "symbol": "triangle-green"
+    },
+    {
+      "text": "Flametesting Apaladin",
+      "kind": "unknown",
+      "symbol": null
+    },
+    {
+      "text": "Moozraiel Lucane",
+      "kind": "unknown",
+      "symbol": null
+    },
+    {
+      "text": "Rigby Skullsmasha",
+      "kind": "unknown",
+      "symbol": null
+    },
+    {
+      "text": "Spirit Fingies",
+      "kind": "unknown",
+      "symbol": null
+    }
+  ],
+  "marks": 7,
+  "withheldRegions": 5,
+  "prototypeReportsSaved": 0,
+  "userFeedback": "Test completed; green triangle reported too large on minimap",
+  "candidate": "0.11.1",
+  "mapSymbolPixelsBefore": 24,
+  "mapSymbolPixelsAfter": 18,
+  "listSymbolPixels": 24,
+  "installedFilesVerified": 16,
+  "backupPath": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns.disabled/Couchside_Gathering-pre-0.11.1-2026-10-13",
+  "newSizeNativeAcceptance": "pending",
+  "localPrototypeChecks": 13,
+  "bugLogComparison": {
+    "databaseSession": 67,
+    "errors": 8,
+    "messageSessionCountTimeUnchanged": true,
+    "sourceModifiedAt": "2026-10-13T23:34:16.941333+00:00"
+  },
+  "changedFileHashes": {
+    "NearbyList.lua": "3414d41ec2056463a38b9a68744850e08801d990a24c94f612b8627f95c66b7f",
+    "Couchside_Gathering.toc": "4aa25a7af091d70578a74fe1a9c42a8db0305c7450f188e607841fe424191091"
+  }
+}

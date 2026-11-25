@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-14T01:33:51.924352+00:00",
+  "candidate": "0.11.5",
+  "feedback": "Brian is outdoors and saw blue Peacebloom squares; still too large",
+  "interpretation": "Observed outdoor asset appearance confirmed by user; no direct dungeon fallback display confirmation and no full controller verdict inferred",
+  "mapSymbolPixelsBefore": 18,
+  "mapSymbolPixelsAfter": 12,
+  "listSymbolPixels": 24,
+  "scope": "Map badge size only; catalog, textures, positions, scan and freshness rules unchanged",
+  "nativeSizeAcceptance": "Pending Brian reload and visible-herb rescan",
+  "localChecks": {
+    "prototypeLegend": 13,
+    "dungeonDisplayAndScannerIntegration": 14,
+    "changedLua51Syntax": true,
+    "diffWhitespace": true
+  },
+  "installed": {
+    "path": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/Couchside_Gathering",
+    "matchedFiles": 18,
+    "rollback": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns.disabled/Couchside_Gathering-pre-0.11.5-2026-10-13",
+    "sha256": {
+      "Couchside_Gathering.toc": "39c6702d8fbc39de99b1a86543311483fa44fc69f8e4d89219f36eda8b6d6ed4",
+      "DungeonMotion.lua": "f00b640c2763432b62608ac3605f329f7911957b383c86dc8d31368ad8e12c34",
+      "Gathering.lua": "070f6b30633155302d0ea6ed4cc0a7cb3cf205e6f63ab19a95475ab01efdf43c",
+      "Media/circle-orange.tga": "d60f414b993a713cf727c947792b32ed51c5d29dbdab3bc22f2e83016490e7b9",
+      "Media/cross-red.tga": "9e49010bf209b6937925e60d1d0153a1ac2f54fe71e31bc02e6353256484bacc",
+      "Media/diamond-purple.tga": "48ba29adcad5792aec6003518ee1c9899ad054cb5f113e350698497ccf21de3f",
+      "Media/hexagon-teal.tga": "2ae6bc5017d706adb753ddc43679e58d64af61f734c7c583e974fa1a9df1b72f",
+      "Media/square-blue.tga": "6da9188bc3e0188e36eacad0c556b078ca6f9d73ebc593d0207691dc8bfaabb5",
+      "Media/star-yellow.tga": "e0f09131354206b29bd18dd5d59eed5f9a12ef8dc1b799d47eaebebaf0d9d01d",
+      "Media/triangle-green.tga": "37425484cbe3c037b7ef4e49d9656f05b2e577535c18fab11eb54828ed9f5279",
+      "MinimapProbe.lua": "518d54f4a10754cbd65bbdfea613ad5e7077a544f58ff382bf1d4d40f73e2785",
+      "MotionProbe.lua": "b6c616b1e259192422c2d937f1c781e3b4d1994caa13727d1640005224f4f2f4",
+      "NearbyList.lua": "d23ac9984d03bc1f040652328e353762700e24e2002abe2442cfe8efd6bcc317",
+      "QuestTextFilter.lua": "c2e602fea67dca74f2a525ef9dc26d94a500dccf3102393a770e6552dc21041c",
+      "ResourceClassifier.lua": "a8dba6145f4012d0639a2bd2fc7a13bf254c71bf1752374d06f33803cf459151",
+      "ResourceLegend.lua": "471a1ba9276f5fa47ad3c2ead1f01ec1e5a020e25b535951abc737cb0fafbe9f",
+      "ScanLog.lua": "44798b5a759beb152bb9e8a014b53822d7b9ee64d3b6ef34d6006bf97fe900d9",
+      "ScanMotion.lua": "0943ed795e43b703bc42391991709301b286fea3c994da320de6456bf62fb143"
+    }
+  },
+  "commitStatus": "Uncommitted pending native acceptance"
+}

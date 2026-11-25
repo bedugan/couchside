@@ -1,176 +1,220 @@
 # Couchside
 
-A family of World of Warcraft addons for playing without a mouse: from the couch, on a handheld, or with a controller. Each addon fills one kind of gap. They also help with a mouse, because they show information on screen instead of hiding it behind a hover or a held button.
+World of Warcraft addons for playing from the couch, on a handheld or with a controller. Couchside makes information visible that normally requires a mouse hover or held button.
 
-| Addon | Folder | What it's for |
+| Addon | Folder | Purpose |
 | --- | --- | --- |
-| Couchside | `Couchside` | The base every module needs: the `/cs` command, the settings pages and debug output. Does nothing on its own. |
-| Couchside: Quests | `Couchside_Quests` | Automatic zone tracking, quest areas and nearby turn-ins, without hovering the map. |
-| Couchside: Controller | `Couchside_Controller` | Controller interface state that Blizzard only shows while you hold a button. |
+| Couchside | `Couchside` | Required base: commands, saved options, settings and debug output. |
+| Quests | `Couchside_Quests` | Quest areas, nearby turn-ins and optional zone-based tracking. |
+| Controller | `Couchside_Controller` | Keep native controller action-page numbers visible; show party targeting buttons; fix the equipment set list. |
+| Gathering | `Couchside_Gathering` | Gathering difficulty in herb and ore tooltips. |
 
-Each module lists `Couchside` under `## Dependencies`, so WoW loads the base first and won't load a module without it.
+Every module requires only the base. The TOCs declare Forever 1.60.1 and Retail 12.1.x interfaces; feature validation varies by client. Gathering difficulty is Forever only.
 
-Every TOC lists WoW Forever 1.60.1 (Interface `16001`) and the Retail 12.1.x client (Interface `120100` and `120105`).
+## Install and configure
 
-## Couchside: Quests
+Copy `Couchside` and the module folders you want into `Interface/AddOns`, keeping each folder's name. Use real copies during development so the game loads a prepared candidate. `/reload` loads changed Lua and files listed in a TOC; restart the client if a new addon folder does not appear.
 
-### Quest areas
+For the tested Mac client, the directory is `/Applications/World of Warcraft/_forever_/Interface/Addons`. Back up existing copies before replacing them. Delete any old `Couchside_Minimap` folder; that module has been retired.
 
-The map and minimap shade a blue area where a quest's mobs or items are. With a mouse you hover the area to see which quest it belongs to. Couchside: Quests tells you without the hover.
+Type `/cs` to open Couchside's settings window, which works with the controller (see [Settings](#settings)). Or run `/cs option` to list module options and their values, then use `/cs option <module.name> <value>`: `on` or `off` for a checkbox, one of the listed values for a choice, or a number in range. **Options > AddOns > Couchside** holds one button that opens the same window, for mouse users; on the tested Forever gamepad UI, closing Blizzard's settings panel breaks the controller interface until `/reload`, so controller players use `/cs`.
 
-- **Tracked quests.** While you stand inside a tracked quest's area, its objective tracker entry gets a blue wash and a blue ring around its quest icon. The mark clears the moment you leave.
-- **Untracked quests.** The minimap doesn't draw areas for untracked quests at all. Couchside: Quests still detects them and lists each one under **Nearby (Untracked)** with a blue "in area" label.
+## Quests
 
-### Nearby turn-ins
+Tracked quests get a blue highlight while you stand in their quest area. Untracked quests whose areas contain you appear under **Nearby (Untracked)**. Blue means "inside this quest's area".
 
-When a quest is ready to hand in, the minimap shows a yellow "?" at the quest giver. Several of them close together are hard to tell apart without hovering each one.
+Nearby turn-ins receive teal letters beside the minimap icon and matching letter/arrow/distance tags in the tracker. Quests sharing a turn-in NPC share a letter. Letters follow distance and can change as you walk. Untracked turn-ins appear in **Nearby (Untracked)**. Teal means "turn-in on the minimap".
 
-- Each "?" on the minimap gets a small teal letter. The closest is always A.
-- The quest's tracker entry gets the same letter, an arrow pointing the way the icon lies on the minimap, and the distance in yards.
-- Quests handed in to the same NPC share a letter, since they share one icon.
-- Untracked quests have no tracker entry, so they're listed under **Nearby (Untracked)** with the same letter tag.
+Optional **Track quests for my current zone** keeps the current quest-log group and quests with qualifying local map markers tracked. It checks on login, zone/instance changes and quest updates, and leaves unknown locations unchanged. Selected navigation quests are kept. Use `/cs quests tracking keep <questID>` for a persistent exception, or `auto <questID>` to return it to automatic rules. `keep` tracks immediately even when automation is off. Disabling zone tracking restores changes the addon still owns, preserving later manual choices.
 
-Letters follow distance, so two of them can swap as you walk.
+Status: the initial zone filter passed native testing; broader zone transitions, dungeon matching and watch restoration remain subject to playtesting. See the [tracking design and evidence](docs/research/zone-quest-tracking.md).
 
-### Zone tracking
+## Controller
 
-Enable **Track quests for my current zone** to track the current zone's quest-log group, plus accepted quests with direct markers on the player's map. Quests grouped elsewhere with no qualifying local marker are untracked. Inside an instance, the group is matched to the native instance name. Off by default.
+**Show action page numbers** keeps `1 2 3` visible with the selected page highlighted. Couchside's copy hides while LB+RB shows Blizzard's strip; special controller pages use the native display. **Only show page 2 or 3** instead shows just the current `2` or `3`, with nothing on page 1. Both options default off.
 
-The addon scans half a second after login, entering a zone or instance, quest-log changes and quest-map updates. It coalesces events, uses the explicit player map rather than the map being browsed, and does not poll while moving. Each scan replaces the previous zone's relevance. Hidden quests, tasks and bounties are excluded.
+Status: the page display has native acceptance. Automatic page switching was withdrawn after it broke later controller input; it is not an available feature. See the [controller findings](docs/research/controller-page-idle-api.md).
 
-Start markers and child-map markers do not qualify. Parent map names are checked for nested outdoor maps. A local completed hand-in marker includes its quest; a known remote hand-in takes precedence over the original group. Selected navigation quests are kept. Missing location or group data leaves the watch unchanged.
+**Show party targeting buttons** (default on, Forever only: Retail has no controller action bars and never runs it) marks each party frame with the button that targets that member when the controller's Party Targeting option is on (CVar `GamepadUsePartyTargeting`), you are in a party but not a raid, and the controller interface is showing. The mark is the game's own controller glyph: D-pad up for party1, right for party2, down for party3, left for party4, the bottom face button (A on Xbox) for you and the left face button (X on Xbox) for your pet, on raid-style pet frames or the classic pet frame. The right face button targets your target's target, which has no party frame. Mapping per Blizzard's `FriendlyTargetingActionBar.lua`; `GamepadSwapFriendlyTargetActions` swaps the D-pad and face buttons. If a glyph is missing, a drawn D-pad or face-button diamond with the button lit in amber takes its place. With **Swap friendly target actions** on, the D-pad and face buttons trade places. Marks stay up all the time so you can read them before pressing: dim, under a badge showing the friendly targeting button to hold (`RB hold` with swapped target modifiers, otherwise LB), and full brightness without the badge while that button is held. Blizzard's own party targeting prompt always shows LB, even when the modifiers are swapped (`GAMEPAD_SHOULDER_LEFT` in `GroupTargeting.lua`).
 
-This is a best-effort filter. Unmarked gathering locations can be missed, and some direct markers can be entrances or waypoints. Use `/cs quests tracking keep <questID>` to keep an exception tracked across scans and reloads. Use `/cs quests tracking auto <questID>` to return it to automatic rules. A keep command tracks the quest immediately, even if zone tracking is off.
+**Button position** is Automatic (default), Left, Right, Top, Bottom or Inside. Automatic uses the left of a vertical raid-style column, the top of a horizontal row and the right of classic party frames, keeping marks off neighbouring frames. A left mark with no room before the screen edge moves right. In a horizontal row the pet's mark goes left, since a pet frame sits under its owner. With raid-style frames the badge takes the place of Blizzard's party targeting prompt under the frames, which the addon makes invisible (alpha 0) while marks show and restores afterwards; its show/hide and bindings stay Blizzard's. With classic frames the badge sits above the top mark. Marks hide in Edit Mode, where empty slots show the player as placeholders. **Button labels** picks the face-button and badge glyphs: Automatic (default) uses the active controller's label style, which the game reported as Generic (`1`) for Brian's controller; Xbox, PlayStation and Nintendo choose directly. **Button size** runs 50–200% (default 100%) of half the frame's height. Each mark belongs to a Blizzard party frame and follows the unit that frame shows, so sorting and roster changes, in or out of combat, keep it right. Report: `/cs controller partytargets`.
 
-Manual and native auto-watch changes are preserved until the zone or quest progress changes; a permanent exception needs `keep`. Disabling the option restores changes the addon still owns, preserving later manual choices and selected navigation quests. Restoration records and keep overrides are saved per character in `CouchsideQuestsTrackingDB` and removed when the quest leaves the ordinary quest log. Reloads retain restoration records. Watch removals run before additions to free capacity, and failed changes are reported without evicting kept or unknown quests.
+Status: Brian confirmed the D-pad up mark on party1 and the A mark on his own frame with Button labels set to Xbox, on raid-style vertical frames. Pending checks and the confirmed list are in [party targeting validation](docs/research/party-targeting-validation.md).
 
-### Zone-tracking reports
+**Second press casts** (default off, experimental) adds an action to party targeting. Hold the friendly targeting button and press a member's button: the first press targets them as usual, and each further press of that button in the same hold casts the second-press action on them. Releasing the button resets the count. It covers party1–4, you and your pet, solo or in a party (not in a raid); solo, only your button and your pet's do anything. The spell is cast on that unit directly, so a mouseover target can't catch it. A member who can't be helped (offline, out of sight or dead) gets no cast, since the game would cast it on you instead. The action is your class's quick friendly action, the first one known from its list (Paladin: Flash of Light, then Holy Light; Priest, Druid and Shaman heals; Mage: Remove Lesser Curse; Warlock: Health Funnel; Hunter: Mend Pet), or a spell or macro chosen on the settings window's Second press page or with `/cs controller secondpress`. Pet-only spells (Health Funnel, Mend Pet) cast from the pet's button only; the other buttons just target. Only spells the character knows are offered. While held, the addon binds those keys to its own secure buttons from a secure frame on Blizzard's friendly targeting bar and returns them on release; nothing of Blizzard's is hooked. Action changes during combat apply when combat ends. Status: the press probe confirmed the key takeover and targeting in and out of combat, and Brian confirmed Flash of Light on the second press in and out of combat, on himself, and on a party member in range; Health Funnel on a warlock's pet from X, and a chosen bandage macro. Brian confirmed solo use on himself, with the action chosen from the settings window. See [second-press notes](docs/research/second-press.md).
 
-`/cs quests tracking [questID]` reports the evidence and decisions without changing watches. It includes the client build, player map and parent maps, instance identity, and the quest system's current POI map context. For each quest it shows its quest-log group, header index, header sort key and collapsed state, watch and completion state, readiness for hand-in, quest tag, waypoint and destination maps, implicit map membership, every POI returned for the player's explicit map, and objective progress. Missing APIs and errors are reported separately from `nil` and `false` answers. The decision rule is shared with automation; explicit keeps, selected navigation quests and temporary manual holds are included in the report.
+**Fix the equipment set list** (default on) shows your sets on the character sheet with the controller interface on. Forever's controller layout anchors the list to `CharacterFrame.InsetRight`, which Forever's sheet doesn't have, leaving the list 0 wide (forever-bugs #494). The addon restores the list's XML anchors while it is hidden and out of combat, after login and after each controller/mouse switch; it hooks nothing. It acts only on that broken layout, so Retail and a fixed client are left alone. Reach the list with D-pad right from the gear column; A on a set opens Equip, Save, Bind and Delete. The name and icon window still needs the mouse. Turning the option off takes effect after `/reload`. Report: `/cs controller equipmentsets`.
 
-`/cs quests watchtest <questID>` checks the watch APIs on an ordinary quest that is currently untracked and not selected for navigation. It briefly adds a watch, removes it, and reports each API's return value, observed watch state and selected quest before and after. It respects Blizzard's untracking restriction. It attempts to restore the original untracked state; if cleanup fails or cannot be confirmed, it tells you to untrack the quest manually. Zone tracking must be off for this test. The normal tracking report remains read-only.
+Status: Brian confirmed the set list and its controller actions in game. Ported from a local EasyController patch.
 
-The API reports have been checked on Forever build `1.60.1.70245` as described below. Brian confirmed the initial zone filter works in-game. Zone transitions, restoration, keep overrides and instance matching still await broader playtesting. Enable with `/cs option quests.smartTracking on`, check the tracker in Silverpine, then cross a zone boundary, test an explicit keep and disable the option to check restoration. Use `/cs debug on` to see changes and `/cs quests tracking <questID>` to explain a particular quest. See the [feature plan](docs/zone-quest-tracking-plan.html) and [source research](docs/research/zone-quest-tracking.md).
+## Gathering
 
-### Colours
+**Show gathering difficulty in tooltips** adds one colored line to the world tooltip of a known herb or ore node (mouse hover or controller soft target):
 
-Blue always means "you're inside this quest's area". Teal always means "this quest's turn-in is on your minimap".
+| Line | Meaning |
+| --- | --- |
+| gray `No gain · Herbalism 138` | At or above the Classic gray threshold. |
+| green `Low · …` | Classic green band. |
+| yellow `Medium · …` | Classic yellow band. |
+| orange `High · …` | Classic orange band. |
+| red `Too difficult · needs Herbalism 210 (you have 138)` | Below the Classic minimum. |
+| gray `At cap · Herbalism 150/150` | Current training maximum reached. |
+| white `Mining difficulty unknown` | Skill unreadable or not learned, a nonzero bonus, or one of three quest-only minerals. |
 
-## Couchside: Controller
+The curated English catalog covers 44 resource types across 50 node labels. These are reference bands, not exact skill-up chances or proof of every gathering prerequisite. Minimap pin tooltips get no line, and Retail shows none. Skill is reread at most once a second.
 
-### Action pages
+The addon reads tooltip text two ways: Blizzard's tooltip-data post-call for data-built tooltips, and `GameTooltip` `OnShow` for tooltips the client fills natively. It only reads text and adds a line. Secret text is skipped.
 
-Enable **Show action page numbers** to keep the `1 2 3` tiles visible after releasing LB+RB, with the selected page highlighted. While LB+RB is held, Blizzard's own strip appears and Couchside's copy hides. Special controller pages use Blizzard's own display. Off by default.
+Status: Brian confirmed the line on world Copper and Silver tooltips at Mining 136 (gray No gain and green Low). It never appeared on minimap tooltips in two tests, so minimap support was dropped. The difficulty bands and the zero-bonus Herbalism read have earlier native acceptance; learned Mining, nonzero bonuses and exact Forever thresholds remain unverified. See [difficulty limits](docs/research/gathering-difficulty-2026-10-14.md) and [catalog coverage](docs/research/gathering-static-catalog-2026-10-14.md).
 
-Enable **Only show page 2 or 3** as well to show just the current page's tile: `2` on page 2, `3` on page 3, and nothing on page 1. Blizzard's full LB+RB strip still appears on every page while the modifiers are held. Off by default.
+The earlier Couchside Minimap module (scanned nearby names, letter stamps, automatic scans) was retired after Blizzard removed the minimap capability it relied on. See [ADR 0004](docs/adr/0004-retire-minimap-scanning.md).
 
 ## Settings
 
-Open **Options > AddOns > Couchside**, or type `/cs settings`. The Couchside page holds the debug option, and each installed module has its own page beneath it. Every feature above has its own checkbox, and turning one off also stops the work behind it. On Forever build `1.60.1.70235`, don't open the panel in gamepad UI: use `/cs option` instead (see [How the game behaves](#how-the-game-behaves)).
+Defaults apply when no preference is saved. Module settings live account-wide in `CouchsideDB.modules`; debug is `CouchsideDB.debug`. Settings that depend on the character are saved per character in `CouchsideCharDB.modules`, marked "(this character)" in the window and by `/cs option`. When a setting moves between account-wide and per character, the value saved the old way is dropped and the default applies. Modules keep other per-character data, such as the second-press action, in `CouchsideCharDB.data`.
 
-Options are saved per account in `CouchsideDB`: the debug option at the top level, and each module's options under `modules.<module>`. Settings from the earlier single addon, Ergonomancer, aren't carried over.
+`/cs` opens Couchside's own settings window, built for the controller interface. Pages are word tabs along its bottom edge: one per module, a Second press page with the on/off setting and the action list (the class default, each class heal and dispel the character knows, a macro, where A again moves to the next macro, and Nothing), and General. Each option is a row: a checkbox, a button that moves to the next value (in place of a dropdown), or a slider; per-character options say "(this character)". A strip at the bottom describes the selected option, since a controller can't hover. The D-pad moves, A changes, B closes; Escape closes it from the keyboard. The mouse can drag the window by its title bar; it opens where it was left (`CouchsideDB.windowPosition`). The window opens only out of combat and closes itself when combat starts, because the controller's navigation refuses addon windows in combat. Status: Brian confirmed navigation, the description strip following the D-pad, each control saving, the word tabs, dragging and the saved position, Escape, choosing an action, and three clean NPC window closes afterwards, 2026-11-25. The combat close and the party-frame marks moving with their settings are still to try. With BagPad's search open, BagPad keeps taking the controller's presses while the cursor is on this window; see the plan's results. See the [settings window plan](docs/research/settings-window-plan.md).
 
-| Option | Default | Checkbox |
+Couchside's options are no longer on Blizzard's settings pages, whose close breaks the controller interface. **Options > AddOns > Couchside** keeps one page with a button that opens the window. Status: Brian confirmed the page and its button, and closing Options afterwards blocked nothing, 2026-11-25. The earlier Blizzard pages are recorded in [settings layout validation](docs/research/settings-label-spacing-2026-10-14.md).
+
+| Option | Default | Setting |
 | --- | --- | --- |
-| `quests.smartTracking` | off | Track quests for my current zone |
-| `quests.areaMarker` | on | Mark tracked quest areas |
-| `quests.untrackedAreas` | on | Show untracked quest areas |
-| `quests.nearbyTags` | on | Tag turn-ins in the tracker |
-| `quests.minimapBadges` | on | Show letters on the minimap |
-| `quests.nearbyTurnIns` | on | List untracked turn-ins |
-| `controller.pageNumbers` | off | Show action page numbers |
-| `controller.pageNumbersExtraOnly` | off | Only show page 2 or 3 |
+| `debug` | off | Print debug output; use `/cs debug on` or `off`. |
+| `quests.smartTracking` | off | Track quests for my current zone. |
+| `quests.areaMarker` | on | Mark tracked quest areas. |
+| `quests.untrackedAreas` | on | Show untracked quest areas. |
+| `quests.nearbyTags` | on | Tag turn-ins in the tracker. |
+| `quests.minimapBadges` | on | Show letters on the minimap. |
+| `quests.nearbyTurnIns` | on | List untracked turn-ins. |
+| `controller.pageNumbers` | off | Show action page numbers. |
+| `controller.pageNumbersExtraOnly` | off | Only show page 2 or 3; requires pageNumbers. |
+| `controller.partyHints` | on, per character | Show party targeting buttons. |
+| `controller.partySecondPress` | off, per character | Second press casts (experimental). |
+| `controller.partyHintPosition` | `auto`, per character | Button position: `auto`, `left`, `right`, `top`, `bottom` or `inside`. |
+| `controller.partyHintLabels` | `auto` | Face-button glyphs: `auto`, `xbox`, `playstation` or `nintendo`. |
+| `controller.partyHintSize` | 100%, per character | Button size, 50–200%. |
+| `gathering.tooltipDifficulty` | on | Show gathering difficulty in tooltips. |
+
+Disabling a display option also stops its feature-specific background work. Explicit report commands run when requested.
 
 ## Commands
 
-`/cs`, `/cside` and `/couchside` all work. Module commands sit under the module's name, and `/cs <module>` on its own lists them.
+`/cs`, `/cside` and `/couchside` are aliases. `/cs <module>` lists that module's commands. Names are case-insensitive.
 
-| Command | What it does |
+### General and controller
+
+| Command | Action |
 | --- | --- |
-| `/cs` or `/cs help` | Lists every command from the base and each installed module, with versions. |
-| `/cs settings` | Opens the settings panel. |
-| `/cs option` | Lists every module option and whether it's on. |
-| `/cs option <module.name> on` / `off` | Turns an option on or off without opening the settings panel, for example `/cs option controller.pageNumbers on`. Names aren't case-sensitive. |
-| `/cs debug on` / `off` | Prints what every module sees to chat. Stays on across sessions and reminds you at login. |
-| `/cs quests areas` | For each tracked quest: whether the game and the addon think you're in its area, and whether the tracker mark is showing. |
-| `/cs quests nearby` | Every quest in your log by distance, which turn-ins are on the minimap, their letter, and where each sits on the minimap face. |
-| `/cs quests probe` | Checks untracked-area detection against the game's own answer for tracked quests. |
-| `/cs quests tracking [questID]` | Reports zone-tracking evidence and decisions for every quest or one quest ID. Never changes watches. |
-| `/cs quests tracking keep <questID>` / `auto <questID>` | Keeps a quest tracked across scans or returns it to automatic zone rules. `keep` tracks immediately, even with automation off. |
-| `/cs quests watchtest <questID>` | Briefly watches an untracked ordinary quest, then unwatches it, reporting API results and whether the original state was restored. |
-| `/cs controller actionpage` | Reports the native controller page, controller bar visibility and numbered strip state. |
-| `/cs controller actionpage watch` / `off` | Reports changes to the controller page or numbered strip visibility until stopped or reloaded. |
+| `/cs` | Open or close the settings window. |
+| `/cs help` | List commands and installed versions. |
+| `/cs settings` | Open the settings window, same as `/cs`. |
+| `/cs option [module.name] [value]` | List, inspect or change module options; a wrong value prints the accepted ones. |
+| `/cs debug [on\|off]` | Inspect/change persistent debug output. |
+| `/cs windowtest off` | Turn off the game's taint log, which the settings window test turns on. The test shows its steps beside the window, checks each saved value and the next three NPC window closes (PASS or FAIL), and logs to chat and `CouchsideDB.windowTest`. |
+| `/cs controller actionpage [watch\|off]` | Report native page/strip state, watch changes or stop the watch. |
+| `/cs controller equipmentsets` | Report the character sheet's equipment set list layout. |
+| `/cs controller pressprobe [on\|off]` | Log every party target press, hold and release to chat and the saved file for a bug report. With Second press casts off it takes the keys but only targets. |
+| `/cs controller secondpress [default\|off\|spell <name or ID>\|macro <name>]` | Choose what a second press will cast (per character; default: the character's first known class action, also used when a chosen spell is no longer known), or show it with the class actions and dispels this character knows (trained, not just old enough for); every listed spell ID and what it resolves to is saved with the report. Decisions and deferred ideas: [second-press notes](docs/research/second-press.md). Used by Second press casts. |
+| `/cs controller partytargets [label]` | Report Party Targeting CVars, group state, the button that targets each member and their party frame. Keeps the last eight runs for `/reload` to save. |
 
-## Reporting a problem
+### Quest commands
 
-1. Turn on `/cs debug on`.
-2. Do whatever went wrong again.
-3. Run the report that matches the problem: `/cs quests areas`, `/cs quests nearby`, `/cs quests tracking <questID>` or `/cs controller actionpage`.
-4. Send a screenshot that shows the chat output, the tracker and the minimap together.
+| Command | Action |
+| --- | --- |
+| `/cs quests areas` | Report tracked quest-area states and highlights. |
+| `/cs quests nearby` | Report quest points, distance, minimap range and letters. |
+| `/cs quests probe` | Compare untracked-area detection with the native answer. |
+| `/cs quests tracking [questID]` | Read-only zone rules, evidence and watch decisions. |
+| `/cs quests tracking keep <questID>` or `auto <questID>` | Keep a quest tracked or restore automatic rules. |
+| `/cs quests watchtest <questID>` | Briefly watch/unwatch an eligible untracked quest; requires zone tracking off. Reports cleanup failures. |
+| `/cs quests roles [label]` | Save read-only map/quest/hover/gossip evidence. |
+| `/cs quests roles request [label]` | Also request map quest-line data, with a bounded response wait. |
+| `/cs quests roles show` or `off` | List retained reports or cancel the pending request. |
 
-The reports print what the game said, what the addon decided and, for display features, what it drew, so a screenshot usually shows which step failed.
+### Gathering commands
 
-## Installing
+| Command | Action |
+| --- | --- |
+| `/cs gathering tooltip` | Report the last five tooltips: read path, data type, owner, text (secret lines marked), known nodes and lines added. |
+| `/cs gathering skills` | Read-only raw Herbalism/Mining values and what the difficulty model sees. |
 
-Copy the `Couchside` folder and the module folders you want into your game's `Interface/AddOns` directory, keeping their names: each folder name must match the `.toc` inside it. When working from a clone, a symlink per folder saves copying after every change:
+## Saved data and troubleshooting
 
-```bash
-for addon in Couchside Couchside_Quests Couchside_Controller; do
-  ln -s "/path/to/couchside/$addon" "/path/to/World of Warcraft/_retail_/Interface/AddOns/$addon"
-done
-```
+`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. `CouchsideDB.windowTest` keeps the last 60 settings window test lines; an old `CouchsideDB.panelProbe` is no longer written. `CouchsideCharDB` keeps per-character options and module data, such as the second-press action. `CouchsideControllerReportDB` keeps the last eight `partytargets` reports, the last 60 `pressprobe` events and the last `secondpress` report per character, written to `SavedVariables/Couchside_Controller.lua` on `/reload`. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
 
-A `/reload` picks up code changes and new files listed in a `.toc`. If a newly added folder doesn't appear in the AddOns list, restart the game client.
+For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, `controller equipmentsets`, `controller partytargets`, or Gathering's `tooltip` and `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
 
 ## How the game behaves
 
-Quest area and nearby behaviour below was confirmed in-game on 12.1.x. Controller page reporting and the explicitly labelled tracking-report results were confirmed on WoW Forever 1.60.1. The features depend on this behaviour, and a future patch could change any of it.
+These are confirmed observations in the sampled clients, not guarantees for every client/build. Detailed samples and version results are in the [development record](docs/research/readme-development-record-2026-10-14.md#how-the-game-behaves).
 
-- **Area events only cover tracked quests.** `PLAYER_INSIDE_QUEST_BLOB_STATE_CHANGED` and `C_Minimap.IsInsideQuestBlob` only report quests whose area is drawn, which means tracked ones. Untracking a quest while standing in its area fires a "left" event.
-- **Area state survives a character switch.** Logging out to character select and into another character can fire a "left" event for the previous character's quest. Exiting the game fully avoids it. It's harmless, because the addon rebuilds its state at login.
-- **The minimap shows turn-ins for untracked quests, but not their areas.**
-- **Distances are in yards.** `C_QuestLog.GetDistanceSqToQuest` matches a distance measured from `C_QuestLog.GetQuestsOnMap` positions exactly, and compares directly with `C_Minimap.GetViewRadius`.
-- **Direction comes from the map, not a fixed axis convention.** The addon measures which way east and north point from the map's own corners, so the arrows can't come out mirrored or rotated. With a rotating minimap it adds `GetPlayerFacing`.
-- **Untracked areas need a workaround.** The world map finds the quest area under the cursor with a `QuestPOIFrame`'s `UpdateMouseOverTooltip(x, y)`. The addon draws one untracked quest's area at a time into its own invisible `QuestPOIFrame` and asks with your position instead. It checks once a second.
-- **Positions aren't available in instances.** The nearby and untracked-area features go quiet inside dungeons and raids.
-- **Forever tracking report distinguishes the sampled local and remote quests.** On build `1.60.1.70245`, completed Border Crossings (`477`) and The Decrepit Ferry (`438`) returned destination map Silverpine Forest (`1421`) and one player-map POI each. Completed Sample for Helbrim (`1358`) returned The Barrens (`1413`), no player-map POI, and `ReadyForTurnIn = true`. Untracked Lost in Battle (`4921`) also returned The Barrens and no local POI. These samples do not establish coverage for every multi-zone quest.
-- **Forever's implicit quest-map state follows the viewed map.** Completed Border Crossings (`477`) retained its Silverpine destination and one explicit player-map POI after untracking. While the player remained in Silverpine and viewed the Barrens map, `IsOnMap` returned `false, false`, but `GetQuestsOnMap` for the player's Silverpine map still returned the same local marker. Use the explicit player-map query for location relevance. This test covers a completed hand-in, not unfinished quest objectives.
-- **A Forever dungeon tag can come without a destination.** Outdoors, The Book of Ur (`1013`) and A Frightened Request (`92401`) returned the Dungeon tag (`81`), both destination-map modes returned `0`, and neither had a local POI. The tag alone cannot match these quests to a specific instance.
-- **Forever's quest-log group can identify a dungeon without map data.** The Book of Ur (`1013`) returned the group Shadowfang Keep even while that group was collapsed, with header index `13` and sort key `1073742033`. Both destination-map modes returned `0`. This confirms access to the category; matching it against the native name inside an instance still needs verification. The header sort key is not assumed to be a map ID.
-- **Forever watch APIs passed a round-trip test.** Border Crossings (`477`) began untracked, `AddQuestWatch` returned `true` and changed its watch type to `1`, then `RemoveQuestWatch` returned `true` and restored watch type `nil`. The selected quest was `nil` before and after. `QuestUtil.CanRemoveQuestWatch` returned `true`. This verifies the API calls on build `1.60.1.70245`, not the automatic feature.
-- **Forever POI `inProgress` is not the quest's completion flag.** Both sampled completed Silverpine quests had `inProgress = true`, zero POI objectives and no objective records. Read quest completion and readiness separately.
-- **Closing the addon's settings panel in gamepad UI freezes Forever.** On build `1.60.1.70235`, opening the panel in gamepad UI and closing it froze the client on macOS and SteamOS, even with no changes made. It still froze with the controller page code removed, so the cause is the game's settings close path rather than any one feature. Changing an option with `/cs option` doesn't open the panel and doesn't freeze. Changing settings in keyboard/mouse UI and then switching back to gamepad UI also works.
-- **Controller page state is available while the numbered strip is hidden.** The native controller page unit reports its selected page and each numbered slot's selected, normal or disabled state independently of the strip's visibility. `/cs controller actionpage` reads this state.
+- Quest-area events cover drawn tracked areas. Untracking can fire a left event; a character switch can briefly report the previous character's state. Couchside rebuilds at login.
+- The minimap shows untracked quest turn-ins but omits their areas. Couchside tests untracked areas in its own invisible quest-POI frame, once per second.
+- Quest distance matches yards and the minimap view radius in tested samples. Direction is measured from map corners, with facing added for rotation.
+- Forever's implicit `IsOnMap` follows the viewed map. Explicit player-map POIs remained stable in the tested turn-in comparison. Returned point arrays can include other map IDs.
+- A dungeon tag can lack a destination. A quest's log group was readable while collapsed, but its header sort key is not a map ID. Watch add/remove passed the sampled round trip; POI `inProgress` did not mean incomplete.
+- Tested Forever dungeons lacked map coordinates/facing while speed and movement/turning/looking events remained readable. Direct fallback display coverage is still pending.
+- Closing settings in the tested Forever gamepad UI froze macOS and SteamOS clients. In the current client it no longer freezes, but the controller interface stops working until `/reload`: hiding a panel makes the controller UI call the protected `SetPreferredGamepadInteractTarget()` on a path addon code has already run on, so the game blocks it and blames that addon. BugGrabber logged the same error for Auctionator, BlessingsUponYou and Couchside, so it is a client bug, not one addon's. Couchside's settings window and `/cs option` avoid that close path.
+- An addon window can join Forever's controller navigation: calling `GamepadMode.FrameControlsManager:FrameShown(self)` on show and `FrameHidden(self)` on hide gave D-pad movement, A to press and B to close (through the window's `CloseButton`), and later windows closed cleanly. Two Blizzard pieces made from addon code broke later window closes the same way the settings panel does: a dropdown's menu, and `GamepadTabIndicatorsTemplate` (LB/RB tabs), which puts addon code in the game's shared input binding stack. Details: [settings panel probe](docs/research/settings-panel-probe.md).
+- Selecting a button with the D-pad runs its `OnEnter` script, as the mouse does: the settings window's description strip follows the D-pad.
+- Blizzard's party targeting prompt under raid-style party frames shows LB even with swapped target modifiers, where RB is the friendly targeting button: it hard-codes `GAMEPAD_SHOULDER_LEFT` (`RaidTargetDPAD.lua`, `GroupTargeting.lua`). Brian saw LB with RB as his friendly targeting button.
+- A spell cast at a party member who can't be targeted (Brian's offline party1) lands on the player instead.
+- Forever reports Brian's controller's `labelStyle` as `Generic`, so `GetBindingText("PAD1")` returns the generic glyph `1`. The A/B/X/Y, shape and Nintendo glyph atlases exist and draw when chosen directly.
+- Forever's controller Party Targeting option is CVar `GamepadUsePartyTargeting`. With it on and in a party, holding the friendly targeting button made D-pad up target party1 and the bottom face button target Brian. Raid-style party frames sort by reassigning units to fixed frames, so frame order is not party order (`CompactPartyFrame.lua`).
+- With the controller interface on, Forever's equipment set list is 0 wide and empty: its controller layout anchors to `CharacterFrame.InsetRight`, which Forever's character sheet lacks. Restoring the XML anchors while the list is hidden brings back the sets and the game's own controller actions.
+- The controller page remains readable while its numbered strip is hidden. Controller input normally hides the pointer in Brian's tested workflow, with text-field exceptions.
+- A native minimap tooltip can combine a herb, quest text and NPC names. Generic tooltip type/color did not establish their roles.
+- The sampled zero-bonus Herbalism rank matched Skills; Mining returned nil when not learned.
+- Blizzard removed the minimap capability the retired Minimap scanner relied on. Lines added to the minimap pin tooltip did not appear.
+- Offer-map reads were empty despite an available quest in gossip. One ready non-repeatable turn-in supplied an exact quest-title match in hover. NPC/pin identity, repeatable and flight-discovery coverage remain unresolved.
+- Timer-driven controller paging and the full GatherMate2 trial broke later controller input. Both were withdrawn; no automatic page-switching or external collection addon is required.
 
 ## Limits
 
-- Minimap letters assume a round minimap. On a square one, from another addon, they can sit slightly off their icons.
-- When the tracker is too long for the screen, Blizzard hides the quests that don't fit. Those have no tracker entry either, so their turn-ins appear under Nearby (Untracked) even though they're tracked.
-- Couchside never moves, reorders or edits Blizzard's frames. Every mark is its own frame drawn beside or behind Blizzard's.
+Quest minimap marks assume a round minimap. A long native tracker can hide entries, which may then appear in Nearby (Untracked). Every Couchside mark is an addon-owned frame beside or behind the native UI.
 
 ## Development
 
+Plain Lua, with no build step. The README owns current features, settings, commands, files and concise confirmed client facts. Put detailed samples, case counts and validation history in `docs/research/`, with a link from the relevant feature. [GLOSSARY.md](GLOSSARY.md) defines resource terms; [ADRs](docs/adr/) record architecture decisions. The [development record](docs/research/readme-development-record-2026-10-14.md) preserves the material moved out of this README.
+
+Run local Lua checks in an isolated environment with `lupa`, using `tests/run-gathering-checks.py` (Gathering, option values, the settings window and its AddOns page, and the second-press command) and `tests/quest-role-probe-check.py`. Local fixtures do not establish native input or taint safety. Only Brian tests the game; copy verified real module folders for a test and commit runtime changes after native acceptance.
+
 | File | Role |
 | --- | --- |
-| `Couchside/Core.lua` | `Couchside.RegisterModule`, chat output, options and their saved values, `/cs` commands. |
-| `Couchside/Settings.lua` | The settings panel: the Couchside page and one page per module, built at login. |
-| `Couchside_Quests/Quests.lua` | Registers the Quests module and its options. Quest colours and chat descriptions. |
-| `Couchside_Quests/QuestTracking.lua` | Shared zone decision snapshot, `/cs quests tracking` reports and override commands, and explicit `/cs quests watchtest <questID>` watch API test. |
-| `Couchside_Quests/QuestZoneTracking.lua` | Event-driven watch reconciliation, per-character keeps and restoration records. Coalesces scans with a temporary OnUpdate handler. |
-| `Couchside_Quests/Tracker.lua` | Finds a quest's tracker entry and re-applies marks after the tracker lays itself out. |
-| `Couchside_Quests/QuestAreaMarker.lua` | Blue mark on tracked quests you're standing in. `/cs quests areas`. |
-| `Couchside_Quests/QuestNearby.lua` | The nearby turn-in model: distances, letters, minimap angles. `/cs quests nearby`. |
-| `Couchside_Quests/NearbyTrackerTags.lua` | Letter, arrow and distance tags on tracker entries. |
-| `Couchside_Quests/MinimapBadges.lua` | Letter badges on the minimap, spread apart when icons cluster. |
-| `Couchside_Quests/UntrackedAreas.lua` | Untracked-area detection. `/cs quests probe`. |
-| `Couchside_Quests/NearbySection.lua` | The Nearby (Untracked) list below the tracker. |
-| `Couchside_Controller/Controller.lua` | Registers the Controller module and its options. |
-| `Couchside_Controller/ControllerPageReport.lua` | Read-only controller page report. `/cs controller actionpage`. Polls only while diagnostic watch mode is running. |
-| `Couchside_Controller/ControllerPages.lua` | Persistent controller page tiles. Reads native page state at 10Hz only while the option is enabled. |
+| `Couchside/Core.lua` | Module registration, commands, saved options (checkbox, choice, number; account or per character), per-character module data and chat/debug output. |
+| `Couchside/Settings.lua` | Couchside's page under Options > AddOns: one button that opens the settings window. |
+| `Couchside/Panel.lua` | The settings window: pages built from the module registrations, `Couchside.RegisterPanelPage` for module pages, and the controller navigation and combat rules. |
+| `Couchside/WindowTest.lua` | Throwaway: the settings window's test steps, saved-value and NPC-close checks, and taint logging. |
+| `Couchside_Quests/Quests.lua` | Register options and shared quest colors/descriptions. |
+| `Couchside_Quests/QuestTracking.lua` | Zone decisions, reports, keep/auto overrides and watch test. |
+| `Couchside_Quests/QuestRoleProbe.lua` | Bounded read-only role reports and optional data request. |
+| `Couchside_Quests/QuestZoneTracking.lua` | Event-driven watch reconciliation and per-character restoration. |
+| `Couchside_Quests/Tracker.lua` | Find tracker entries and reapply addon marks. |
+| `Couchside_Quests/QuestAreaMarker.lua` | Blue tracked-area highlights. |
+| `Couchside_Quests/QuestNearby.lua` | Nearby turn-in distances, letters and directions. |
+| `Couchside_Quests/NearbyTrackerTags.lua` | Tracker letter, arrow and distance tags. |
+| `Couchside_Quests/MinimapBadges.lua` | Teal turn-in badges and cluster separation. |
+| `Couchside_Quests/UntrackedAreas.lua` | Untracked-area detection and diagnostic. |
+| `Couchside_Quests/NearbySection.lua` | Nearby (Untracked) tracker section. |
+| `Couchside_Controller/Controller.lua` | Register controller display options. |
+| `Couchside_Controller/ControllerPageReport.lua` | Read-only native page report/watch. |
+| `Couchside_Controller/ControllerPages.lua` | Persistent page-number tiles. |
+| `Couchside_Controller/EquipmentSets.lua` | Restore the equipment set list's anchors; `/cs controller equipmentsets` report. |
+| `Couchside_Controller/PartyTargetHints.lua` | Party targeting button mapping and the marks on party frames. |
+| `Couchside_Controller/PartyPress.lua` | Secure party target key takeover, second-press casting and `/cs controller pressprobe`. |
+| `Couchside_Controller/SecondPress.lua` | Second-press action, class defaults and the settings window's Second press page. |
+| `Couchside_Controller/PartyTargetReport.lua` | Read-only `/cs controller partytargets` report, saved for `/reload`. |
+| `Couchside_Gathering/Gathering.lua` | Register Gathering and its tooltip option. |
+| `Couchside_Gathering/SkillProbe.lua` | Read-only raw skill report. |
+| `Couchside_Gathering/ResourceCatalog.lua` | Curated node names and Classic reference bands. |
+| `Couchside_Gathering/Tooltip.lua` | Tooltip difficulty line and `/cs gathering tooltip` report. |
+| `Couchside_Gathering/ResourceDifficulty.lua` | Current skill capture and conservative difficulty evaluation. |
+| `Couchside/Couchside.toc` | Load order, declared interfaces and dependencies; account-wide and per-character options. |
+| `Couchside_Quests/Couchside_Quests.toc` | Load order, declared interfaces and dependencies; per-character quest state/reports. |
+| `Couchside_Controller/Couchside_Controller.toc` | Load order, declared interfaces and dependencies; saved reports. |
+| `Couchside_Gathering/Couchside_Gathering.toc` | Load order, declared interfaces and base dependency. |
 
-A module's first file calls `Couchside.RegisterModule(ns, spec)` with its key, title and option sections. The base fills the module's namespace with `IsEnabled`, `OnOptionChanged`, `OnReady`, `RegisterCommand`, `Print` and `Debug`, so feature files use `ns.` the same way in every module.
-
-Blizzard's UI source, mirrored at [Gethe/wow-ui-source](https://github.com/Gethe/wow-ui-source), is the reference for API names and behaviour. Before building on an API we haven't used yet, we add a debug report that checks it in-game, and keep the report afterwards for bug reports.
+Module registration supplies `IsEnabled`, `GetOption`, `CharacterData`, `OnOptionChanged`, `OnReady`, `RegisterCommand`, `Print` and `Debug`. Options come from the module's registered sections. Check [Blizzard's UI source](https://github.com/Gethe/wow-ui-source) before using new game APIs, add a read-only report first and retain it after native validation. Offline catalog tools are described in the [client-table research](docs/research/client-table-export-2026-10-12.md).
 
 ## License
 

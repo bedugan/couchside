@@ -1,0 +1,13 @@
+## Interface: 16001, 120100, 120105
+## Title: Couchside: Gathering
+## Notes: Gathering difficulty in herb and ore tooltips.
+## Author: Brian Dugan
+## Version: 0.18.0
+## IconTexture: Interface\Icons\INV_Misc_Herb_01
+## Dependencies: Couchside
+
+Gathering.lua
+ResourceCatalog.lua
+ResourceDifficulty.lua
+Tooltip.lua
+SkillProbe.lua

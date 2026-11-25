@@ -1,0 +1,1268 @@
+{
+  "source": "Native SavedVariables parsed as data, never executed",
+  "capturedSavedFileModifiedUTC": {
+    "Couchside_Quests.lua": "2026-10-14T23:13:05.231046+00:00",
+    "Couchside.lua": "2026-10-14T23:13:05.219361+00:00",
+    "!BugGrabber.lua": "2026-10-14T23:13:05.216654+00:00"
+  },
+  "sha256": {
+    "Couchside_Quests.lua": "77ddc69496c59924583f0dae4062da312897ed27adc2bae654fc9a4b955d1c87",
+    "Couchside.lua": "ea551e00dd2d72d1cf3f46e54d5f089e932699eb2736515b7edb74e1d319c2ec",
+    "!BugGrabber.lua": "c6a05935a80f348c331d46c58bfe2d3808c17e3134d1cfd3726544ab4ba8c465"
+  },
+  "questReportVersion": 1,
+  "reports": [
+    {
+      "id": 1,
+      "label": "offer",
+      "serverTime": {
+        "status": "ok",
+        "value": 1792019483
+      },
+      "client": {
+        "status": "ok",
+        "value": {
+          "build": "70374",
+          "version": "1.60.1",
+          "interface": 16001
+        }
+      },
+      "playerMap": {
+        "status": "ok",
+        "value": 1413
+      },
+      "minimapMap": {
+        "status": "nil"
+      },
+      "requestStatus": "event-observed",
+      "requestCall": {
+        "status": "nil"
+      },
+      "mapData": {
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.5056799650192261,
+              "x": 0.6440049409866333,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 220,
+              "isMapIndicatorQuest": false,
+              "y": 0.4377428293228149,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "4": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 97250,
+              "isMapIndicatorQuest": false,
+              "y": 0.5927104949951172,
+              "x": 0.4462417960166931,
+              "numObjectives": 2,
+              "isDaily": false,
+              "isQuestStart": false,
+              "questTagType": 0,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 4
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "quests": {
+          "97250": {
+            "title": {
+              "status": "ok",
+              "value": "Wrongly Blamed, Justly Corrected"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 4
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 2
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 5
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": false
+            },
+            "complete": {
+              "status": "ok",
+              "value": false
+            }
+          },
+          "220": {
+            "title": {
+              "status": "ok",
+              "value": "Call of Water"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 29
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        }
+      },
+      "afterRequest": {
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.5056799650192261,
+              "x": 0.6440049409866333,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 220,
+              "isMapIndicatorQuest": false,
+              "y": 0.4377428293228149,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "4": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 97250,
+              "isMapIndicatorQuest": false,
+              "y": 0.5927104949951172,
+              "x": 0.4462417960166931,
+              "numObjectives": 2,
+              "isDaily": false,
+              "isQuestStart": false,
+              "questTagType": 0,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 4
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "quests": {
+          "97250": {
+            "title": {
+              "status": "ok",
+              "value": "Wrongly Blamed, Justly Corrected"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 4
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 2
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 5
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": false
+            },
+            "complete": {
+              "status": "ok",
+              "value": false
+            }
+          },
+          "220": {
+            "title": {
+              "status": "ok",
+              "value": "Call of Water"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 29
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        }
+      },
+      "hover": {
+        "status": "nil"
+      },
+      "gossipVisible": {
+        "status": "ok",
+        "value": false
+      },
+      "questFrameVisible": {
+        "status": "ok",
+        "value": false
+      },
+      "gossipAvailable": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      },
+      "gossipActive": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      }
+    },
+    {
+      "id": 2,
+      "label": "offer-talk",
+      "serverTime": {
+        "status": "ok",
+        "value": 1792019514
+      },
+      "client": {
+        "status": "ok",
+        "value": {
+          "build": "70374",
+          "version": "1.60.1",
+          "interface": 16001
+        }
+      },
+      "playerMap": {
+        "status": "ok",
+        "value": 1413
+      },
+      "minimapMap": {
+        "status": "nil"
+      },
+      "requestStatus": null,
+      "requestCall": null,
+      "mapData": {
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.5056799650192261,
+              "x": 0.6440049409866333,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 220,
+              "isMapIndicatorQuest": false,
+              "y": 0.4377428293228149,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "4": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 97250,
+              "isMapIndicatorQuest": false,
+              "y": 0.5927104949951172,
+              "x": 0.4462417960166931,
+              "numObjectives": 2,
+              "isDaily": false,
+              "isQuestStart": false,
+              "questTagType": 0,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 4
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "quests": {
+          "97250": {
+            "title": {
+              "status": "ok",
+              "value": "Wrongly Blamed, Justly Corrected"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 4
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 2
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 5
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": false
+            },
+            "complete": {
+              "status": "ok",
+              "value": false
+            }
+          },
+          "220": {
+            "title": {
+              "status": "ok",
+              "value": "Call of Water"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 29
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        }
+      },
+      "afterRequest": null,
+      "hover": {
+        "status": "nil"
+      },
+      "gossipVisible": {
+        "status": "ok",
+        "value": true
+      },
+      "questFrameVisible": {
+        "status": "ok",
+        "value": false
+      },
+      "gossipAvailable": {
+        "status": "ok",
+        "rows": {
+          "1": {
+            "questLevel": 30,
+            "isIgnored": false,
+            "isImportant": false,
+            "frequency": 0,
+            "isTrivial": false,
+            "isLegendary": false,
+            "repeatable": false,
+            "questInfoID": 0,
+            "title": "Melor Sends Word",
+            "questID": 1130,
+            "isMeta": false
+          }
+        },
+        "truncated": false,
+        "total": 1
+      },
+      "gossipActive": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      }
+    },
+    {
+      "id": 3,
+      "label": "offer",
+      "serverTime": {
+        "status": "ok",
+        "value": 1792019547
+      },
+      "client": {
+        "status": "ok",
+        "value": {
+          "build": "70374",
+          "version": "1.60.1",
+          "interface": 16001
+        }
+      },
+      "playerMap": {
+        "status": "ok",
+        "value": 1413
+      },
+      "minimapMap": {
+        "status": "nil"
+      },
+      "requestStatus": "event-observed",
+      "requestCall": {
+        "status": "nil"
+      },
+      "mapData": {
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.5056799650192261,
+              "x": 0.6440049409866333,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 220,
+              "isMapIndicatorQuest": false,
+              "y": 0.4377428293228149,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "4": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 97250,
+              "isMapIndicatorQuest": false,
+              "y": 0.5927104949951172,
+              "x": 0.4462417960166931,
+              "numObjectives": 2,
+              "isDaily": false,
+              "isQuestStart": false,
+              "questTagType": 0,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 4
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "quests": {
+          "97250": {
+            "title": {
+              "status": "ok",
+              "value": "Wrongly Blamed, Justly Corrected"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 4
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 2
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 5
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": false
+            },
+            "complete": {
+              "status": "ok",
+              "value": false
+            }
+          },
+          "220": {
+            "title": {
+              "status": "ok",
+              "value": "Call of Water"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 29
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        }
+      },
+      "afterRequest": {
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.5056799650192261,
+              "x": 0.6440049409866333,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 220,
+              "isMapIndicatorQuest": false,
+              "y": 0.4377428293228149,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "4": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 97250,
+              "isMapIndicatorQuest": false,
+              "y": 0.5927104949951172,
+              "x": 0.4462417960166931,
+              "numObjectives": 2,
+              "isDaily": false,
+              "isQuestStart": false,
+              "questTagType": 0,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 4
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "quests": {
+          "97250": {
+            "title": {
+              "status": "ok",
+              "value": "Wrongly Blamed, Justly Corrected"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 4
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 2
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 5
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": false
+            },
+            "complete": {
+              "status": "ok",
+              "value": false
+            }
+          },
+          "220": {
+            "title": {
+              "status": "ok",
+              "value": "Call of Water"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 29
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        }
+      },
+      "hover": {
+        "status": "ok",
+        "value": {
+          "dataInstanceID": 82864,
+          "lines": {
+            "1": {
+              "leftColor": {
+                "b": 0,
+                "GetHSL": "<function omitted>",
+                "g": 0.8235294222831726,
+                "GetRGBA": "<function omitted>",
+                "IsRGBEqualTo": "<function omitted>",
+                "SetRGB": "<function omitted>",
+                "GetRGB": "<function omitted>",
+                "OnLoad": "<function omitted>",
+                "GenerateHexColorMarkup": "<function omitted>",
+                "WrapTextInColorCode": "<function omitted>",
+                "GenerateHexColor": "<function omitted>",
+                "IsEqualTo": "<function omitted>",
+                "r": 1,
+                "GenerateHexColorNoAlpha": "<function omitted>",
+                "SetRGBA": "<function omitted>",
+                "GetRGBAsBytes": "<function omitted>",
+                "GetRGBAAsBytes": "<function omitted>"
+              },
+              "type": 0,
+              "leftText": "Tatternack Steelforge"
+            }
+          },
+          "type": 21
+        }
+      },
+      "gossipVisible": {
+        "status": "ok",
+        "value": false
+      },
+      "questFrameVisible": {
+        "status": "ok",
+        "value": false
+      },
+      "gossipAvailable": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      },
+      "gossipActive": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      }
+    },
+    {
+      "id": 4,
+      "label": "offer-talk",
+      "serverTime": {
+        "status": "ok",
+        "value": 1792019564
+      },
+      "client": {
+        "status": "ok",
+        "value": {
+          "build": "70374",
+          "version": "1.60.1",
+          "interface": 16001
+        }
+      },
+      "playerMap": {
+        "status": "ok",
+        "value": 1413
+      },
+      "minimapMap": {
+        "status": "nil"
+      },
+      "requestStatus": null,
+      "requestCall": null,
+      "mapData": {
+        "mapID": 1413,
+        "points": {
+          "status": "ok",
+          "rows": {
+            "1": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 873,
+              "isMapIndicatorQuest": false,
+              "y": 0.5056799650192261,
+              "x": 0.6440049409866333,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "2": {
+              "mapID": 1442,
+              "isCombatAllyQuest": false,
+              "questID": 1060,
+              "isMapIndicatorQuest": false,
+              "y": 0.2789271473884583,
+              "x": 0.2977220714092255,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "3": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 220,
+              "isMapIndicatorQuest": false,
+              "y": 0.4377428293228149,
+              "x": 0.6583141088485718,
+              "numObjectives": 1,
+              "isQuestStart": false,
+              "isDaily": false,
+              "inProgress": true,
+              "isMeta": false
+            },
+            "4": {
+              "mapID": 1413,
+              "isCombatAllyQuest": false,
+              "questID": 97250,
+              "isMapIndicatorQuest": false,
+              "y": 0.5927104949951172,
+              "x": 0.4462417960166931,
+              "numObjectives": 2,
+              "isDaily": false,
+              "isQuestStart": false,
+              "questTagType": 0,
+              "inProgress": true,
+              "isMeta": false
+            }
+          },
+          "truncated": false,
+          "total": 4
+        },
+        "offers": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "forceVisible": {
+          "status": "ok",
+          "rows": {},
+          "truncated": false,
+          "total": 0
+        },
+        "quests": {
+          "97250": {
+            "title": {
+              "status": "ok",
+              "value": "Wrongly Blamed, Justly Corrected"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 4
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "1060": {
+            "title": {
+              "status": "ok",
+              "value": "Letter to Jin'Zil"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 2
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          },
+          "873": {
+            "title": {
+              "status": "ok",
+              "value": "Isha Awak"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 5
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": false
+            },
+            "complete": {
+              "status": "ok",
+              "value": false
+            }
+          },
+          "220": {
+            "title": {
+              "status": "ok",
+              "value": "Call of Water"
+            },
+            "repeatable": {
+              "status": "ok",
+              "value": false
+            },
+            "logIndex": {
+              "status": "ok",
+              "value": 29
+            },
+            "readyForTurnIn": {
+              "status": "ok",
+              "value": true
+            },
+            "complete": {
+              "status": "ok",
+              "value": true
+            }
+          }
+        }
+      },
+      "afterRequest": null,
+      "hover": {
+        "status": "nil"
+      },
+      "gossipVisible": {
+        "status": "ok",
+        "value": true
+      },
+      "questFrameVisible": {
+        "status": "ok",
+        "value": false
+      },
+      "gossipAvailable": {
+        "status": "ok",
+        "rows": {
+          "1": {
+            "questLevel": 30,
+            "isIgnored": false,
+            "isImportant": false,
+            "frequency": 0,
+            "isTrivial": false,
+            "isLegendary": false,
+            "repeatable": false,
+            "questInfoID": 0,
+            "title": "Melor Sends Word",
+            "questID": 1130,
+            "isMeta": false
+          }
+        },
+        "truncated": false,
+        "total": 1
+      },
+      "gossipActive": {
+        "status": "ok",
+        "rows": {},
+        "truncated": false,
+        "total": 0
+      }
+    }
+  ],
+  "context": {
+    "gatheringAutoScan": false,
+    "bugGrabberSession": 103,
+    "recordedErrorsAtOrAfterFirstReport": 0,
+    "newestRecordedErrorUTC": "2026-10-14T06:35:05+00:00"
+  },
+  "userObservation": "Second attempt hovered native minimap icon and saw NPC name only, then manually interacted and captured dialogue. Controls worked throughout. Minimap cursor disappeared on controller interaction; pointer/hover recovery and baseline behavior not yet established."
+}

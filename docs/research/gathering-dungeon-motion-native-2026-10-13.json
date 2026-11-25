@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-10-14T01:15:51.415526+00:00",
+  "sourceModified": "2026-10-13T18:03:27.611141-07:00",
+  "addonVersion": "0.11.3",
+  "build": "70374",
+  "instance": {
+    "values": {
+      "1": true,
+      "2": "party",
+      "n": 2
+    }
+  },
+  "instanceInfo": {
+    "values": {
+      "1": "Wailing Caverns",
+      "2": "party",
+      "3": 1,
+      "4": "Normal",
+      "5": 5,
+      "6": 0,
+      "7": false,
+      "8": 43,
+      "9": 5,
+      "11": false,
+      "n": 11
+    }
+  },
+  "durationSeconds": 12.00200000000041,
+  "reason": "completed",
+  "samples": 107,
+  "events": 20,
+  "eventCounts": {
+    "PLAYER_STARTED_LOOKING": 4,
+    "PLAYER_STARTED_TURNING": 5,
+    "PLAYER_STARTED_MOVING": 2,
+    "PLAYER_STOPPED_TURNING": 4,
+    "PLAYER_STOPPED_LOOKING": 3,
+    "PLAYER_STOPPED_MOVING": 2
+  },
+  "eventRegistrationErrors": {},
+  "speedMovementPairs": [
+    {
+      "speed": 0,
+      "moving": false,
+      "samples": 88
+    },
+    {
+      "speed": 2.5,
+      "moving": true,
+      "samples": 1
+    },
+    {
+      "speed": 7,
+      "moving": true,
+      "samples": 18
+    }
+  ],
+  "worldCoordinates": "x/y/z unavailable; instance ID 43 readable",
+  "mapAndFacing": "unavailable in all samples",
+  "rotatingMinimap": false,
+  "userValidation": "Brian confirmed normal hover, Jump and interaction worked before and after reload",
+  "errorLog": {
+    "session": 74,
+    "entries": 9,
+    "changedTuples": [
+      {
+        "message": "Interface/AddOns/Spoken_Quests/VoiceOver.lua:1196: attempted to index a table that cannot be indexed with secret keys",
+        "counter": 2,
+        "session": 74,
+        "time": 1791939803,
+        "stack": "[Interface/AddOns/Spoken_Quests/VoiceOver.lua]:244: in function 'InvokeQuestHandler'\n[Interface/AddOns/Spoken_Quests/VoiceOver.lua]:846: in function <Interface/AddOns/Spoken_Quests/VoiceOver.lua:834>\n[Interface/AddOns/Spoken_Quests/VoiceOver.lua]:888: in function 'func'\n[Interface/AddOns/Spoken/Libs/AceTimer-3.0/AceTimer-3.0.lua]:57: in function <...ace/AddOns/Spoken/Libs/AceTimer-3.0/AceTimer-3.0.lua:50>\n"
+      }
+    ],
+    "attributionBoundary": "Recorded stack contains no Couchside frame; original taint source not established. No unrelated addon changed."
+  },
+  "nextCandidate": "0.11.4 north-up party-instance display; direct in-game display test pending"
+}

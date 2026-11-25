@@ -3,7 +3,7 @@
 A family of World of Warcraft addons for WoW Forever 1.60.1 and the Retail 12.1.x client. Plain Lua, no build step. The repo holds one folder per addon:
 
 - `Couchside/`: the required base. The `/cs` command, options, settings pages, chat and debug output.
-- `Couchside_Quests/`, `Couchside_Controller/`: modules. Each lists `## Dependencies: Couchside` and registers with `Couchside.RegisterModule` from its first file.
+- `Couchside_Quests/`, `Couchside_Controller/`, `Couchside_Gathering/`: modules. Each lists `## Dependencies: Couchside` and registers with `Couchside.RegisterModule` from its first file.
 
 A feature goes in the module whose purpose it serves. A new purpose gets a new `Couchside_<Purpose>/` module, not a file in an existing one. Code moves into the base only when more than one module needs it.
 
@@ -13,9 +13,11 @@ A feature goes in the module whose purpose it serves. A new purpose gets a new `
 
 The update is done when every feature, option, command and `.toc` file in the committed code appears in the README, and nothing the README describes is gone from the code. New facts about how the game behaves go under "How the game behaves" once they've been confirmed in-game.
 
+Keep the README focused on current behavior, setup, commands, limits and concise validation status. Put detailed test procedures, build/scan IDs, case counts and validation history in `docs/research/`, and decision rationale in ADRs. Link that evidence from the relevant README feature. Archived records describe their captured version; consult the current code and README before following old procedures.
+
 ## Adding an option
 
-1. Add an entry with `key`, `default`, `name` and `tooltip` to the module's sections in its `Couchside.RegisterModule` call (`Quests.lua`, `Controller.lua`). The settings page and `/cs option` pick it up from there.
+1. Add an entry with `key`, `default`, `name` and `tooltip` to the module's sections in its `Couchside.RegisterModule` call (`Quests.lua`, `Controller.lua`, `Gathering.lua`). The settings page and `/cs option` pick it up from there.
 2. Gate the feature's display and its background work with `ns.IsEnabled(key)`.
 
 ## Working against the game
@@ -23,5 +25,7 @@ The update is done when every feature, option, command and `.toc` file in the co
 - Blizzard's UI source ([Gethe/wow-ui-source](https://github.com/Gethe/wow-ui-source)) is the reference for API names, signatures and behaviour. Read it before using an API.
 - Verify before building. For an API the addon hasn't used yet, first add a report command (`ns.RegisterCommand`, run as `/cs <module> <command>`) that shows what the API returns, have Brian check it in-game, then build on it. Keep the report for bug reports.
 - Only Brian can test in-game. Commit a change after he confirms it works; a `/reload` loads code changes and new files listed in a `.toc`.
-- Every mark is the addon's own frame, anchored beside or behind Blizzard's frames, which stay where Blizzard put them.
+- The game loads copies from `/Applications/World of Warcraft/_forever_/Interface/Addons`, not the repo. Symlinks exposed half-finished work while Brian played, so when a change is ready to test, copy each changed module folder there and confirm it matches the repo. Syncthing shares that folder with his other devices.
+- Every mark is the addon's own frame, anchored beside or behind Blizzard's frames. Blizzard's frames keep Blizzard's behaviour.
+- Where Blizzard's own UI is broken (empty, wrong or misleading), the addon makes the feature work anyway with the smallest change to Blizzard's frame: restore the frame's intended state (the equipment set list's anchors), or make the broken element invisible with `SetAlpha(0)` and show the addon's own in its place (the party targeting badge over Blizzard's LB prompt). Blizzard keeps its functions, scripts, bindings and Show/Hide. Protected frames change only out of combat. Turning the option off restores Blizzard's frame. The README records the breakage under "How the game behaves" and the change beside the feature.
 - Log decisions with `ns.Debug` so `/cs debug on` explains what the addon did.

@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-12",
+  "providerVersion": "1.52.3-8-g26d58dd",
+  "action": "Moved the unchanged temporary evaluation folder outside AddOns after Brian confirmed the recorded errors break controller input",
+  "from": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/GatherMate2",
+  "to": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns.disabled/GatherMate2-1.52.3-8-g26d58dd",
+  "filesVerified": 341,
+  "savedVariablesPreserved": true,
+  "bugHistoryPreserved": true,
+  "couchsideFilesUnchanged": true,
+  "nativeRecovery": "Pending Brian reload and controller/map comparison",
+  "rootCause": "Not proven; saved protected-call attribution names GatherMate2. Removal isolates the provider-dependent combination."
+}

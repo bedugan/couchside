@@ -1,0 +1,171 @@
+<!doctype html>
+<!-- Throwaway: three D-pad party targeting indicator concepts, ?variant=badge|compass|tapagain. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Party D-pad Hints</title>
+<style>
+:root{color-scheme:dark;--bg:#0f1d2a;--panel:#16293a;--panel2:#1d3448;--line:#3b6178;--text:#eef3f6;--muted:#a9c3d2;--hint:#ffc94d;--hint-ink:#2b1d00;--target:#4de3c1;--heal:#7cf09a;--warn:#ff8a5c;--hp:#3fbf5a;--hp-bg:#2a1a1f;font-family:system-ui,sans-serif;line-height:1.5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}
+main{max-width:1180px;margin:auto;padding:24px 16px 130px}
+h1{font-family:Georgia,serif;font-weight:normal;font-size:clamp(26px,4vw,36px);margin:6px 0 10px}
+p{max-width:860px}.status{color:var(--target);font-size:14px;margin:0}.small{font-size:14px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:270px 1fr;gap:18px;margin-top:18px}
+.controls{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;align-self:start}
+.controls h2{font-size:15px;margin:0 0 10px;color:var(--hint)}
+.field{margin-bottom:14px}.field label,.field .lbl{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+button{font:14px system-ui,sans-serif;cursor:pointer;border:1px solid #5d8aa0;background:#203c50;color:var(--text);border-radius:6px;padding:7px 10px}
+button[aria-pressed=true]{background:#aee3e6;color:#0d2a33;border-color:#d6f3f5}
+button:disabled{opacity:.35;cursor:not-allowed}
+button:focus-visible{outline:3px solid var(--hint);outline-offset:2px}
+input[type=range]{width:100%}select{width:100%;font:14px system-ui;background:#203c50;color:var(--text);border:1px solid #5d8aa0;border-radius:6px;padding:6px}
+.note{font-size:12.5px;color:var(--warn);min-height:18px;margin-top:4px}
+.pad{display:grid;grid-template-columns:repeat(3,46px);grid-template-rows:repeat(3,46px);gap:4px;justify-content:center;margin:6px 0}
+.pad button{padding:0;font-size:20px}.pad .u{grid-area:1/2}.pad .l{grid-area:2/1}.pad .r{grid-area:2/3}.pad .d{grid-area:3/2}
+.pad .c{grid-area:2/2;display:grid;place-items:center;font-size:11px;color:var(--muted)}
+.log{font-size:13px;background:#0b1620;border:1px solid var(--line);border-radius:6px;padding:8px;min-height:62px;color:var(--muted)}
+.log b{color:var(--text)}
+.world{position:relative;min-height:520px;border:2px solid #8a7047;border-radius:8px;overflow:hidden;background:radial-gradient(ellipse at 70% 30%,#3c5a48 0,#2a4235 30%,transparent 65%),linear-gradient(130deg,#4a4632,#2b4442 50%,#21364a)}
+.world:after{content:"Not a game screenshot";position:absolute;right:10px;bottom:8px;font-size:11px;color:#ffffff55}
+.group{position:absolute;display:flex;gap:var(--gap)}
+.group.vertical{flex-direction:column;left:70px;top:60px;--gap:6px}
+.group.horizontal{flex-direction:row;left:50%;transform:translateX(-50%);bottom:90px;--gap:6px}
+.frame{position:relative;background:#101820e8;border:2px solid #6d5a3c;border-radius:4px;padding:5px 7px;transition:box-shadow .15s,border-color .15s}
+.vertical .frame{width:184px;height:50px}.horizontal .frame{width:112px;height:62px}
+.frame .name{font:600 13px system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.frame .bar{height:12px;background:var(--hp-bg);border-radius:2px;margin-top:4px;overflow:hidden}
+.frame .bar i{display:block;height:100%;background:var(--hp);transition:width .4s}
+.horizontal .frame .bar{height:18px}
+.frame.targeted{border-color:var(--target);box-shadow:0 0 0 2px var(--target),0 0 16px #4de3c188}
+.frame.healed .bar i{background:var(--heal);box-shadow:0 0 12px var(--heal)}
+.frame .tab{position:absolute;left:-2px;top:-2px;bottom:-2px;width:6px;border-radius:4px 0 0 4px}
+/* indicator anchoring: --s is the user scale */
+.hint{position:absolute;--sz:calc(28px * var(--s));width:var(--sz);height:var(--sz);display:grid;place-items:center;filter:drop-shadow(0 1px 2px #000c);pointer-events:none}
+.hint svg{width:100%;height:100%}
+.pos-left .hint{right:calc(100% + 6px);top:50%;transform:translateY(-50%)}
+.pos-right .hint{left:calc(100% + 6px);top:50%;transform:translateY(-50%)}
+.pos-top .hint{bottom:calc(100% + 4px);left:50%;transform:translateX(-50%)}
+.pos-bottom .hint{top:calc(100% + 4px);left:50%;transform:translateX(-50%)}
+.pos-inside .hint{right:3px;top:3px;--sz:calc(20px * var(--s))}
+.armed{position:absolute;white-space:nowrap;font:600 calc(11px * var(--s)) system-ui;background:var(--heal);color:#0b2a14;border-radius:999px;padding:1px 7px;pointer-events:none;box-shadow:0 1px 4px #000a}
+.pos-left .armed,.pos-inside .armed{right:calc(100% + 8px);bottom:-4px}
+.pos-right .armed{left:calc(100% + 8px);bottom:-4px}
+.pos-top .armed{bottom:calc(100% + 4px + 28px * var(--s));left:50%;transform:translateX(-50%)}
+.pos-bottom .armed{top:calc(100% + 6px + 28px * var(--s));left:50%;transform:translateX(-50%)}
+.compass{position:absolute;display:grid;grid-template-columns:repeat(3,auto);grid-template-rows:repeat(3,auto);align-items:center;justify-items:center;gap:calc(2px * var(--s));pointer-events:none}
+.compass .ctr{width:calc(30px * var(--s));height:calc(30px * var(--s))}
+.compass .arm{font:600 calc(11px * var(--s)) system-ui;padding:calc(2px * var(--s)) calc(6px * var(--s));border-radius:4px;background:#101820e8;border:2px solid;white-space:nowrap;transition:box-shadow .15s}
+.compass .arm.on{box-shadow:0 0 0 2px var(--target),0 0 12px #4de3c188}
+.explain{border-left:4px solid var(--hint);background:var(--panel2);padding:14px 18px;margin-top:16px;border-radius:0 8px 8px 0}
+.explain h2{font-size:19px;margin:0 0 6px}.explain p{margin:6px 0}.explain ul{margin:6px 0;padding-left:20px}
+.switcher{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;padding:10px;background:#18344b;border:1px solid #83bccb;border-radius:10px;box-shadow:0 5px 25px #0008;max-width:calc(100vw - 32px);flex-wrap:wrap;justify-content:center}
+.switcher button{padding:9px 13px}
+@keyframes cast{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
+.frame.healed{animation:cast .4s}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.world{min-height:480px}.group.vertical{left:56px;top:40px}.horizontal .frame{width:62px}.horizontal .frame .name{font-size:11px}}
+</style></head><body><main>
+<p class="status">Couchside Controller · throwaway concepts · D-pad mapping is a placeholder</p>
+<h1>Which D-pad button targets whom?</h1>
+<p>Three ways to show the D-pad button that targets each party member. Use the controls to switch between vertical and horizontal party frames, move the hint and resize it. Press the D-pad on the left (or W A S D) to target someone. Press <b>1–3</b> or the arrows at the bottom to switch concepts.</p>
+<div class="layout">
+<aside class="controls" aria-label="Prototype controls">
+<h2>Party frames</h2>
+<div class="field"><span class="lbl">Layout</span><div class="seg" data-group="layout"><button data-val="vertical">Vertical</button><button data-val="horizontal">Horizontal</button></div></div>
+<div class="field"><span class="lbl" id="posLabel">Hint position</span><div class="seg" data-group="pos"><button data-val="left">Left</button><button data-val="right">Right</button><button data-val="top">Top</button><button data-val="bottom">Bottom</button><button data-val="inside">Inside</button></div><div class="note" id="posNote"></div></div>
+<div class="field"><label for="scale">Hint size: <span id="scaleOut">100%</span></label><input id="scale" type="range" min="60" max="200" step="10" value="100"></div>
+<div class="field" id="spellField"><label for="spell">Second press casts</label><select id="spell"><option>Flash Heal</option><option>Renew</option><option>Power Word: Shield</option></select></div>
+<h2>Controller</h2>
+<div class="pad"><button class="u" data-dir="up" aria-label="D-pad up">▲</button><button class="l" data-dir="left" aria-label="D-pad left">◀</button><span class="c">D-pad</span><button class="r" data-dir="right" aria-label="D-pad right">▶</button><button class="d" data-dir="down" aria-label="D-pad down">▼</button></div>
+<div class="log" id="log" aria-live="polite">No target yet.</div>
+</aside>
+<section><div class="world" id="world"></div><div class="explain" id="explain"></div></section>
+</div>
+</main>
+<nav class="switcher" aria-label="Concept switcher"><button id="prev" aria-label="Previous concept">←</button><button data-variant="badge">1 · Badge per frame</button><button data-variant="compass">2 · Group compass</button><button data-variant="tapagain">3 · Tap again to heal</button><button id="next" aria-label="Next concept">→</button></nav>
+<script>
+const MEMBERS=[
+ {unit:'player',name:'You',cls:'#f2f2f2',hp:88,dir:null},
+ {unit:'party1',name:'Brakka',cls:'#c69b6d',hp:54,dir:'up'},
+ {unit:'party2',name:'Ilsa',cls:'#3fc7eb',hp:92,dir:'right'},
+ {unit:'party3',name:'Toren',cls:'#fff468',hp:31,dir:'down'},
+ {unit:'party4',name:'Mirelle',cls:'#aad372',hp:76,dir:'left'}];
+const ARROW={up:'▲',right:'▶',down:'▼',left:'◀'};
+const VARIANTS=['badge','compass','tapagain'];
+const S={variant:'badge',layout:'vertical',pos:'left',scale:1,target:null,flash:null};
+const qp=new URL(location.href).searchParams.get('variant');if(VARIANTS.includes(qp))S.variant=qp;
+const $=s=>document.querySelector(s);
+
+function dpad(dir,lit='var(--hint)'){
+ const arm={up:'M11 2h10v10l-5 4-5-4z',down:'M11 30h10V20l-5-4-5 4z',left:'M2 11v10h10l4-5-4-5z',right:'M30 11v10H20l-4-5 4-5z'};
+ return `<svg viewBox="0 0 32 32" aria-hidden="true">${Object.entries(arm).map(([d,p])=>`<path d="${p}" fill="${d===dir?lit:'#0d1820'}" stroke="${d===dir?'#2b1d00':'#8fb3c4'}" stroke-width="1.4"/>`).join('')}</svg>`;
+}
+function posNote(){
+ if(S.variant==='compass')return '';
+ if(S.layout==='vertical'&&(S.pos==='top'||S.pos==='bottom'))return 'Overlaps the next frame: the addon can’t move Blizzard’s frames apart.';
+ if(S.layout==='horizontal'&&(S.pos==='left'||S.pos==='right'))return 'Overlaps the neighbouring frame in a row.';
+ if(S.pos==='inside')return 'Covers part of the name or health text at large sizes.';
+ return '';
+}
+function frameHTML(m,i){
+ const t=S.target===m.unit, hint=S.variant!=='compass'&&m.dir?`<span class="hint">${dpad(m.dir)}</span>`:'';
+ const armed=S.variant==='tapagain'&&t&&m.dir?`<span class="armed">${ARROW[m.dir]} again: ${$('#spell').value}</span>`:'';
+ const tab=S.variant==='compass'?`<span class="tab" style="background:${m.cls}"></span>`:'';
+ return `<div class="frame${t?' targeted':''}${S.flash===m.unit?' healed':''}" data-i="${i}">${tab}<div class="name" style="color:${m.cls}">${m.name}</div><div class="bar"><i style="width:${m.hp}%"></i></div>${hint}${armed}</div>`;
+}
+function compassHTML(){
+ const by=d=>MEMBERS.find(m=>m.dir===d);
+ const arm=(d,area)=>{const m=by(d);return `<span class="arm${S.target===m.unit?' on':''}" style="grid-area:${area};border-color:${m.cls};color:${m.cls}">${ARROW[d]} ${m.name}</span>`};
+ return `<div class="compass" id="compass" style="--s:${S.scale}">${arm('up','1/2')}${arm('left','2/1')}<span class="ctr" style="grid-area:2/2">${dpad(null)}</span>${arm('right','2/3')}${arm('down','3/2')}</div>`;
+}
+function placeCompass(){
+ const c=$('#compass'),g=$('.group'),w=$('#world');if(!c)return;
+ const wr=w.getBoundingClientRect(),gr=g.getBoundingClientRect(),cr=c.getBoundingClientRect();
+ let x,y;const gap=12,p=S.pos==='inside'?'right':S.pos;
+ if(p==='left'){x=gr.left-cr.width-gap;y=gr.top+(gr.height-cr.height)/2}
+ if(p==='right'){x=gr.right+gap;y=gr.top+(gr.height-cr.height)/2}
+ if(p==='top'){x=gr.left+(gr.width-cr.width)/2;y=gr.top-cr.height-gap}
+ if(p==='bottom'){x=gr.left+(gr.width-cr.width)/2;y=gr.bottom+gap}
+ x=Math.max(4,Math.min(x-wr.left,wr.width-cr.width-4));y=Math.max(4,Math.min(y-wr.top,wr.height-cr.height-4));
+ c.style.left=x+'px';c.style.top=y+'px';
+}
+const EXPLAIN={
+badge:`<h2>1 · Badge per frame</h2><p>A small D-pad glyph sits beside each party member, with the arm that targets them lit in amber. You look at the hurt player and the button is right there.</p><ul><li><b>Good:</b> no lookup step. Works for any mapping the bindings report.</li><li><b>Cost:</b> four anchored frames. Some positions collide with neighbours depending on layout, so the option should offer only the positions that fit, or default to Left for vertical and Top for horizontal.</li><li><b>Player frame:</b> stays unmarked unless a binding targets you.</li></ul><p class="small">Build: anchor to each Blizzard party frame (raid-style or classic) and read the button with <code>GetBindingKey("TARGETPARTYMEMBER1")</code>… instead of assuming the mapping.</p>`,
+compass:`<h2>2 · Group compass</h2><p>One D-pad legend sits next to the whole group. Each arm shows the member’s name in their class colour, and a matching colour tab on each frame links the two. Moving the hint moves the whole legend.</p><ul><li><b>Good:</b> one frame, no collisions in any layout, and it reads like the controller in your hands. Easy to fade out once you’ve learned it.</li><li><b>Cost:</b> your eye goes from the hurt frame to the legend and back. Two members of the same class share a colour, so the name carries the link.</li></ul><p class="small">Build: a single frame anchored to the party container. Rebuilds on <code>GROUP_ROSTER_UPDATE</code> out of combat.</p>`,
+tapagain:`<h2>3 · Tap again to heal</h2><p>The first press targets, the same as now. While that member is your target, the badge shows what a second press of the same direction will do. Press it again and the addon casts the chosen spell on them. Pressing another direction retargets.</p><ul><li><b>Why “tap again” and not a timed double-tap:</b> a timed double-tap has to wait to see if a second tap is coming, so every plain target press gets slower. I also don’t believe protected (secure) code can read a clock. Counting “same button again” needs no timer.</li><li><b>How it would work:</b> addons can only cast from a secure button pressed by you. Out of combat, the addon would point the D-pad bindings at its own secure buttons (<code>SetOverrideBindingClick</code>). A secure snippet would remember the last direction and switch between “target” and “cast”. The bindings can’t change in combat, but they keep working in combat once set.</li><li><b>Risks:</b> it replaces Blizzard’s D-pad targeting while it’s on, a nervous double-tap spends mana, and this addon has hooked nothing so far. This is a separate decision from the hint, and every step needs an in-game check.</li></ul>`};
+
+function render(){
+ document.querySelectorAll('[data-group]').forEach(g=>g.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(S[g.dataset.group]===b.dataset.val));b.disabled=S.variant==='compass'&&b.dataset.val==='inside'}));
+ document.querySelectorAll('[data-variant]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.variant===S.variant)));
+ $('#spellField').hidden=S.variant!=='tapagain';
+ $('#posLabel').textContent=S.variant==='compass'?'Legend position (around the group)':'Hint position (per frame)';
+ $('#posNote').textContent=posNote();
+ $('#scaleOut').textContent=Math.round(S.scale*100)+'%';
+ $('#world').innerHTML=`<div class="group ${S.layout} pos-${S.pos}" style="--s:${S.scale}">${MEMBERS.map(frameHTML).join('')}</div>${S.variant==='compass'?compassHTML():''}`;
+ $('#explain').innerHTML=EXPLAIN[S.variant];
+ placeCompass();
+ const u=new URL(location.href);u.searchParams.set('variant',S.variant);history.replaceState(null,'',u);
+}
+function log(html){$('#log').innerHTML=html}
+function press(dir){
+ const m=MEMBERS.find(x=>x.dir===dir);
+ if(S.variant==='tapagain'&&S.target===m.unit){
+  const spell=$('#spell').value;m.hp=Math.min(100,m.hp+28);S.flash=m.unit;
+  log(`<b>${ARROW[dir]} again</b> → cast <b style="color:var(--heal)">${spell}</b> on ${m.name}.`);
+  render();setTimeout(()=>{S.flash=null;render()},500);return;
+ }
+ S.target=m.unit;
+ log(`<b>${ARROW[dir]}</b> → target <b style="color:${m.cls}">${m.name}</b> (${m.unit}).${S.variant==='tapagain'?` Press ${ARROW[dir]} again to cast.`:''}`);
+ render();
+}
+function setVariant(v){S.variant=v;if(v==='compass'&&S.pos==='inside')S.pos='left';render()}
+function cycle(n){setVariant(VARIANTS[(VARIANTS.indexOf(S.variant)+n+VARIANTS.length)%VARIANTS.length])}
+document.querySelectorAll('[data-group] button').forEach(b=>b.onclick=()=>{S[b.closest('[data-group]').dataset.group]=b.dataset.val;render()});
+document.querySelectorAll('[data-variant]').forEach(b=>b.onclick=()=>setVariant(b.dataset.variant));
+document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>press(b.dataset.dir));
+$('#scale').oninput=e=>{S.scale=e.target.value/100;render()};
+$('#spell').onchange=render;$('#prev').onclick=()=>cycle(-1);$('#next').onclick=()=>cycle(1);
+addEventListener('resize',placeCompass);
+addEventListener('keydown',e=>{if(e.target.closest('input,select,textarea'))return;
+ const k={w:'up',a:'left',s:'down',d:'right'}[e.key.toLowerCase()];if(k){press(k);return}
+ if(['1','2','3'].includes(e.key))setVariant(VARIANTS[+e.key-1]);
+ if(e.key==='ArrowLeft'){e.preventDefault();cycle(-1)}if(e.key==='ArrowRight'){e.preventDefault();cycle(1)}});
+render();
+</script></body></html>

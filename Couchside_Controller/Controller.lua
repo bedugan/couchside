@@ -25,5 +25,81 @@ Couchside.RegisterModule(ns, {
 				},
 			},
 		},
+		{
+			title = "Party targeting",
+			options = {
+				{
+					key = "partyHints",
+					default = true,
+					scope = "character",
+					name = "Show party targeting buttons",
+					tooltip = "With the controller's Party Targeting option on, mark each party frame with the button that targets that member while you hold the friendly targeting button. The marks stay up all the time so you can read them before you press.",
+				},
+				{
+					key = "partyHintPosition",
+					default = "auto",
+					scope = "character",
+					choices = {
+						{ value = "auto", label = "Automatic" },
+						{ value = "left", label = "Left" },
+						{ value = "right", label = "Right" },
+						{ value = "top", label = "Top" },
+						{ value = "bottom", label = "Bottom" },
+						{ value = "inside", label = "Inside" },
+					},
+					name = "Button position",
+					tooltip = "Where the button sits on each party frame. Automatic uses the left side for a vertical party and the top for a horizontal one, so it doesn't cover the next frame.",
+				},
+				{
+					key = "partyHintLabels",
+					default = "auto",
+					-- Account-wide: it describes the controller, which the game can't reliably detect (it reports
+					-- "Generic"), not the character.
+					choices = {
+						{ value = "auto", label = "Automatic" },
+						{ value = "xbox", label = "Xbox (A B X Y)" },
+						{ value = "playstation", label = "PlayStation (shapes)" },
+						{ value = "nintendo", label = "Nintendo (B A Y X)" },
+					},
+					name = "Button labels",
+					tooltip = "Which controller's face-button glyphs to show. Automatic uses the labels the game picked for your controller, which can be plain numbers.",
+				},
+				{
+					key = "partyHintSize",
+					default = 100,
+					scope = "character",
+					min = 50,
+					max = 200,
+					step = 10,
+					format = "%d%%",
+					name = "Button size",
+					tooltip = "Size of the party targeting button marks.",
+				},
+			},
+		},
+		{
+			-- Its own tab in the settings window (SecondPress.lua), with the action list.
+			title = "Second press",
+			options = {
+				{
+					key = "partySecondPress",
+					default = false,
+					scope = "character",
+					name = "Second press casts",
+					tooltip = "Experimental. While you hold the friendly targeting button, pressing a party member's button again casts your second-press action on them: your class heal unless you chose another action on the Second press page.",
+				},
+			},
+		},
+		{
+			title = "Character sheet",
+			options = {
+				{
+					key = "equipmentSets",
+					default = true,
+					name = "Fix the equipment set list",
+					tooltip = "Show your equipment sets on the character sheet with the controller interface on, where Forever leaves the list empty. Turning it off takes effect after /reload.",
+				},
+			},
+		},
 	},
 })

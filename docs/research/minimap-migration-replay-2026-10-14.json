@@ -1,0 +1,38 @@
+{
+  "source": "Current Gathering SavedVariables parsed as data, never executed; real addon Lua loaded in isolated Lua 5.1 fixtures",
+  "sourceSHA256": "d8a21720f71d7f61f30ad9f958f3b47a0c810665250e90e75c535addb7f93636",
+  "savedFileModifiedUTC": "2026-10-15T01:15:03.251678+00:00",
+  "legacyVersion": 1,
+  "scanIDs": [
+    275,
+    276,
+    310,
+    311,
+    312,
+    313,
+    314,
+    315,
+    316,
+    317,
+    318,
+    319
+  ],
+  "nextID": 320,
+  "nextSkillReportID": 2,
+  "fullScanGraphsEqual": true,
+  "legacyAndCanonicalTablesIndependent": true,
+  "nativeFileUnchanged": true,
+  "nativeCursorQueriesOrMacroWrites": 0,
+  "limit": "Offline migration replay only. This does not establish native addon discovery/load, disk persistence, input or taint safety.",
+  "comparedReportFieldsEqual": true,
+  "reportAndPreferenceFieldsCompared": [
+    "skillReports",
+    "nextSkillReportID",
+    "classificationReport",
+    "panelReport",
+    "motionReport",
+    "macroReport",
+    "automaticScanSettings"
+  ],
+  "automationReport": "Replaced by normal current-session startup status; original retained in legacy history."
+}

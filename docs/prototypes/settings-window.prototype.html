@@ -1,0 +1,155 @@
+<!doctype html>
+<!-- Throwaway: three layouts for Couchside's own settings window, ?variant=tabs|panes|tiles. Not game code. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Couchside Settings Window</title>
+<style>
+:root{color-scheme:dark;--bg:#0f1d2a;--panel:#16293a;--line:#3b6178;--text:#eef3f6;--muted:#a9c3d2;--accent:#ffc94d;--good:#4de3c1;--warn:#ff8a5c;--gold:#e8c46a;--char:#c9a4ff;--a:#5cc05c;--b:#d9443a;font-family:system-ui,sans-serif;line-height:1.45}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}
+main{max-width:1120px;margin:auto;padding:24px 16px 140px}
+h1{font-family:Georgia,serif;font-weight:normal;font-size:clamp(24px,4vw,34px);margin:6px 0 8px}
+p{max-width:860px}.small{font-size:14px;color:var(--muted)}code{font-size:13px}
+.stage{display:grid;grid-template-columns:1fr 290px;gap:18px;margin-top:14px}
+@media(max-width:900px){.stage{grid-template-columns:1fr}}
+.world{position:relative;min-height:520px;border:2px solid #8a7047;border-radius:8px;overflow:hidden;background:linear-gradient(130deg,#2c2a44,#23324a 55%,#1c2a3c);padding:22px 56px 22px 18px}
+.world:after{content:"Not a game screenshot";position:absolute;right:10px;bottom:8px;font-size:11px;color:#ffffff55}
+.side{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;align-self:start;font-size:14px}
+.side h2{font-size:15px;margin:0 0 8px;color:var(--accent)}.side dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0}.side dt{color:var(--muted)}.side dd{margin:0}
+.explain{border-left:4px solid var(--accent);background:#1d3448;padding:12px 16px;margin-top:16px;border-radius:0 8px 8px 0}.explain h2{font-size:18px;margin:0 0 6px}.explain li{margin:4px 0}
+.win{position:relative;background:#120f0b;border:2px solid var(--gold);border-radius:6px;box-shadow:0 0 0 3px #ffd75e55,0 6px 30px #000c;max-width:640px}
+.win header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:linear-gradient(#3a2c18,#22190d);border-bottom:1px solid #7a6236;font:600 14px Georgia,serif;color:var(--gold)}
+.x{width:20px;height:20px;border-radius:4px;background:#8b1d14;color:#fff;display:grid;place-items:center;font:800 12px system-ui}
+.body{padding:10px 12px}
+.sec{font:600 12px system-ui;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 4px}
+.row{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:4px;border:1px solid transparent;min-height:34px;cursor:pointer}
+.row .name{flex:1}
+.focus{outline:2px solid var(--accent);outline-offset:1px;background:#30261a}
+.chip{font-size:11px;padding:1px 7px;border-radius:9px;background:#33244d;color:var(--char);margin-left:6px;white-space:nowrap}
+.check{width:22px;height:22px;border:2px solid #c9b27a;border-radius:3px;display:grid;place-items:center;color:#ffd75e;font-weight:900;flex:none}
+.cycle{display:flex;align-items:center;gap:6px;min-width:150px;justify-content:space-between;border:1px solid #6b5630;border-radius:4px;padding:2px 6px;background:#1d160c}
+.cycle b{font-weight:600}
+.slider{display:flex;align-items:center;gap:6px;min-width:170px}.track{flex:1;height:6px;background:#3a2f1e;border-radius:3px;position:relative}.knob{position:absolute;top:-5px;width:14px;height:14px;margin-left:-7px;background:#e8c46a;border-radius:3px;transform:rotate(45deg)}
+.arrow{color:var(--gold);font-weight:800}
+.desc{margin-top:10px;padding:8px 10px;border-radius:4px;background:#1c1710;border:1px solid #3a2f1e;font-size:13px;min-height:54px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;border-top:1px solid #3a2f1e;padding-top:8px}
+.glyph{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font:800 10px system-ui;color:#fff;border:2px solid #0008;vertical-align:middle}.ga{background:var(--a)}.gb{background:var(--b)}
+.tabs{position:absolute;left:100%;top:34px;display:flex;flex-direction:column;gap:6px;margin-left:2px}
+.tab{width:40px;height:40px;border-radius:4px;border:1px solid #000;display:grid;place-items:center;font:700 11px system-ui;color:#fff;text-shadow:0 1px 2px #000;background:#3b3022;cursor:pointer}
+.tab.on{outline:2px solid var(--gold);background:#6a5228}
+.panes{display:grid;grid-template-columns:190px 1fr;gap:10px}
+.list .row{min-height:28px;padding:3px 8px}.list .row.on{background:#2a2216;border-color:#6b5630}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{border:1px solid #4a3c24;border-radius:6px;padding:8px;background:#1d160c;min-height:86px;display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.tile .val{font-weight:700;color:var(--good)}.tile .val.off{color:var(--muted)}
+.tile .mod{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.05em}
+.picker .row{min-height:30px}
+.hidden{display:none}
+.switcher{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;padding:10px 14px;background:#f2f6f8;color:#0d2a33;border-radius:999px;box-shadow:0 5px 25px #000a;max-width:calc(100vw - 32px)}
+.switcher button{background:#0d2a33;color:#fff;border:none;border-radius:999px;padding:6px 12px;font:14px system-ui;cursor:pointer}.switcher strong{min-width:230px;text-align:center;font-size:14px}
+</style></head><body><main>
+<p class="small">Throwaway prototype for Couchside's own settings window, which replaces Blizzard's settings pages (closing those breaks the controller). Mock data. Every control here is one the panel probe confirmed works with the controller: checkboxes, value buttons that cycle, sliders, D-pad tab buttons. No dropdowns, no LB/RB.</p>
+<h1 id="title"></h1>
+<p id="lede"></p>
+<p class="small">Try it like a controller: arrow keys move the highlight (left/right also change a value or slider), Enter is A, Escape is B. Mouse clicks work too. Switch layouts with the bar at the bottom or the [ and ] keys.</p>
+<div class="stage"><div class="world" id="world"></div>
+<aside class="side"><h2>Saved values</h2><dl id="state"></dl><p class="small" id="note"></p></aside></div>
+<section class="explain" id="explain"></section>
+</main>
+<div class="switcher"><button id="prev" aria-label="Previous layout">←</button><strong id="vlabel"></strong><button id="next" aria-label="Next layout">→</button></div>
+<script>
+const MODULES=[
+ {key:"quests",title:"Quests",icon:"Q",sections:[
+  {title:"Zone tracking",options:[{key:"smartTracking",name:"Track quests for my current zone",value:false,tip:"Tracks the quests for the zone you are in and untracks the rest; your own choices win."}]},
+  {title:"Quest areas",options:[{key:"areaMarker",name:"Mark tracked quest areas",value:true,tip:"A mark on the tracker when you are inside a tracked quest's area."},{key:"untrackedAreas",name:"Show untracked quest areas",value:true,tip:"Also mark areas of quests you are not tracking."}]},
+  {title:"Nearby turn-ins",options:[{key:"nearbyTags",name:"Tag turn-ins in the tracker",value:true,tip:"Letters in the tracker for quests ready to turn in nearby."},{key:"minimapBadges",name:"Show letters on the minimap",value:true,tip:"The same letters on the minimap."},{key:"nearbyTurnIns",name:"List untracked turn-ins",value:true,tip:"A Nearby section listing turn-ins you are not tracking."}]}]},
+ {key:"controller",title:"Controller",icon:"C",sections:[
+  {title:"Action pages",options:[{key:"pageNumbers",name:"Show action page numbers",value:false,tip:"Numbers on the controller's action page strip."},{key:"pageNumbersExtraOnly",name:"Only show page 2 or 3",value:false,tip:"Hide the number on page 1."}]},
+  {title:"Party targeting",options:[{key:"partyHints",name:"Show party targeting buttons",value:true,char:true,tip:"Marks each party frame with the button that targets that member."},{key:"partyHintPosition",name:"Button position",value:"Automatic",choices:["Automatic","Left","Right","Top","Bottom","Inside"],char:true,tip:"Where the mark sits on each party frame."},{key:"partyHintLabels",name:"Button labels",value:"Xbox",choices:["Automatic","Xbox","PlayStation","Nintendo"],tip:"Which controller's face-button glyphs to show. Account-wide: it describes your controller."},{key:"partyHintSize",name:"Button size",value:100,min:50,max:200,step:10,char:true,tip:"Size of the marks."}]},
+  {title:"Character sheet",options:[{key:"equipmentSets",name:"Fix the equipment set list",value:true,tip:"Shows your equipment sets with the controller interface on."}]}]},
+ {key:"second",title:"Second press",icon:"2",picker:true,sections:[
+  {title:"Second press",options:[{key:"partySecondPress",name:"Second press casts",value:false,char:true,tip:"Hold the friendly targeting button and press a member's button twice to cast your action on them."}]}]},
+ {key:"gathering",title:"Gathering",icon:"G",sections:[
+  {title:"Tooltips",options:[{key:"tooltipDifficulty",name:"Show gathering difficulty in tooltips",value:true,tip:"Herb and ore tooltips show how hard the node is for your skill."}]}]},
+ {key:"general",title:"General",icon:"⚙",sections:[
+  {title:"Troubleshooting",options:[{key:"debug",name:"Print debug output",value:false,tip:"Explains what Couchside did, in chat."}]}]}];
+const ACTIONS=["Class default (Flash of Light)","Flash of Light","Holy Light","Purify","Macro: Bandage","Nothing"];
+let action=ACTIONS[0];
+const VARIANTS=[
+ {key:"tabs",name:"Side tabs, one page per module",title:"A: Side tabs, like the character sheet",
+  lede:"One page per module, chosen with tabs down the right edge. Each row is a name and its control. The selected row's description shows at the bottom, since a controller can't hover for tooltips.",
+  explain:["Closest to Forever's own windows (character sheet, spellbook), so it should feel native.","Tabs are buttons: D-pad right from a row reaches them, A switches. LB/RB isn't available without the taint we found.","Second press is its own tab with the action list from the picker you chose.","Grows cleanly: a new module is a new tab."]},
+ {key:"panes",name:"Section list and detail pane",title:"B: Section list on the left, options on the right",
+  lede:"Every section from every module in one list on the left. Moving through it shows that section's options on the right. No tabs to find; up and down reach everything.",
+  explain:["Fastest to scan: all sections visible at once, one press to any of them.","Needs a left/right hop between the list and the options, which Blizzard's navigation does by position.","The list gets long as modules grow; module names group it.","Description pane is always visible for the focused option."]},
+ {key:"tiles",name:"Tiles, console style",title:"C: Tiles, like a console settings screen",
+  lede:"Each option is a tile showing its current value. A toggles a tile or moves it to the next value; left/right on a size tile changes it. Modules are rows of tiles.",
+  explain:["Most couch-like: big targets, values visible at a glance, few presses.","Least room for explanation on the tile; the description strip carries it.","Sliders become steppers (left/right), which suits a controller anyway.","Second press opens its action list from its tile.","Tallest: every module on one screen needs a scroll area (right stick scrolls through Blizzard's SetScrollFrameForFrame, which addons may call)."]}];
+const params=new URLSearchParams(location.search);
+let vi=Math.max(0,VARIANTS.findIndex(v=>v.key===params.get("variant")));
+let mod=0,section=0,focus=0,note="",picking=false,closed=false;
+const allOptions=()=>MODULES.flatMap(m=>m.sections.flatMap(s=>s.options.map(o=>({...o,module:m}))));
+function find(key){for(const m of MODULES)for(const s of m.sections)for(const o of s.options)if(o.key===key)return o}
+function valueText(o){return typeof o.value==="boolean"?(o.value?"On":"Off"):o.min!==undefined?o.value+"%":o.value}
+function control(o){
+ if(typeof o.value==="boolean")return `<span class="check">${o.value?"✓":""}</span>`;
+ if(o.choices)return `<span class="cycle"><span class="arrow">◀</span><b>${o.value}</b><span class="arrow">▶</span></span>`;
+ const pct=(o.value-o.min)/(o.max-o.min)*100;
+ return `<span class="slider"><span class="arrow">◀</span><span class="track"><span class="knob" style="left:${pct}%"></span></span><span class="arrow">▶</span><span>${o.value}%</span></span>`}
+function act(o,dir){
+ if(typeof o.value==="boolean"){if(dir)return;o.value=!o.value}
+ else if(o.choices){const i=o.choices.indexOf(o.value);o.value=o.choices[(i+(dir||1)+o.choices.length)%o.choices.length]}
+ else{o.value=Math.min(o.max,Math.max(o.min,o.value+(dir||1)*o.step))}
+ note=`${o.name}: ${valueText(o)}${o.char?" (this character)":""}`}
+function row(o,i){return `<div class="row ${i===focus?"focus":""}" data-f="${i}" data-key="${o.key}"><span class="name">${o.name}${o.char?'<span class="chip">this character</span>':""}</span>${control(o)}</div>`}
+function legend(){return `<div class="legend"><span>D-pad move</span><span><span class="glyph ga">A</span> change</span><span>◀ ▶ adjust</span><span><span class="glyph gb">B</span> close</span></div>`}
+let items=[];// focus order: {type,ref}
+function pickerHTML(start){return `<div class="sec">Action</div><div class="picker">`+ACTIONS.map((a,j)=>{const i=start+j;items.push({type:"action",ref:a});return `<div class="row ${i===focus?"focus":""}" data-f="${i}"><span class="name">${a}</span>${a===action?'<span style="color:var(--good);font-weight:800">✓</span>':""}</div>`}).join("")+`</div>`}
+function descFor(){const it=items[focus];if(!it)return"";if(it.type==="opt")return it.ref.tip;if(it.type==="tab")return `Open the ${it.ref.title} page.`;if(it.type==="sec")return `Show ${it.ref.title} options.`;if(it.type==="action")return it.ref==="Nothing"?"Second presses only target.":`A second press casts ${it.ref.replace("Class default (","").replace(")","")} on the member.`;return""}
+function frame(inner,extra=""){return `<div class="win"><header><span>Couchside</span><span class="x">✕</span></header><div class="body">${inner}<div class="desc">${descFor()}</div>${legend()}</div>${extra}</div>`}
+function renderTabs(){items=[];const m=MODULES[mod];let html="";
+ m.sections.forEach(s=>{html+=`<div class="sec">${s.title}</div>`;s.options.forEach(o=>{const i=items.length;items.push({type:"opt",ref:o});html+=row(o,i)})});
+ if(m.picker)html+=pickerHTML(items.length);
+ const tabStart=items.length;
+ const tabs=`<div class="tabs">${MODULES.map((t,j)=>{items.push({type:"tab",ref:t,index:j});const i=tabStart+j;return `<div class="tab ${j===mod?"on":""} ${i===focus?"focus":""}" data-f="${i}" title="${t.title}">${t.icon}</div>`}).join("")}</div>`;
+ return frame(`<div class="small" style="color:var(--gold)">${m.title}</div>`+html,tabs)}
+function renderPanes(){items=[];const secs=MODULES.flatMap(m=>m.sections.map(s=>({m,s})));let list="",cur="";
+ secs.forEach((x,j)=>{if(x.m.title!==cur){cur=x.m.title;list+=`<div class="sec">${cur}</div>`}const i=items.length;items.push({type:"sec",ref:x.s,index:j});list+=`<div class="row ${j===section?"on":""} ${i===focus?"focus":""}" data-f="${i}"><span class="name">${x.s.title}</span></div>`});
+ const sel=secs[section];let detail=`<div class="sec">${sel.s.title}</div>`;sel.s.options.forEach(o=>{const i=items.length;items.push({type:"opt",ref:o});detail+=row(o,i)});
+ if(sel.m.picker)detail+=pickerHTML(items.length);
+ return frame(`<div class="panes"><div class="list">${list}</div><div>${detail}</div></div>`)}
+function renderTiles(){items=[];let html="";
+ MODULES.forEach(m=>{html+=`<div class="sec">${m.title}</div><div class="tiles">`;m.sections.forEach(s=>s.options.forEach(o=>{const i=items.length;items.push({type:"opt",ref:o});html+=`<div class="tile ${i===focus?"focus":""}" data-f="${i}"><span class="mod">${s.title}${o.char?' · this character':""}</span><span>${o.name}</span><span class="val ${o.value===false?"off":""}">${o.min!==undefined?"◀ "+valueText(o)+" ▶":o.choices?valueText(o)+" ▸":valueText(o)}</span></div>`}));
+  if(m.picker){const i=items.length;items.push({type:"pick"});html+=`<div class="tile ${i===focus?"focus":""}" data-f="${i}"><span class="mod">Action · this character</span><span>Second press action</span><span class="val">${action.replace("Class default (","").replace(")","")} ▸</span></div>`}
+  html+=`</div>`});
+ if(picking){html=`<div class="sec">Second press action</div>`;items=[];html+=pickerHTML(0)}
+ return frame(html)}
+function render(){const v=VARIANTS[vi];
+ document.getElementById("title").textContent=v.title;document.getElementById("lede").textContent=v.lede;
+ document.getElementById("vlabel").textContent=`${v.key} (${v.name}) ${vi+1}/${VARIANTS.length}`;
+ const w=document.getElementById("world");
+ w.innerHTML=closed?`<div class="small" style="padding:40px">Window closed with B. <button id="reopen">Open again</button></div>`:(v.key==="tabs"?renderTabs():v.key==="panes"?renderPanes():renderTiles());
+ if(!closed&&focus>=items.length){focus=0;return render()}
+ const shown=["partyHints","partySecondPress","partyHintPosition","partyHintLabels","partyHintSize","smartTracking","debug"];
+ document.getElementById("state").innerHTML=shown.map(k=>{const o=find(k);return `<dt>${k}</dt><dd>${valueText(o)}${o.char?" ·char":""}</dd>`}).join("")+`<dt>action</dt><dd>${action}</dd>`;
+ document.getElementById("note").textContent=note;
+ document.getElementById("explain").innerHTML=`<h2>What this layout trades</h2><ul>${v.explain.map(e=>`<li>${e}</li>`).join("")}</ul><p class="small">All layouts: values marked "this character" save per character; the rest are account-wide. The window opens with <code>/cs</code> or a key binding, and the AddOns settings page keeps one "Open Couchside" button for mouse users.</p>`;
+ w.querySelectorAll("[data-f]").forEach(el=>el.onclick=()=>{focus=+el.dataset.f;press()});
+ const r=document.getElementById("reopen");if(r)r.onclick=()=>{closed=false;render()}}
+function press(dir){const it=items[focus];if(!it)return render();
+ if(it.type==="opt")act(it.ref,dir);
+ else if(dir)return;
+ else if(it.type==="tab"){mod=it.index;focus=0;note=`Page: ${it.ref.title}`}
+ else if(it.type==="sec"){section=it.index;note=`Section: ${it.ref.title}`}
+ else if(it.type==="action"){action=it.ref;note=`Second press: ${action}`;if(picking){picking=false;focus=0}}
+ else if(it.type==="pick"){picking=true;focus=0}
+ render()}
+function go(d){vi=(vi+d+VARIANTS.length)%VARIANTS.length;focus=0;picking=false;closed=false;note="";const u=new URL(location);u.searchParams.set("variant",VARIANTS[vi].key);history.replaceState(null,"",u);render()}
+document.getElementById("prev").onclick=()=>go(-1);document.getElementById("next").onclick=()=>go(1);
+document.addEventListener("keydown",e=>{if(e.target.closest("input,textarea,[contenteditable]"))return;
+ if(e.key==="["||e.key==="]"){go(e.key==="]"?1:-1);return}
+ if(closed)return;const it=items[focus];const adjustable=it&&it.type==="opt"&&typeof it.ref.value!=="boolean";
+ if(e.key==="ArrowDown"||(e.key==="ArrowRight"&&!adjustable)){focus=(focus+1)%items.length;e.preventDefault();render()}
+ else if(e.key==="ArrowUp"||(e.key==="ArrowLeft"&&!adjustable)){focus=(focus-1+items.length)%items.length;e.preventDefault();render()}
+ else if(adjustable&&(e.key==="ArrowLeft"||e.key==="ArrowRight")){press(e.key==="ArrowRight"?1:-1);e.preventDefault()}
+ else if(e.key==="Enter"){press();e.preventDefault()}
+ else if(e.key==="Escape"){if(picking){picking=false;focus=0;render()}else{closed=true;note="Closed with B";render()}}});
+render();
+</script></body></html>

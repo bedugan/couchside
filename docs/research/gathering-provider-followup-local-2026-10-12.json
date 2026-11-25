@@ -1,0 +1,257 @@
+{
+  "provider": {
+    "version": "1.52.3-8-g26d58dd",
+    "interface": "16001,120100,120105",
+    "loadedFileSHA256": {
+      "Libs/LibStub/LibStub.lua": "6000f58d740eaa2b4a006c1dabb0366f0321fc687bab9e85d97d040a1fd42dab",
+      "Libs/AceLocale-3.0/AceLocale-3.0.lua": "b7e88bda8ce9bae648e5a4ded0d50f838350314cba75d1ba6e99ebbf63d0e9f1",
+      "Locales/GatherMate2-enUS.lua": "015bc9a72d559b4013b45bca5c0515b4b6e01bd62058f6fe9721cc7bfe6477f8",
+      "Locales/Vanilla/GatherMate2-Vanilla-enUS.lua": "922454c551a73879429d4e6a2eb6d28d5ef10462f479462d681bd427f4c19beb",
+      "GatherMate2.lua": "69072a6b07973dd5cc0c41802c9d3ceaa867a022de787745460c542bad1da855",
+      "Constants.lua": "44b69834d2141c6bbcdf91c4fa1a4a9c5fffae475122e176a7c4fdf0887c8614",
+      "Couchside_Gathering/ScanLog.lua": "75dbb83fae1c5a606cddb90238c4fc90642597ee3ce53f461f8b4712128c4d57",
+      "Couchside_Gathering/QuestTextFilter.lua": "c2e602fea67dca74f2a525ef9dc26d94a500dccf3102393a770e6552dc21041c",
+      "Couchside_Gathering/ResourceClassifier.lua": "fcd234d1d767725969f4663d2f6ccc6afb4bdf9a52790282bb84cea853ddd279"
+    }
+  },
+  "environment": "Isolated Lua 5.1, enUS; actual packaged locale engine, catalog construction and lookup methods",
+  "limitations": "Lifecycle, frames and HBD are stubbed. No client loading, full-addon behavior, mining pins or other locales validated.",
+  "checks": [
+    {
+      "name": "Peacebloom",
+      "category": "herb",
+      "catalogKey": "gathermate2:herb:401",
+      "reverseName": "Peacebloom"
+    },
+    {
+      "name": "Silverleaf",
+      "category": "herb",
+      "catalogKey": "gathermate2:herb:402",
+      "reverseName": "Silverleaf"
+    },
+    {
+      "name": "Earthroot",
+      "category": "herb",
+      "catalogKey": "gathermate2:herb:403",
+      "reverseName": "Earthroot"
+    },
+    {
+      "name": "Mageroyal",
+      "category": "herb",
+      "catalogKey": "gathermate2:herb:404",
+      "reverseName": "Mageroyal"
+    },
+    {
+      "name": "Briarthorn",
+      "category": "herb",
+      "catalogKey": "gathermate2:herb:405",
+      "reverseName": "Briarthorn"
+    },
+    {
+      "name": "Bruiseweed",
+      "category": "herb",
+      "catalogKey": "gathermate2:herb:408",
+      "reverseName": "Bruiseweed"
+    },
+    {
+      "name": "Kingsblood",
+      "category": "herb",
+      "catalogKey": "gathermate2:herb:411",
+      "reverseName": "Kingsblood"
+    },
+    {
+      "name": "Copper Vein",
+      "category": "ore",
+      "catalogKey": "gathermate2:ore:201",
+      "reverseName": "Copper Vein"
+    },
+    {
+      "name": "Tin Vein",
+      "category": "ore",
+      "catalogKey": "gathermate2:ore:202",
+      "reverseName": "Tin Vein"
+    },
+    {
+      "name": "__Couchside_unknown_control__",
+      "category": "unknown"
+    },
+    {
+      "name": "Innkeeper Boorand Plainswind",
+      "category": "unknown"
+    },
+    {
+      "name": "Devrak",
+      "category": "unknown"
+    },
+    {
+      "name": "Lizzarik",
+      "category": "unknown"
+    },
+    {
+      "name": "Thork",
+      "category": "unknown"
+    },
+    {
+      "name": "Halija Whitestrider",
+      "category": "unknown"
+    }
+  ],
+  "savedReplays": [
+    {
+      "scanID": 30,
+      "reportLines": [
+        "Classifier report for saved scan 30, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "unknown: Devrak; retained; no catalog or saved quest-text match.",
+        "unknown: Thork; retained; no catalog or saved quest-text match.",
+        "unknown: Halija Whitestrider; retained; no catalog or saved quest-text match.",
+        "resource-candidate: Silverleaf; retained; gathermate2:herb:402.",
+        "unknown: Lizzarik; retained; no catalog or saved quest-text match.",
+        "unknown: Innkeeper Boorand Plainswind; retained; no catalog or saved quest-text match.",
+        "Distinct entries: 1 resource candidates, 0 quest text, 0 ambiguous, 5 unknown. These are not node counts.",
+        "Provider report 1 recorded in memory (1/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 31,
+      "reportLines": [
+        "Classifier report for saved scan 31, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "unknown: Devrak; retained; no catalog or saved quest-text match.",
+        "unknown: Thork; retained; no catalog or saved quest-text match.",
+        "unknown: Halija Whitestrider; retained; no catalog or saved quest-text match.",
+        "resource-candidate: Silverleaf; retained; gathermate2:herb:402.",
+        "unknown: Lizzarik; retained; no catalog or saved quest-text match.",
+        "unknown: Innkeeper Boorand Plainswind; retained; no catalog or saved quest-text match.",
+        "Distinct entries: 1 resource candidates, 0 quest text, 0 ambiguous, 5 unknown. These are not node counts.",
+        "Provider report 2 recorded in memory (2/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 32,
+      "reportLines": [
+        "Classifier report for saved scan 32, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "unknown: Devrak; retained; no catalog or saved quest-text match.",
+        "unknown: Thork; retained; no catalog or saved quest-text match.",
+        "unknown: Halija Whitestrider; retained; no catalog or saved quest-text match.",
+        "resource-candidate: Silverleaf; retained; gathermate2:herb:402.",
+        "unknown: Lizzarik; retained; no catalog or saved quest-text match.",
+        "unknown: Innkeeper Boorand Plainswind; retained; no catalog or saved quest-text match.",
+        "Distinct entries: 1 resource candidates, 0 quest text, 0 ambiguous, 5 unknown. These are not node counts.",
+        "Provider report 3 recorded in memory (3/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 33,
+      "reportLines": [
+        "Classifier report for saved scan 33, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "unknown: Devrak; retained; no catalog or saved quest-text match.",
+        "unknown: Thork; retained; no catalog or saved quest-text match.",
+        "unknown: Halija Whitestrider; retained; no catalog or saved quest-text match.",
+        "unknown: Lizzarik; retained; no catalog or saved quest-text match.",
+        "unknown: Innkeeper Boorand Plainswind; retained; no catalog or saved quest-text match.",
+        "Distinct entries: 0 resource candidates, 0 quest text, 0 ambiguous, 5 unknown. These are not node counts.",
+        "Provider report 4 recorded in memory (4/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 34,
+      "reportLines": [
+        "Classifier report for saved scan 34, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "quest-text: Ishamuhale; excluded by existing quest filter; quest title.",
+        "resource-candidate: Peacebloom; retained; gathermate2:herb:401.",
+        "Distinct entries: 1 resource candidates, 1 quest text, 0 ambiguous, 0 unknown. These are not node counts.",
+        "Provider report 5 recorded in memory (5/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 35,
+      "reportLines": [
+        "Classifier report for saved scan 35, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "quest-text: Ishamuhale; excluded by existing quest filter; quest title.",
+        "resource-candidate: Peacebloom; retained; gathermate2:herb:401.",
+        "Distinct entries: 1 resource candidates, 1 quest text, 0 ambiguous, 0 unknown. These are not node counts.",
+        "Provider report 6 recorded in memory (6/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 36,
+      "reportLines": [
+        "Classifier report for saved scan 36, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "quest-text: Ishamuhale; excluded by existing quest filter; quest title.",
+        "resource-candidate: Peacebloom; retained; gathermate2:herb:401.",
+        "resource-candidate: Earthroot; retained; gathermate2:herb:403.",
+        "Distinct entries: 2 resource candidates, 1 quest text, 0 ambiguous, 0 unknown. These are not node counts.",
+        "Provider report 7 recorded in memory (7/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 37,
+      "reportLines": [
+        "Classifier report for saved scan 37, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "quest-text: Ishamuhale; excluded by existing quest filter; quest title.",
+        "resource-candidate: Peacebloom; retained; gathermate2:herb:401.",
+        "resource-candidate: Earthroot; retained; gathermate2:herb:403.",
+        "Distinct entries: 2 resource candidates, 1 quest text, 0 ambiguous, 0 unknown. These are not node counts.",
+        "Provider report 8 recorded in memory (8/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 38,
+      "reportLines": [
+        "Classifier report for saved scan 38, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "unknown: Billyspike Winf; retained; no catalog or saved quest-text match.",
+        "resource-candidate: Bruiseweed; retained; gathermate2:herb:408.",
+        "quest-text: Enraged Thunder Lizards; excluded by existing quest filter; quest title.",
+        "unknown: Idiotwtha Bow; retained; no catalog or saved quest-text match.",
+        "resource-candidate: Kingsblood; retained; gathermate2:herb:411.",
+        "unknown: Ronma Millwright; retained; no catalog or saved quest-text match.",
+        "unknown: Spirit Fingies; retained; no catalog or saved quest-text match.",
+        "resource-candidate: Mageroyal; retained; gathermate2:herb:404.",
+        "quest-text: Serpentbloom; excluded by existing quest filter; quest title.",
+        "Distinct entries: 3 resource candidates, 2 quest text, 0 ambiguous, 4 unknown. These are not node counts.",
+        "Provider report 9 recorded in memory (9/10 retained). /reload or logout to write it."
+      ]
+    },
+    {
+      "scanID": 39,
+      "reportLines": [
+        "Classifier report for saved scan 39, build 70338. Catalog: GatherMate2 herb/ore lookup. Saved quest snapshot: true.",
+        "GatherMate2 version: 1.52.3-8-g26d58dd. This report probes its returned node IDs; it does not establish native pin identity.",
+        "Name matches are resource candidates. Unknown/ambiguous text is preserved; live list and saved scan evidence are unchanged.",
+        "unknown: Billyspike Winf; retained; no catalog or saved quest-text match.",
+        "quest-text: Enraged Thunder Lizards; excluded by existing quest filter; quest title.",
+        "resource-candidate: Bruiseweed; retained; gathermate2:herb:408.",
+        "quest-text: Serpentbloom; excluded by existing quest filter; quest title.",
+        "unknown: Spirit Fingies; retained; no catalog or saved quest-text match.",
+        "unknown: Fuzzle Guzzle; retained; no catalog or saved quest-text match.",
+        "unknown: Idiotwtha Bow; retained; no catalog or saved quest-text match.",
+        "resource-candidate: Kingsblood; retained; gathermate2:herb:411.",
+        "unknown: Ronma Millwright; retained; no catalog or saved quest-text match.",
+        "resource-candidate: Mageroyal; retained; gathermate2:herb:404.",
+        "Distinct entries: 3 resource candidates, 2 quest text, 0 ambiguous, 5 unknown. These are not node counts.",
+        "Provider report 10 recorded in memory (10/10 retained). /reload or logout to write it."
+      ]
+    }
+  ],
+  "nativePointOrCursorCalls": 0,
+  "savedScanEvidenceUnchanged": true,
+  "decoratedEarthroot": null,
+  "providerReportHistoryChecked": true
+}

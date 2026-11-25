@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-13",
+  "candidate": "0.11.2",
+  "nativeStatus": "Native scan 78 persisted explicit withheld verdict; map position and facing unavailable in user-confirmed instance. Alternative motion probe pending.",
+  "reportedSymptom": "whole nearby list absent after a stationary scan with a herb pin visible",
+  "savedEvidenceModified": "2026-10-13T17:14:43.092535-07:00",
+  "savedSnapshotReplay": {
+    "scanID": 72,
+    "status": "withheld",
+    "reason": "scan motion is unknown",
+    "motionStatus": "unknown",
+    "unknownSamples": 66,
+    "positionError": "Interface/AddOns/Couchside_Gathering/ScanMotion.lua:10: player map position unavailable",
+    "facingError": "Interface/AddOns/Couchside_Gathering/ScanMotion.lua:19: player facing unavailable"
+  },
+  "freshnessBoundary": "scan 72 predates the current report and contains no herb region; it does not reproduce or explain the current live failure",
+  "change": "report acceptance and clearing reasons; persist display verdict in the completed scan; no acceptance, lifetime, symbols or native-cursor behavior changed",
+  "localValidation": {
+    "displayDiagnostics": 8,
+    "prototypeLegend": 13,
+    "scannerAndMotion": 60,
+    "classifier": 15,
+    "legacyDisplayAndIntegration": 13,
+    "allAddonLua51Parse": true,
+    "diffWhitespace": true
+  },
+  "nativeValidationPending": [
+    "fresh scan display verdict",
+    "actual revised symbol appearance",
+    "normal hover and controller input"
+  ],
+  "installed": {
+    "path": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns/Couchside_Gathering",
+    "matchedFiles": 16,
+    "rollback": "/Applications/World of Warcraft/_classic_beta_/Interface/AddOns.disabled/Couchside_Gathering-pre-0.11.2-2026-10-13",
+    "sha256": {
+      "Couchside_Gathering.toc": "75497d2a0679303e0c6963c4eafd9a90daa689f4c62ea4bd841248fdcc939497",
+      "Gathering.lua": "070f6b30633155302d0ea6ed4cc0a7cb3cf205e6f63ab19a95475ab01efdf43c",
+      "Media/circle-orange.tga": "d60f414b993a713cf727c947792b32ed51c5d29dbdab3bc22f2e83016490e7b9",
+      "Media/cross-red.tga": "9e49010bf209b6937925e60d1d0153a1ac2f54fe71e31bc02e6353256484bacc",
+      "Media/diamond-purple.tga": "48ba29adcad5792aec6003518ee1c9899ad054cb5f113e350698497ccf21de3f",
+      "Media/hexagon-teal.tga": "2ae6bc5017d706adb753ddc43679e58d64af61f734c7c583e974fa1a9df1b72f",
+      "Media/square-blue.tga": "6da9188bc3e0188e36eacad0c556b078ca6f9d73ebc593d0207691dc8bfaabb5",
+      "Media/star-yellow.tga": "e0f09131354206b29bd18dd5d59eed5f9a12ef8dc1b799d47eaebebaf0d9d01d",
+      "Media/triangle-green.tga": "37425484cbe3c037b7ef4e49d9656f05b2e577535c18fab11eb54828ed9f5279",
+      "MinimapProbe.lua": "518d54f4a10754cbd65bbdfea613ad5e7077a544f58ff382bf1d4d40f73e2785",
+      "NearbyList.lua": "59aeba0e4d1efc4dd868caebe95fb9f0bb7449876a1ae63e67702916c713ee6a",
+      "QuestTextFilter.lua": "c2e602fea67dca74f2a525ef9dc26d94a500dccf3102393a770e6552dc21041c",
+      "ResourceClassifier.lua": "a8dba6145f4012d0639a2bd2fc7a13bf254c71bf1752374d06f33803cf459151",
+      "ResourceLegend.lua": "471a1ba9276f5fa47ad3c2ead1f01ec1e5a020e25b535951abc737cb0fafbe9f",
+      "ScanLog.lua": "75dbb83fae1c5a606cddb90238c4fc90642597ee3ce53f461f8b4712128c4d57",
+      "ScanMotion.lua": "18543de54447a039c488a2fe1e9e33aa2270da63712b2421a98dbda441373c42"
+    }
+  },
+  "nativeFollowup": "gathering-dungeon-display-native-2026-10-13.json"
+}

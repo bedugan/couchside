@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-12",
+  "scanFileModifiedLocal": "2026-10-12T19:35:58.524855",
+  "scanIDs": [
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
+  "providerReportCountOnDisk": 0,
+  "nativeControlReport": "Brian: All good on the controls. I reloaded so you should have fresh data.",
+  "providerState": "GatherMate2 SavedVariables present at matching write time; global.data_version=8 observed by isolated read",
+  "limitations": "Classification console output was not persisted by 0.9.0. Saved raw scans and local replays cannot confirm the native provider report.",
+  "scans": [
+    {
+      "id": 34,
+      "build": "70338",
+      "pointCount": 1009,
+      "hitCount": 25,
+      "retainedHitCount": 16,
+      "durationSeconds": 1.25,
+      "cleanupRequestSucceeded": true,
+      "motionStatus": "still",
+      "regions": [
+        "Peacebloom"
+      ],
+      "rawNames": [
+        "Ishamuhale",
+        "Peacebloom"
+      ]
+    },
+    {
+      "id": 35,
+      "build": "70338",
+      "pointCount": 1009,
+      "hitCount": 25,
+      "retainedHitCount": 16,
+      "durationSeconds": 1.25,
+      "cleanupRequestSucceeded": true,
+      "motionStatus": "still",
+      "regions": [
+        "Peacebloom"
+      ],
+      "rawNames": [
+        "Ishamuhale",
+        "Peacebloom"
+      ]
+    },
+    {
+      "id": 36,
+      "build": "70338",
+      "pointCount": 1009,
+      "hitCount": 41,
+      "retainedHitCount": 32,
+      "durationSeconds": 1.25,
+      "cleanupRequestSucceeded": true,
+      "motionStatus": "moving",
+      "regions": [
+        "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:16:32|tEarthroot",
+        "Peacebloom"
+      ],
+      "rawNames": [
+        "Ishamuhale",
+        "Peacebloom",
+        "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:16:32|tEarthroot"
+      ]
+    },
+    {
+      "id": 37,
+      "build": "70338",
+      "pointCount": 1009,
+      "hitCount": 41,
+      "retainedHitCount": 32,
+      "durationSeconds": 1.25,
+      "cleanupRequestSucceeded": true,
+      "motionStatus": "still",
+      "regions": [
+        "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:16:32|tEarthroot",
+        "Peacebloom"
+      ],
+      "rawNames": [
+        "Ishamuhale",
+        "Peacebloom",
+        "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:16:32|tEarthroot"
+      ]
+    },
+    {
+      "id": 38,
+      "build": "70338",
+      "pointCount": 1009,
+      "hitCount": 128,
+      "retainedHitCount": 99,
+      "durationSeconds": 1.25,
+      "cleanupRequestSucceeded": true,
+      "motionStatus": "still",
+      "regions": [
+        "Idiotwtha Bow",
+        "Bruiseweed",
+        "Billyspike Winf",
+        "Bruiseweed",
+        "Mageroyal",
+        "Ronma Millwright",
+        "Ronma Millwright / Spirit Fingies",
+        "Spirit Fingies",
+        "Kingsblood / Ronma Millwright / Spirit Fingies",
+        "Kingsblood / Spirit Fingies",
+        "Kingsblood"
+      ],
+      "rawNames": [
+        "Billyspike Winf",
+        "Bruiseweed",
+        "Enraged Thunder Lizards",
+        "Idiotwtha Bow",
+        "Kingsblood",
+        "Kingsblood Ronma Millwright Spirit Fingies",
+        "Kingsblood Spirit Fingies",
+        "Mageroyal Serpentbloom",
+        "Ronma Millwright",
+        "Ronma Millwright Spirit Fingies",
+        "Serpentbloom",
+        "Spirit Fingies"
+      ]
+    },
+    {
+      "id": 39,
+      "build": "70338",
+      "pointCount": 1009,
+      "hitCount": 142,
+      "retainedHitCount": 101,
+      "durationSeconds": 1.25,
+      "cleanupRequestSucceeded": true,
+      "motionStatus": "still",
+      "regions": [
+        "Billyspike Winf",
+        "Idiotwtha Bow",
+        "Bruiseweed",
+        "Fuzzle Guzzle",
+        "Bruiseweed",
+        "Mageroyal",
+        "Bruiseweed / Spirit Fingies",
+        "Ronma Millwright / Spirit Fingies",
+        "Kingsblood / Ronma Millwright / Spirit Fingies",
+        "Spirit Fingies",
+        "Kingsblood / Spirit Fingies",
+        "Kingsblood"
+      ],
+      "rawNames": [
+        "Billyspike Winf",
+        "Billyspike Winf Enraged Thunder Lizards",
+        "Bruiseweed",
+        "Bruiseweed Serpentbloom",
+        "Bruiseweed Spirit Fingies",
+        "Enraged Thunder Lizards",
+        "Fuzzle Guzzle",
+        "Idiotwtha Bow",
+        "Kingsblood",
+        "Kingsblood Ronma Millwright Spirit Fingies",
+        "Kingsblood Spirit Fingies",
+        "Mageroyal Serpentbloom",
+        "Ronma Millwright Spirit Fingies",
+        "Serpentbloom",
+        "Spirit Fingies"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "source": "/Applications/World of Warcraft/_classic_beta_/WTF/Account/493795#1/SavedVariables/Couchside_Gathering.lua",
+  "note": "Latest saved records inspected after Brian reported the display test successful and pins aligned. These records do not contain retained non-resource examples. No one-to-one screenshot association or native classifier is inferred.",
+  "records": [
+    {
+      "id": 23,
+      "clientVersion": "1.60.1",
+      "build": "70338",
+      "interface": 16001,
+      "serverTime": 1791844114,
+      "durationSeconds": 1.134000000020023,
+      "pointCount": 901,
+      "hitCount": 36,
+      "retainedHitCount": 36,
+      "cleanupRequestSucceeded": true,
+      "scanProfile": "quest-filter-motion-v1",
+      "geometry": {
+        "zoom": 0,
+        "bottom": 853.4157104492188,
+        "height": 197.9999694824219,
+        "scale": 0.6699999570846558,
+        "left": 1539.427001953125,
+        "width": 197.9998474121094
+      },
+      "motionStatus": "still",
+      "unknownMotionSamples": 0,
+      "regions": [
+        {
+          "y": 0.720588235294118,
+          "text": "Briarthorn",
+          "count": 20,
+          "x": 0.7352941176470591
+        },
+        {
+          "y": 0.8088235294117648,
+          "text": "Peacebloom",
+          "count": 16,
+          "x": 0.5441176470588234
+        }
+      ],
+      "tooltipFields": {
+        "Briarthorn": {
+          "type": 21,
+          "topLevelFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "lineFields": [
+            [
+              "leftColor",
+              "leftText",
+              "type"
+            ]
+          ]
+        },
+        "Peacebloom": {
+          "type": 21,
+          "topLevelFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "lineFields": [
+            [
+              "leftColor",
+              "leftText",
+              "type"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": 24,
+      "clientVersion": "1.60.1",
+      "build": "70338",
+      "interface": 16001,
+      "serverTime": 1791844136,
+      "durationSeconds": 1.134000000020023,
+      "pointCount": 901,
+      "hitCount": 32,
+      "retainedHitCount": 32,
+      "cleanupRequestSucceeded": true,
+      "scanProfile": "quest-filter-motion-v1",
+      "geometry": {
+        "zoom": 0,
+        "bottom": 853.4157104492188,
+        "height": 197.9999694824219,
+        "scale": 0.6699999570846558,
+        "left": 1539.427001953125,
+        "width": 197.9998474121094
+      },
+      "motionStatus": "still",
+      "unknownMotionSamples": 0,
+      "regions": [
+        {
+          "y": 0.720588235294118,
+          "text": "Briarthorn",
+          "count": 16,
+          "x": 0.7205882352941178
+        },
+        {
+          "y": 0.8088235294117648,
+          "text": "Peacebloom",
+          "count": 16,
+          "x": 0.5441176470588234
+        }
+      ],
+      "tooltipFields": {
+        "Briarthorn": {
+          "type": 21,
+          "topLevelFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "lineFields": [
+            [
+              "leftColor",
+              "leftText",
+              "type"
+            ]
+          ]
+        },
+        "Peacebloom": {
+          "type": 21,
+          "topLevelFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "lineFields": [
+            [
+              "leftColor",
+              "leftText",
+              "type"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": 25,
+      "clientVersion": "1.60.1",
+      "build": "70338",
+      "interface": 16001,
+      "serverTime": 1791844222,
+      "durationSeconds": 1.134000000020023,
+      "pointCount": 901,
+      "hitCount": 16,
+      "retainedHitCount": 16,
+      "cleanupRequestSucceeded": true,
+      "scanProfile": "quest-filter-motion-v1",
+      "geometry": {
+        "zoom": 0,
+        "bottom": 853.4157104492188,
+        "height": 197.9999694824219,
+        "scale": 0.6699999570846558,
+        "left": 1539.427001953125,
+        "width": 197.9998474121094
+      },
+      "motionStatus": "still",
+      "unknownMotionSamples": 0,
+      "regions": [
+        {
+          "y": 0.3970588235294118,
+          "text": "Mageroyal",
+          "count": 16,
+          "x": 0.8088235294117647
+        }
+      ],
+      "tooltipFields": {
+        "Mageroyal": {
+          "type": 21,
+          "topLevelFields": [
+            "dataInstanceID",
+            "lines",
+            "type"
+          ],
+          "lineFields": [
+            [
+              "leftColor",
+              "leftText",
+              "type"
+            ]
+          ]
+        }
+      }
+    }
+  ]
+}

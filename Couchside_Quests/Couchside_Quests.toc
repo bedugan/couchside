@@ -2,13 +2,14 @@
 ## Title: Couchside: Quests
 ## Notes: Tracks quests by zone and shows quest areas and nearby turn-ins without hovering the map.
 ## Author: Brian Dugan
-## Version: 0.7.0
+## Version: 0.7.1
 ## IconTexture: Interface\Icons\INV_Misc_Map_01
 ## Dependencies: Couchside
-## SavedVariablesPerCharacter: CouchsideQuestsTrackingDB
+## SavedVariablesPerCharacter: CouchsideQuestsTrackingDB, CouchsideQuestsRoleDB
 
 Quests.lua
 QuestTracking.lua
+QuestRoleProbe.lua
 QuestZoneTracking.lua
 Tracker.lua
 QuestAreaMarker.lua

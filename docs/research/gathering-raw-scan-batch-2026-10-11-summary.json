@@ -1,0 +1,477 @@
+{
+  "evidence": "Native persisted history after Brian reloaded at the tenth retained scan. Some scans were made while moving; which IDs were moving is not recorded. All records lack the newer quest-filter fields, so this is earlier-scanner evidence, not live filter validation.",
+  "retainedScans": 10,
+  "nextID": 11,
+  "scans": [
+    {
+      "id": 1,
+      "serverTime": 1791774892,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 417,
+      "regions": [
+        {
+          "y": 0.3077033218785797,
+          "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r",
+          "count": 388,
+          "x": 0.3417096219931272
+        },
+        {
+          "y": 0.1666666666666667,
+          "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.2222222222222222
+        },
+        {
+          "y": 0.5,
+          "text": "Peacebloom Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r",
+          "count": 20,
+          "x": 0.2916666666666666
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 2,
+      "serverTime": 1791777321,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 718,
+      "regions": [
+        {
+          "y": 0.5248749553411947,
+          "text": "Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 622,
+          "x": 0.3603072525902107
+        },
+        {
+          "y": 0.2916666666666666,
+          "text": "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:16:32|tStranglekelp",
+          "count": 16,
+          "x": 0.7083333333333333
+        },
+        {
+          "y": 0.3611111111111111,
+          "text": "Root Samples|cffffffff - 0/8 Root Sample|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.1111111111111111
+        },
+        {
+          "y": 0.4305555555555556,
+          "text": "Earthroot Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 8,
+          "x": 0.625
+        },
+        {
+          "y": 0.4305555555555556,
+          "text": "Earthroot",
+          "count": 8,
+          "x": 0.6805555555555556
+        },
+        {
+          "y": 0.4743589743589744,
+          "text": "Spirit Fingies Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 13,
+          "x": 0.4871794871794872
+        },
+        {
+          "y": 0.5185185185185185,
+          "text": "Ghost Notary Spirit Fingies Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 9,
+          "x": 0.5092592592592592
+        },
+        {
+          "y": 0.5555555555555556,
+          "text": "Ghost Notary Michelle Rose Spirit Fingies Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 3,
+          "x": 0.5277777777777778
+        },
+        {
+          "y": 0.6138888888888889,
+          "text": "Michelle Rose Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 10,
+          "x": 0.55
+        },
+        {
+          "y": 0.5833333333333334,
+          "text": "Ghost Notary Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 1,
+          "x": 0.4722222222222222
+        },
+        {
+          "y": 0.5833333333333334,
+          "text": "Ghost Notary Michelle Rose Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 3,
+          "x": 0.5277777777777778
+        },
+        {
+          "y": 0.7638888888888888,
+          "text": "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:0:16|tEarthroot Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 16,
+          "x": 0.4027777777777779
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 3,
+      "serverTime": 1791778361,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 1009,
+      "regions": [
+        {
+          "y": 0.5550519138385243,
+          "text": "Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 717,
+          "x": 0.6082829691616305
+        },
+        {
+          "y": 0.3714032757857458,
+          "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 251,
+          "x": 0.2246569278441792
+        },
+        {
+          "y": 0.1944444444444445,
+          "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 0/8 Root Sample|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.1944444444444445
+        },
+        {
+          "y": 0.2916666666666667,
+          "text": "Silverleaf Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 12,
+          "x": 0.4166666666666667
+        },
+        {
+          "y": 0.2916666666666667,
+          "text": "Silverleaf Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 4,
+          "x": 0.4722222222222222
+        },
+        {
+          "y": 0.4305555555555556,
+          "text": "Mageroyal Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 16,
+          "x": 0.2083333333333333
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 4,
+      "serverTime": 1791778424,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 1009,
+      "regions": [
+        {
+          "y": 0.5088842333954068,
+          "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 716,
+          "x": 0.6189866542520174
+        },
+        {
+          "y": 0.519153225806452,
+          "text": "Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 248,
+          "x": 0.1765232974910395
+        },
+        {
+          "y": 0.1666666666666667,
+          "text": "Root Samples|cffffffff - 0/8 Root Sample|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.25
+        },
+        {
+          "y": 0.2361111111111111,
+          "text": "Silverleaf Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 16,
+          "x": 0.4861111111111111
+        },
+        {
+          "y": 0.3055555555555555,
+          "text": "Mageroyal Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 0/8 Root Sample|r",
+          "count": 20,
+          "x": 0.375
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 5,
+      "serverTime": 1791778697,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 1009,
+      "regions": [
+        {
+          "y": 0.5072387005649718,
+          "text": "Root Samples|cffffffff - 3/8 Root Sample|r",
+          "count": 944,
+          "x": 0.4966454802259884
+        },
+        {
+          "y": 0.1111111111111111,
+          "text": "Root Samples|cffffffff - 3/8 Root Sample|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.3333333333333333
+        },
+        {
+          "y": 0.2083333333333333,
+          "text": "Mageroyal Root Samples|cffffffff - 3/8 Root Sample|r",
+          "count": 20,
+          "x": 0.75
+        },
+        {
+          "y": 0.4305555555555556,
+          "text": "Peacebloom Root Samples|cffffffff - 3/8 Root Sample|r",
+          "count": 16,
+          "x": 0.2361111111111111
+        },
+        {
+          "y": 0.6805555555555554,
+          "text": "Briarthorn Root Samples|cffffffff - 3/8 Root Sample|r",
+          "count": 20,
+          "x": 0.6944444444444444
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 6,
+      "serverTime": 1791778739,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 1009,
+      "regions": [
+        {
+          "y": 0.2927704194260482,
+          "text": "Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 302,
+          "x": 0.2918506254598968
+        },
+        {
+          "y": 0.08333333333333333,
+          "text": "Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.4166666666666667
+        },
+        {
+          "y": 0.6002949852507369,
+          "text": "Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 678,
+          "x": 0.595050803015405
+        },
+        {
+          "y": 0.3611111111111111,
+          "text": "Mageroyal Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 1,
+          "x": 0.4166666666666667
+        },
+        {
+          "y": 0.4195906432748539,
+          "text": "Mageroyal Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 19,
+          "x": 0.4605263157894737
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 7,
+      "serverTime": 1791778749,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 1009,
+      "regions": [
+        {
+          "y": 0.3077747168656261,
+          "text": "Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 363,
+          "x": 0.3166513621059075
+        },
+        {
+          "y": 0.08333333333333333,
+          "text": "Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.4166666666666667
+        },
+        {
+          "y": 0.6201914474861329,
+          "text": "Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 621,
+          "x": 0.6080246913580251
+        },
+        {
+          "y": 0.3888888888888889,
+          "text": "Mageroyal Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 1,
+          "x": 0.4722222222222222
+        },
+        {
+          "y": 0.4333333333333334,
+          "text": "Mageroyal Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 15,
+          "x": 0.5166666666666666
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 8,
+      "serverTime": 1791778801,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 1009,
+      "regions": [
+        {
+          "y": 0.3213734567901239,
+          "text": "Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 432,
+          "x": 0.3432998971193415
+        },
+        {
+          "y": 0.08333333333333333,
+          "text": "Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r Jorn Skyseer",
+          "count": 6,
+          "x": 0.5416666666666666
+        },
+        {
+          "y": 0.642046670948407,
+          "text": "Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 519,
+          "x": 0.6344465853136376
+        },
+        {
+          "y": 0.4508547008547009,
+          "text": "Peacebloom Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 13,
+          "x": 0.4508547008547009
+        },
+        {
+          "y": 0.4907407407407408,
+          "text": "Peacebloom Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 3,
+          "x": 0.4907407407407408
+        },
+        {
+          "y": 0.6296296296296297,
+          "text": "Peacebloom Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 6,
+          "x": 0.2685185185185186
+        },
+        {
+          "y": 0.6666666666666667,
+          "text": "Peacebloom Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 10,
+          "x": 0.3055555555555556
+        },
+        {
+          "y": 0.7083333333333333,
+          "text": "Peacebloom Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 20,
+          "x": 0.5833333333333333
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 9,
+      "serverTime": 1791778842,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 1009,
+      "regions": [
+        {
+          "y": 0.519277474195507,
+          "text": "Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 915,
+          "x": 0.5071341833636913
+        },
+        {
+          "y": 0.1515151515151515,
+          "text": "Consumed by Hatred|cffffffff - 0/60 Bristleback Quilboar Tusk|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 33,
+          "x": 0.2053872053872054
+        },
+        {
+          "y": 0.08333333333333333,
+          "text": "Root Samples|cffffffff - 4/8 Root Sample|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.5277777777777777
+        },
+        {
+          "y": 0.1805555555555556,
+          "text": "Peacebloom Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 16,
+          "x": 0.5972222222222223
+        },
+        {
+          "y": 0.4861111111111111,
+          "text": "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:0:16|tBruiseweed Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 16,
+          "x": 0.3194444444444444
+        },
+        {
+          "y": 0.5972222222222223,
+          "text": "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:16:32|tMageroyal Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 16,
+          "x": 0.6805555555555556
+        },
+        {
+          "y": 0.8472222222222222,
+          "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 4,
+          "x": 0.8472222222222223
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    },
+    {
+      "id": 10,
+      "serverTime": 1791778882,
+      "build": "70338",
+      "durationSeconds": 1.25,
+      "pointCount": 1009,
+      "hitCount": 1009,
+      "regions": [
+        {
+          "y": 0.4526734662339674,
+          "text": "Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 719,
+          "x": 0.3953407510431153
+        },
+        {
+          "y": 0.08333333333333333,
+          "text": "Root Samples|cffffffff - 4/8 Root Sample|r Jorn Skyseer",
+          "count": 9,
+          "x": 0.5277777777777777
+        },
+        {
+          "y": 0.6417190775681347,
+          "text": "Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 265,
+          "x": 0.762054507337526
+        },
+        {
+          "y": 0.5138888888888888,
+          "text": "|TInterface\\Minimap\\Minimap-PositionArrows:0:0:0:0:16:32:0:16:16:32|tSilverleaf Centaur Bracers|cffffffff - 0/15 Centaur Bracers|r Root Samples|cffffffff - 4/8 Root Sample|r",
+          "count": 16,
+          "x": 0.8472222222222223
+        }
+      ],
+      "cleanupRequestSucceeded": true
+    }
+  ]
+}

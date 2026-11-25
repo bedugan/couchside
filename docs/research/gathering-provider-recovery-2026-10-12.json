@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-12",
+  "source": "Latest saved BugGrabber database compared with preserved pre-withdrawal audit",
+  "fileModifiedLocal": "2026-10-12T22:02:00.183876",
+  "databaseSession": 56,
+  "uniqueErrorCount": 8,
+  "baselineUniqueErrorCount": 8,
+  "newOrChangedErrorEntries": {},
+  "allMessagesCountsSessionsAndTimesUnchanged": true,
+  "entriesInPostWithdrawalSessions": 0,
+  "providerFolderAbsent": true,
+  "userReport": "No problems after Gathermate was removed",
+  "result": "Recovery passed for the reported comparison; no new saved errors after withdrawal",
+  "limits": "Supports a GatherMate2-dependent failure or interaction in this setup; does not prove the original taint source or all future controller behavior"
+}
