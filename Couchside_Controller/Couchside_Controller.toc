@@ -2,11 +2,16 @@
 ## Title: Couchside: Controller
 ## Notes: Keeps the controller interface's hidden state on screen.
 ## Author: Brian Dugan
-## Version: 0.8.0
+## Version: 0.9.0
 ## IconTexture: Interface\Icons\INV_Misc_Gear_01
 ## Dependencies: Couchside
+## SavedVariables: CouchsideControllerDB, CouchsideControllerReportDB
 
 Controller.lua
 ControllerPageReport.lua
 ControllerPages.lua
 EquipmentSets.lua
+PartyTargetHints.lua
+PartyTargetReport.lua
+PartyPress.lua
+SecondPress.lua

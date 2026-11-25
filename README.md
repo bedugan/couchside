@@ -6,7 +6,7 @@ World of Warcraft addons for playing from the couch, on a handheld or with a con
 | --- | --- | --- |
 | Couchside | `Couchside` | Required base: commands, saved options, settings and debug output. |
 | Quests | `Couchside_Quests` | Quest areas, nearby turn-ins and optional zone-based tracking. |
-| Controller | `Couchside_Controller` | Keep native controller action-page numbers visible; fix the equipment set list. |
+| Controller | `Couchside_Controller` | Keep native controller action-page numbers visible; show party targeting buttons; fix the equipment set list. |
 | Gathering | `Couchside_Gathering` | Gathering difficulty in herb and ore tooltips. |
 
 Every module requires only the base. The TOCs declare Forever 1.60.1 and Retail 12.1.x interfaces; feature validation varies by client. Gathering difficulty is Forever only.
@@ -17,7 +17,7 @@ Copy `Couchside` and the module folders you want into `Interface/AddOns`, keepin
 
 For the tested Mac client, the directory is `/Applications/World of Warcraft/_forever_/Interface/Addons`. Back up existing copies before replacing them. Delete any old `Couchside_Minimap` folder; that module has been retired.
 
-Run `/cs option` to list module options, then use `/cs option <module.name> on` or `off`. On the tested Forever gamepad UI, closing the settings panel froze the client; use these commands or keyboard/mouse settings. `/cs settings` opens **Options > AddOns > Couchside**.
+Run `/cs option` to list module options and their values, then use `/cs option <module.name> <value>`: `on` or `off` for a checkbox, one of the listed values for a choice, or a number in range. On the tested Forever gamepad UI, closing the settings panel breaks the controller interface until `/reload`; use these commands or keyboard/mouse settings. `/cs settings` opens **Options > AddOns > Couchside**.
 
 ## Quests
 
@@ -34,6 +34,14 @@ Status: the initial zone filter passed native testing; broader zone transitions,
 **Show action page numbers** keeps `1 2 3` visible with the selected page highlighted. Couchside's copy hides while LB+RB shows Blizzard's strip; special controller pages use the native display. **Only show page 2 or 3** instead shows just the current `2` or `3`, with nothing on page 1. Both options default off.
 
 Status: the page display has native acceptance. Automatic page switching was withdrawn after it broke later controller input; it is not an available feature. See the [controller findings](docs/research/controller-page-idle-api.md).
+
+**Show party targeting buttons** (default on, Forever only: Retail has no controller action bars and never runs it) marks each party frame with the button that targets that member when the controller's Party Targeting option is on (CVar `GamepadUsePartyTargeting`), you are in a party but not a raid, and the controller interface is showing. The mark is the game's own controller glyph: D-pad up for party1, right for party2, down for party3, left for party4, the bottom face button (A on Xbox) for you and the left face button (X on Xbox) for your pet, on raid-style pet frames or the classic pet frame. The right face button targets your target's target, which has no party frame. Mapping per Blizzard's `FriendlyTargetingActionBar.lua`; `GamepadSwapFriendlyTargetActions` swaps the D-pad and face buttons. If a glyph is missing, a drawn D-pad or face-button diamond with the button lit in amber takes its place. With **Swap friendly target actions** on, the D-pad and face buttons trade places. Marks stay up all the time so you can read them before pressing: dim, under a badge showing the friendly targeting button to hold (`RB hold` with swapped target modifiers, otherwise LB), and full brightness without the badge while that button is held. Blizzard's own party targeting prompt always shows LB, even when the modifiers are swapped (`GAMEPAD_SHOULDER_LEFT` in `GroupTargeting.lua`).
+
+**Button position** is Automatic (default), Left, Right, Top, Bottom or Inside. Automatic uses the left of a vertical raid-style column, the top of a horizontal row and the right of classic party frames, keeping marks off neighbouring frames. A left mark with no room before the screen edge moves right. In a horizontal row the pet's mark goes left, since a pet frame sits under its owner. With raid-style frames the badge takes the place of Blizzard's party targeting prompt under the frames, which the addon makes invisible (alpha 0) while marks show and restores afterwards; its show/hide and bindings stay Blizzard's. With classic frames the badge sits above the top mark. Marks hide in Edit Mode, where empty slots show the player as placeholders. **Button labels** picks the face-button and badge glyphs: Automatic (default) uses the active controller's label style, which the game reported as Generic (`1`) for Brian's controller; Xbox, PlayStation and Nintendo choose directly. **Button size** runs 50–200% (default 100%) of half the frame's height. Each mark belongs to a Blizzard party frame and follows the unit that frame shows, so sorting and roster changes, in or out of combat, keep it right. Report: `/cs controller partytargets`.
+
+Status: Brian confirmed the D-pad up mark on party1 and the A mark on his own frame with Button labels set to Xbox, on raid-style vertical frames. Pending checks and the confirmed list are in [party targeting validation](docs/research/party-targeting-validation.md).
+
+**Second press casts** (default off, experimental) adds an action to party targeting. Hold the friendly targeting button and press a member's button: the first press targets them as usual, and each further press of that button in the same hold casts the second-press action on them. Releasing the button resets the count. It covers party1–4, you and your pet. A member who can't be helped (offline, out of sight or dead) gets no cast, since the game would cast it on you instead. The action is your class's first known heal (Paladin: Flash of Light, then Holy Light; Priest, Druid and Shaman have their own lists) or a spell or macro chosen with `/cs controller secondpress`. Only spells the character knows are offered. While held, the addon binds those keys to its own secure buttons from a secure frame on Blizzard's friendly targeting bar and returns them on release; nothing of Blizzard's is hooked. Action changes during combat apply when combat ends. Status: the press probe confirmed the key takeover and targeting in and out of combat, and Brian confirmed Flash of Light on the second press. See [second-press notes](docs/research/second-press.md).
 
 **Fix the equipment set list** (default on) shows your sets on the character sheet with the controller interface on. Forever's controller layout anchors the list to `CharacterFrame.InsetRight`, which Forever's sheet doesn't have, leaving the list 0 wide (forever-bugs #494). The addon restores the list's XML anchors while it is hidden and out of combat, after login and after each controller/mouse switch; it hooks nothing. It acts only on that broken layout, so Retail and a fixed client are left alone. Reach the list with D-pad right from the gear column; A on a set opens Equip, Save, Bind and Delete. The name and icon window still needs the mouse. Turning the option off takes effect after `/reload`. Report: `/cs controller equipmentsets`.
 
@@ -65,6 +73,8 @@ The earlier Couchside Minimap module (scanned nearby names, letter stamps, autom
 
 Defaults apply when no preference is saved. Module settings live account-wide in `CouchsideDB.modules`; debug is `CouchsideDB.debug`.
 
+An option is a checkbox, a dropdown of choices or a slider; its default decides which. `/cs option` sets all three. Brian confirmed the dropdown, slider and `/cs option` values in game.
+
 Checkboxes use a wider column on every Couchside page so long option names have more room. Labels end beside the checkbox, and released rows return to Blizzard's default layout before reuse. Brian accepted the visual result; names, defaults, tooltips and saved values are unchanged. See [settings layout validation](docs/research/settings-label-spacing-2026-10-14.md) for evidence and remaining input checks.
 
 | Option | Default | Setting |
@@ -78,6 +88,11 @@ Checkboxes use a wider column on every Couchside page so long option names have 
 | `quests.nearbyTurnIns` | on | List untracked turn-ins. |
 | `controller.pageNumbers` | off | Show action page numbers. |
 | `controller.pageNumbersExtraOnly` | off | Only show page 2 or 3; requires pageNumbers. |
+| `controller.partyHints` | on | Show party targeting buttons. |
+| `controller.partySecondPress` | off | Second press casts (experimental). |
+| `controller.partyHintPosition` | `auto` | Button position: `auto`, `left`, `right`, `top`, `bottom` or `inside`. |
+| `controller.partyHintLabels` | `auto` | Face-button glyphs: `auto`, `xbox`, `playstation` or `nintendo`. |
+| `controller.partyHintSize` | 100% | Button size, 50–200%. |
 | `gathering.tooltipDifficulty` | on | Show gathering difficulty in tooltips. |
 
 Disabling a display option also stops its feature-specific background work. Explicit report commands run when requested.
@@ -92,9 +107,13 @@ Disabling a display option also stops its feature-specific background work. Expl
 | --- | --- |
 | `/cs` or `/cs help` | List commands and installed versions. |
 | `/cs settings` | Open settings. Prefer `/cs option` in Forever gamepad UI. |
-| `/cs option [module.name] [on\|off]` | List, inspect or change module options. |
+| `/cs option [module.name] [value]` | List, inspect or change module options; a wrong value prints the accepted ones. |
 | `/cs debug [on\|off]` | Inspect/change persistent debug output. |
 | `/cs controller actionpage [watch\|off]` | Report native page/strip state, watch changes or stop the watch. |
+| `/cs controller equipmentsets` | Report the character sheet's equipment set list layout. |
+| `/cs controller pressprobe [on\|off]` | Log every party target press, hold and release to chat and the saved file for a bug report. With Second press casts off it takes the keys but only targets. |
+| `/cs controller secondpress [default\|off\|spell <name or ID>\|macro <name>]` | Choose what a second press will cast (account-wide while tested; default: each character's first known class heal, also used when a chosen spell is unknown to that character), or show it with the class heals and dispels this character knows (trained, not just old enough for); every listed spell ID and what it resolves to is saved with the report. Decisions and deferred ideas: [second-press notes](docs/research/second-press.md). Used by Second press casts. |
+| `/cs controller partytargets [label]` | Report Party Targeting CVars, group state, the button that targets each member and their party frame. Keeps the last eight runs for `/reload` to save. |
 
 ### Quest commands
 
@@ -119,9 +138,9 @@ Disabling a display option also stops its feature-specific background work. Expl
 
 ## Saved data and troubleshooting
 
-`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
+`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. `CouchsideControllerDB` keeps the second-press action. `CouchsideControllerReportDB` keeps the last eight `partytargets` reports the last 60 `pressprobe` events the last `secondpress` report per character, written to `SavedVariables/Couchside_Controller.lua` on `/reload`. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
 
-For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, `controller equipmentsets`, or Gathering's `tooltip` and `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
+For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, `controller equipmentsets`, `controller partytargets`, or Gathering's `tooltip` and `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
 
 ## How the game behaves
 
@@ -133,7 +152,11 @@ These are confirmed observations in the sampled clients, not guarantees for ever
 - Forever's implicit `IsOnMap` follows the viewed map. Explicit player-map POIs remained stable in the tested turn-in comparison. Returned point arrays can include other map IDs.
 - A dungeon tag can lack a destination. A quest's log group was readable while collapsed, but its header sort key is not a map ID. Watch add/remove passed the sampled round trip; POI `inProgress` did not mean incomplete.
 - Tested Forever dungeons lacked map coordinates/facing while speed and movement/turning/looking events remained readable. Direct fallback display coverage is still pending.
-- Closing settings in the tested Forever gamepad UI froze macOS and SteamOS clients. `/cs option` avoided that close path.
+- Closing settings in the tested Forever gamepad UI froze macOS and SteamOS clients. In the current client it no longer freezes, but the controller interface stops working until `/reload`: hiding a panel makes the controller UI call the protected `SetPreferredGamepadInteractTarget()` on a path addon code has already run on, so the game blocks it and blames that addon. BugGrabber logged the same error for Auctionator, BlessingsUponYou and Couchside, so it is a client bug, not one addon's. `/cs option` avoids that close path.
+- Blizzard's party targeting prompt under raid-style party frames shows LB even with swapped target modifiers, where RB is the friendly targeting button: it hard-codes `GAMEPAD_SHOULDER_LEFT` (`RaidTargetDPAD.lua`, `GroupTargeting.lua`). Brian saw LB with RB as his friendly targeting button.
+- A spell cast at a party member who can't be targeted (Brian's offline party1) lands on the player instead.
+- Forever reports Brian's controller's `labelStyle` as `Generic`, so `GetBindingText("PAD1")` returns the generic glyph `1`. The A/B/X/Y, shape and Nintendo glyph atlases exist and draw when chosen directly.
+- Forever's controller Party Targeting option is CVar `GamepadUsePartyTargeting`. With it on and in a party, holding the friendly targeting button made D-pad up target party1 and the bottom face button target Brian. Raid-style party frames sort by reassigning units to fixed frames, so frame order is not party order (`CompactPartyFrame.lua`).
 - With the controller interface on, Forever's equipment set list is 0 wide and empty: its controller layout anchors to `CharacterFrame.InsetRight`, which Forever's character sheet lacks. Restoring the XML anchors while the list is hidden brings back the sets and the game's own controller actions.
 - The controller page remains readable while its numbered strip is hidden. Controller input normally hides the pointer in Brian's tested workflow, with text-field exceptions.
 - A native minimap tooltip can combine a herb, quest text and NPC names. Generic tooltip type/color did not establish their roles.
@@ -150,12 +173,12 @@ Quest minimap marks assume a round minimap. A long native tracker can hide entri
 
 Plain Lua, with no build step. The README owns current features, settings, commands, files and concise confirmed client facts. Put detailed samples, case counts and validation history in `docs/research/`, with a link from the relevant feature. [GLOSSARY.md](GLOSSARY.md) defines resource terms; [ADRs](docs/adr/) record architecture decisions. The [development record](docs/research/readme-development-record-2026-10-14.md) preserves the material moved out of this README.
 
-Run local Lua checks in an isolated environment with `lupa`, using `tests/run-gathering-checks.py` (Gathering and settings) and `tests/quest-role-probe-check.py`. Local fixtures do not establish native input or taint safety. Only Brian tests the game; copy verified real module folders for a test and commit runtime changes after native acceptance.
+Run local Lua checks in an isolated environment with `lupa`, using `tests/run-gathering-checks.py` (Gathering, settings, option values and the second-press command) and `tests/quest-role-probe-check.py`. Local fixtures do not establish native input or taint safety. Only Brian tests the game; copy verified real module folders for a test and commit runtime changes after native acceptance.
 
 | File | Role |
 | --- | --- |
-| `Couchside/Core.lua` | Module registration, commands, saved options and chat/debug output. |
-| `Couchside/Settings.lua` | Build base/module settings at login; omit empty diagnostic-only pages. |
+| `Couchside/Core.lua` | Module registration, commands, saved options (checkbox, choice, number) and chat/debug output. |
+| `Couchside/Settings.lua` | Build base/module settings at login as checkboxes, dropdowns and sliders; omit empty diagnostic-only pages. |
 | `Couchside_Quests/Quests.lua` | Register options and shared quest colors/descriptions. |
 | `Couchside_Quests/QuestTracking.lua` | Zone decisions, reports, keep/auto overrides and watch test. |
 | `Couchside_Quests/QuestRoleProbe.lua` | Bounded read-only role reports and optional data request. |
@@ -171,6 +194,10 @@ Run local Lua checks in an isolated environment with `lupa`, using `tests/run-ga
 | `Couchside_Controller/ControllerPageReport.lua` | Read-only native page report/watch. |
 | `Couchside_Controller/ControllerPages.lua` | Persistent page-number tiles. |
 | `Couchside_Controller/EquipmentSets.lua` | Restore the equipment set list's anchors; `/cs controller equipmentsets` report. |
+| `Couchside_Controller/PartyTargetHints.lua` | Party targeting button mapping and the marks on party frames. |
+| `Couchside_Controller/PartyPress.lua` | Secure party target key takeover, second-press casting and `/cs controller pressprobe`. |
+| `Couchside_Controller/SecondPress.lua` | Second-press action and class defaults. |
+| `Couchside_Controller/PartyTargetReport.lua` | Read-only `/cs controller partytargets` report, saved for `/reload`. |
 | `Couchside_Gathering/Gathering.lua` | Register Gathering and its tooltip option. |
 | `Couchside_Gathering/SkillProbe.lua` | Read-only raw skill report. |
 | `Couchside_Gathering/ResourceCatalog.lua` | Curated node names and Classic reference bands. |
@@ -178,10 +205,10 @@ Run local Lua checks in an isolated environment with `lupa`, using `tests/run-ga
 | `Couchside_Gathering/ResourceDifficulty.lua` | Current skill capture and conservative difficulty evaluation. |
 | `Couchside/Couchside.toc` | Load order, declared interfaces and dependencies; account-wide options. |
 | `Couchside_Quests/Couchside_Quests.toc` | Load order, declared interfaces and dependencies; per-character quest state/reports. |
-| `Couchside_Controller/Couchside_Controller.toc` | Load order, declared interfaces and dependencies. |
+| `Couchside_Controller/Couchside_Controller.toc` | Load order, declared interfaces and dependencies; second-press action and saved reports. |
 | `Couchside_Gathering/Couchside_Gathering.toc` | Load order, declared interfaces and base dependency. |
 
-Module registration supplies `IsEnabled`, `OnOptionChanged`, `OnReady`, `RegisterCommand`, `Print` and `Debug`. Options come from the module's registered sections. Check [Blizzard's UI source](https://github.com/Gethe/wow-ui-source) before using new game APIs, add a read-only report first and retain it after native validation. Offline catalog tools are described in the [client-table research](docs/research/client-table-export-2026-10-12.md).
+Module registration supplies `IsEnabled`, `GetOption`, `OnOptionChanged`, `OnReady`, `RegisterCommand`, `Print` and `Debug`. Options come from the module's registered sections. Check [Blizzard's UI source](https://github.com/Gethe/wow-ui-source) before using new game APIs, add a read-only report first and retain it after native validation. Offline catalog tools are described in the [client-table research](docs/research/client-table-export-2026-10-12.md).
 
 ## License
 

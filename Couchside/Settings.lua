@@ -2,7 +2,8 @@
 -- so they look and behave like the game's own settings pages. The base's options sit on the
 -- Couchside page; each module gets its own page beneath it.
 --
--- Each checkbox is an addon setting bound straight to the page's saved table. Every option a
+-- Each control is an addon setting bound straight to the page's saved table: a checkbox, a
+-- dropdown for a choice option or a slider for a number option (ns.OptionKind). Every option a
 -- page declares appears here exactly once.
 
 local ADDON_NAME, ns = ...
@@ -30,16 +31,46 @@ local function WidenCheckboxColumn(initializer)
 	end)
 end
 
+local VAR_TYPES = {
+	boolean = Settings.VarType.Boolean,
+	choice = Settings.VarType.String,
+	number = Settings.VarType.Number,
+}
+
+local CONTROLS = {
+	boolean = function(pageCategory, setting, option)
+		WidenCheckboxColumn(Settings.CreateCheckbox(pageCategory, setting, option.tooltip))
+	end,
+	choice = function(pageCategory, setting, option)
+		local function GetChoices()
+			local container = Settings.CreateControlTextContainer()
+			for _, choice in ipairs(option.choices) do
+				container:Add(choice.value, choice.label)
+			end
+			return container:GetData()
+		end
+		Settings.CreateDropdown(pageCategory, setting, GetChoices, option.tooltip)
+	end,
+	number = function(pageCategory, setting, option)
+		local sliderOptions = Settings.CreateSliderOptions(option.min, option.max, option.step)
+		sliderOptions:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function(value)
+			return (option.format or "%s"):format(value)
+		end)
+		Settings.CreateSlider(pageCategory, setting, sliderOptions, option.tooltip)
+	end,
+}
+
 local function AddOptions(pageCategory, layout, page)
 	for _, section in ipairs(page.sections) do
 		layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(section.title))
 		for _, option in ipairs(section.options) do
+			local kind = ns.OptionKind(option)
 			local setting = Settings.RegisterAddOnSetting(pageCategory, page.variablePrefix .. option.key:upper(),
-				option.key, page.db, Settings.VarType.Boolean, option.name, option.default)
+				option.key, page.db, VAR_TYPES[kind], option.name, option.default)
 			setting:SetValueChangedCallback(function(_, value)
 				ns.NotifyOptionChanged(page, option.key, value)
 			end)
-			WidenCheckboxColumn(Settings.CreateCheckbox(pageCategory, setting, option.tooltip))
+			CONTROLS[kind](pageCategory, setting, option)
 		end
 	end
 end

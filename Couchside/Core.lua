@@ -9,16 +9,54 @@ local ADDON_NAME, ns = ...
 local PREFIX_COLOR = "|cff66ccff"
 local DEBUG_TAG = "|cffffcc00debug|r "
 
+-- Whether value is one the option accepts: the right type and, for a choice, one of its values; for
+-- a number, within range.
+local function IsValid(option, value)
+	if type(value) ~= type(option.default) then
+		return false
+	end
+	if option.choices then
+		for _, choice in ipairs(option.choices) do
+			if choice.value == value then
+				return true
+			end
+		end
+		return false
+	end
+	if type(value) == "number" then
+		return value >= option.min and value <= option.max
+	end
+	return true
+end
+
 -- A page is the base or one module: its options, their saved values and their listeners.
 -- Settings.lua gives each page its own settings page.
-local function DefaultsFrom(sections)
-	local defaults = {}
+--
+-- An option's default decides its kind, and so its checkbox, dropdown or slider:
+--   boolean: { key, default = true, name, tooltip }
+--   choice:  { key, default = "auto", choices = { { value = "auto", label = "Automatic" }, ... }, name, tooltip }
+--   number:  { key, default = 100, min = 50, max = 200, step = 10, format = "%d%%", name, tooltip }
+function ns.OptionKind(option)
+	if option.choices then
+		return "choice"
+	end
+	return type(option.default) == "number" and "number" or "boolean"
+end
+
+local function OptionsFrom(sections)
+	local options = {}
 	for _, section in ipairs(sections) do
 		for _, option in ipairs(section.options) do
-			defaults[option.key] = option.default
+			local kind = ns.OptionKind(option)
+			assert(kind ~= "number" or (option.min and option.max and option.step), "Number option needs min, max and step: " .. option.key)
+			-- /cs lowercases what it's given, so an uppercase choice could never be typed.
+			for _, choice in ipairs(option.choices or {}) do
+				assert(choice.value == choice.value:lower(), "Choice values must be lowercase: " .. option.key)
+			end
+			options[option.key] = option
 		end
 	end
-	return defaults
+	return options
 end
 
 local function CreatePage(title, variablePrefix, sections)
@@ -26,7 +64,7 @@ local function CreatePage(title, variablePrefix, sections)
 		title = title,
 		variablePrefix = variablePrefix,
 		sections = sections,
-		defaults = DefaultsFrom(sections),
+		options = OptionsFrom(sections),
 		listeners = {},
 	}
 end
@@ -58,9 +96,12 @@ local function EnsureDB()
 end
 
 function ns.GetOption(page, key)
+	local option = page.options[key]
 	local value = page.db and page.db[key]
-	if value == nil then
-		return page.defaults[key]
+	-- A saved value the option no longer accepts (a removed choice, a changed range or kind) falls
+	-- back to the default.
+	if value == nil or not IsValid(option, value) then
+		return option.default
 	end
 	return value
 end
@@ -113,6 +154,11 @@ function Couchside.RegisterModule(moduleNS, spec)
 	local prefix = PREFIX_COLOR .. "Couchside " .. spec.title .. "|r "
 
 	function moduleNS.IsEnabled(key)
+		return ns.GetOption(module, key) == true
+	end
+
+	-- The current value of a choice or number option.
+	function moduleNS.GetOption(key)
 		return ns.GetOption(module, key)
 	end
 
@@ -147,6 +193,13 @@ function Couchside.RegisterModule(moduleNS, spec)
 		local saved = EnsureDB().modules
 		saved[module.key] = saved[module.key] or {}
 		module.db = saved[module.key]
+		-- Blizzard's settings controls read this table directly, so drop values they can't show.
+		for key, value in pairs(module.db) do
+			local option = module.options[key]
+			if option and not IsValid(option, value) then
+				module.db[key] = nil
+			end
+		end
 		for _, callback in ipairs(readyCallbacks) do
 			callback()
 		end
@@ -192,6 +245,58 @@ local function OnOff(value)
 	return value and "|cff00ff00on|r" or "off"
 end
 
+local function ChoiceValues(option)
+	local values = {}
+	for _, choice in ipairs(option.choices) do
+		table.insert(values, choice.value)
+	end
+	return table.concat(values, "|")
+end
+
+local function FormatValue(option, value)
+	local kind = ns.OptionKind(option)
+	if kind == "boolean" then
+		return OnOff(value)
+	elseif kind == "number" then
+		return (option.format or "%s"):format(value)
+	end
+	return tostring(value)
+end
+
+-- The accepted values, as shown in usage lines.
+local function ValueUsage(option)
+	local kind = ns.OptionKind(option)
+	if kind == "boolean" then
+		return "on|off"
+	elseif kind == "number" then
+		return ("%s-%s"):format(option.min, option.max)
+	end
+	return ChoiceValues(option)
+end
+
+-- The value typed after /cs option <name>, or nil when it isn't one the option accepts.
+local function ParseValue(option, text)
+	local kind = ns.OptionKind(option)
+	if kind == "boolean" then
+		if text == "on" or text == "off" then
+			return text == "on"
+		end
+	elseif kind == "number" then
+		local number = tonumber((text:gsub("%%$", "")))
+		if number and number >= option.min and number <= option.max then
+			local stepped = option.min + math.floor((number - option.min) / option.step + 0.5) * option.step
+			return math.min(stepped, option.max)
+		end
+	else
+		for _, choice in ipairs(option.choices) do
+			if choice.value == text then
+				return choice.value
+			end
+		end
+	end
+	return nil
+end
+
 ns.RegisterCommand("debug", "[on|off] - print what Couchside sees; stays on across sessions", function(arg)
 	if arg == "on" or arg == "off" then
 		ns.SetOption(ns.base, "debug", arg == "on")
@@ -204,24 +309,24 @@ local function OptionNames()
 	local names = {}
 	for _, module in ipairs(ns.modules) do
 		local keys = {}
-		for key in pairs(module.defaults) do
+		for key in pairs(module.options) do
 			table.insert(keys, key)
 		end
 		table.sort(keys)
 		for _, key in ipairs(keys) do
-			table.insert(names, { module = module, key = key, name = module.key .. "." .. key })
+			table.insert(names, { module = module, key = key, name = module.key .. "." .. key, spec = module.options[key] })
 		end
 	end
 	return names
 end
 
 local function PrintOption(option)
-	Print("%s: %s", option.name, OnOff(ns.GetOption(option.module, option.key)))
+	Print("%s: %s", option.name, FormatValue(option.spec, ns.GetOption(option.module, option.key)))
 end
 
 -- Sets options without opening the settings panel, which freezes Forever on close in
 -- gamepad UI. Arguments arrive lowercased, so option names are matched case-insensitively.
-ns.RegisterCommand("option", "[module.name] [on|off] - list options, or turn one on or off without opening settings", function(arg)
+ns.RegisterCommand("option", "[module.name] [value] - list options, or set one without opening settings", function(arg)
 	local name, state = arg:match("^(%S*)%s*(.*)$")
 	local option
 	for _, candidate in ipairs(OptionNames()) do
@@ -238,11 +343,13 @@ ns.RegisterCommand("option", "[module.name] [on|off] - list options, or turn one
 		Print("Unknown option \"%s\". /cs option lists them.", name)
 		return
 	end
-	if state == "on" or state == "off" then
-		ns.SetOption(option.module, option.key, state == "on")
-	elseif state ~= "" then
-		Print("Usage: /cs option %s [on|off]", option.name)
-		return
+	if state ~= "" then
+		local value = ParseValue(option.spec, state)
+		if value == nil then
+			Print("Usage: /cs option %s [%s]", option.name, ValueUsage(option.spec))
+			return
+		end
+		ns.SetOption(option.module, option.key, value)
 	end
 	PrintOption(option)
 end)

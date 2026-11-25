@@ -9,16 +9,24 @@ from lupa.lua51 import LuaRuntime
 
 ROOT = Path(__file__).resolve().parents[1]
 STUB = r'''
-initializers={};settings={};pages={};notifications={};debugMessages={}
+initializers={};settings={};pages={};notifications={};debugMessages={};dropdowns={};sliders={}
 ns={base={sections={{title='General',options={
  {key='debug',name='Enable debug output',default=false,tooltip='Debug tooltip'},
 }}},variablePrefix='BASE_',db={}},modules={
  {title='Gathering',sections={{title='Tooltips',options={
   {key='tooltipDifficulty',name='Show gathering difficulty in tooltips',default=true,tooltip='Difficulty tooltip'},
+  {key='place',name='Place',default='auto',tooltip='Place tooltip',
+   choices={{value='auto',label='Automatic'},{value='left',label='Left'}}},
+  {key='size',name='Size',default=100,min=50,max=200,step=10,format='%d%%',tooltip='Size tooltip'},
  }}},variablePrefix='GATHERING_',db={}},
 }}
 ns.NotifyOptionChanged=function(page,key,value)
  notifications[#notifications+1]={page=page,key=key,value=value}
+end
+-- Mirrors Core.lua's ns.OptionKind.
+ns.OptionKind=function(option)
+ if option.choices then return 'choice' end
+ return type(option.default)=='number' and 'number' or 'boolean'
 end
 ns.Debug=function(...) debugMessages[#debugMessages+1]={...} end
 ns.RegisterCommand=function() end
@@ -31,11 +39,12 @@ local function category(title)
  pages[#pages+1]=title
  return {GetID=function() return #pages end},{AddInitializer=function() end}
 end
-Settings={VarType={Boolean='Boolean'},RegisterVerticalLayoutCategory=category,
+MinimalSliderWithSteppersMixin={Label={Right='Right'}}
+Settings={VarType={Boolean='Boolean',String='String',Number='Number'},RegisterVerticalLayoutCategory=category,
  RegisterVerticalLayoutSubcategory=function(_,title) return category(title) end,
  RegisterAddOnCategory=function() end,
- RegisterAddOnSetting=function(_,variable,key,db,_,name,default)
-  local s={key=key,db=db,name=name,default=default}
+ RegisterAddOnSetting=function(_,variable,key,db,varType,name,default)
+  local s={key=key,db=db,varType=varType,name=name,default=default}
   function s:SetValueChangedCallback(fn) self.callback=fn end
   settings[variable]=s;return s
  end,
@@ -45,6 +54,20 @@ Settings={VarType={Boolean='Boolean'},RegisterVerticalLayoutCategory=category,
   function initializer:InitFrame(row) row:Init(self) end
   function initializer:Resetter(row) row:Release(self) end
   initializers[#initializers+1]=initializer;return initializer
+ end,
+ CreateControlTextContainer=function()
+  local data={}
+  return {Add=function(_,value,label) data[#data+1]={value=value,label=label} end,
+   GetData=function() return data end}
+ end,
+ CreateDropdown=function(_,setting,options,tooltip)
+  dropdowns[#dropdowns+1]={setting=setting,options=options,tooltip=tooltip}
+ end,
+ CreateSliderOptions=function(min,max,step)
+  return {min=min,max=max,step=step,SetLabelFormatter=function(self,_,fn) self.formatter=fn end}
+ end,
+ CreateSlider=function(_,setting,options,tooltip)
+  sliders[#sliders+1]={setting=setting,options=options,tooltip=tooltip}
  end,
 }
 function hooksecurefunc(object,key,hook)
@@ -143,4 +166,18 @@ assert(initializers[2].tooltip=='Difficulty tooltip')
 setting.callback(setting,false)
 assert(#notifications==1 and notifications[1].page==ns.modules[1])
 assert(notifications[1].key=='tooltipDifficulty' and notifications[1].value==false)
+''')
+check('choice and number options get a dropdown and a slider, not a checkbox', '''
+assert(#initializers==2 and #dropdowns==1 and #sliders==1)
+local place=dropdowns[1]
+assert(place.setting==settings.GATHERING_PLACE and place.setting.varType=='String')
+assert(place.setting.default=='auto' and place.tooltip=='Place tooltip')
+local choices=place.options()
+assert(#choices==2 and choices[1].value=='auto' and choices[2].label=='Left')
+local size=sliders[1]
+assert(size.setting==settings.GATHERING_SIZE and size.setting.varType=='Number' and size.setting.default==100)
+assert(size.options.min==50 and size.options.max==200 and size.options.step==10)
+assert(size.options.formatter(120)=='120%')
+size.setting.callback(size.setting,150)
+assert(notifications[1].key=='size' and notifications[1].value==150)
 ''')
