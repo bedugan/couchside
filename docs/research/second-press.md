@@ -28,10 +28,11 @@ Status: experimental, behind **Second press casts** (`controller.partySecondPres
 
 - The second press cast Flash of Light (Paladin class default).
 - With party1 offline, it landed on the player: the game falls back to the player when the unit can't be targeted. Second presses now cast only when `[@unit,help,nodead]` holds; otherwise they only target. Confirmed: with party1 unreachable, repeat presses logged `target (can't help party1)` and cast nothing, while repeat presses of the player's button cast Flash of Light.
+- In combat (log 19:57): holding bound the keys, up targeted party1, A targeted the player, repeat presses of A cast Flash of Light on the player, and releasing returned the keys.
 
 ## Open questions for casting
 
-- Does the second press cast on a member who is online and in range, in and out of combat?
+- Does the second press cast on a party member who is online and in range? (Only the player has been a reachable target so far.)
 - Does a chosen spell cast?
 - Does a macro run against the member the first press targeted?
 - Does targeting still feel identical, and do the hint marks and `RB hold` badge behave the same?
