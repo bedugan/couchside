@@ -18,6 +18,7 @@ function UnitClass() return class,class end
 function UnitLevel() return 20 end
 function UnitName() return 'Burn' end
 function date() return 'now' end
+function InCombatLockdown() return false end
 C_SpellBook={IsSpellKnownOrInSpellBook=function(id) return known[id]==true end}
 local spells={[331]='Healing Wave',[8004]='Lesser Healing Wave',[526]='Cure Poison',[136]='Mend Pet',[755]='Health Funnel'}
 class='SHAMAN'
@@ -28,6 +29,13 @@ C_Spell={GetSpellInfo=function(x)
 end}
 function GetMacroInfo(i) if i==130 then return 'Heal Me' end end
 function last() return printed[#printed-2] end
+Couchside={RegisterPanelPage=function(spec) panelPage=spec end}
+-- The window page's list entries, as the settings window would build them.
+function entries()
+ local list
+ panelPage.build({Header=function() end,List=function(_,_,fn) list=fn end})
+ return list()
+end
 '''
 
 
@@ -85,4 +93,21 @@ check('a chosen pet spell is pet only, a heal is not', '''
 known[136]=true
 cmds.secondpress('spell mend pet');assert(select(4,ns.SecondPressAction())==true)
 cmds.secondpress('spell healing wave');assert(select(4,ns.SecondPressAction())==false)
+''')
+check('the window lists the default, known spells, a macro and nothing, and choosing saves', '''
+known[8004]=true;known[526]=true
+local list=entries()
+assert(list[1].text=='Class default: Lesser Healing Wave' and list[1].selected)
+assert(list[2].text=='Healing Wave' and not list[2].selected)
+assert(list[3].text=='Cure Poison')
+assert(list[4].text=='Macro: Heal Me' and list[5].text=='Nothing')
+list[2].onClick();assert(charData.secondPress.mode=='spell' and charData.secondPress.spellID==331)
+list=entries();assert(list[2].selected and not list[1].selected)
+list[4].onClick();assert(charData.secondPress.macro=='Heal Me');assert(entries()[4].selected)
+list[5].onClick();assert(charData.secondPress.mode=='off' and entries()[5].selected)
+assert(panelPage.sections[1]=='Second press' and panelPage.module=='controller')
+''')
+check('pet care says it is for the pet only', '''
+class='HUNTER';known[136]=true
+assert(entries()[1].description:find("pet's button",1,true))
 ''')

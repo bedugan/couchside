@@ -1,6 +1,6 @@
 # Settings window plan
 
-Couchside's own settings window replaces Blizzard's settings pages, whose close breaks the controller. Waiting on Brian's layout choice from [the mockups](../prototypes/settings-window.prototype.html); everything below holds for any of the three.
+Couchside's own settings window replaces Blizzard's settings pages, whose close breaks the controller. Brian chose layout A (side tabs) from [the mockups](../prototypes/settings-window.prototype.html); `Couchside/Panel.lua` builds it.
 
 ## Rules from the panel probe
 
@@ -19,9 +19,20 @@ From [settings-panel-probe.md](settings-panel-probe.md), confirmed in game 2026-
 - A module can add its own page through a small base function (for example `Couchside.RegisterPanelPage(moduleKey, title, build)`). The Controller module uses it for the Second press action list (the picker layout Brian chose: grouped list, A chooses, a preview of what each button does). Changes apply out of combat, as now.
 - Entry points: `/cs` opens the window; a key binding (`Bindings.xml`) toggles it; Blizzard's AddOns settings keeps one Couchside page with an "Open Couchside" button for mouse users. Whether that one-button page still triggers the settings-close bug needs a test.
 - `/cs option` stays as the text interface and for bug reports.
-- `PanelProbe.lua` is deleted once the window exists.
+- `PanelProbe.lua` is deleted (done); `WindowTest.lua` carries the window's test steps and is deleted once the window is confirmed.
+- Not yet built: the key binding, and trimming Blizzard's settings to one "Open Couchside" button.
 
 ## Tests
 
 - Local: a lupa check that builds the window's rows from a stub registration and checks control kind, value round trip and the per-character mark.
 - In game, built to the testing rules in the WoW addon skill: the window carries its own steps and checks the next NPC window close for PASS or FAIL, as the probe did.
+
+## Results
+
+Run 1, 2026-11-25, solo (no party available). From `CouchsideDB.windowTest`; BugGrabber stayed at 15 entries:
+
+- Controller navigation on the window on open: PASS, twice.
+- The D-pad selection updated the description strip: PASS. Selecting a button with the D-pad runs its `OnEnter`.
+- Saved and read back: `pageNumbers` (checkbox), `partyHintPosition` through all six values (cycler), `partyHintSize` (slider): every one PASS.
+- Tabs: all five pages reached by the D-pad and A. Second press: picked the class default (Flash of Light), and the second press cast it on Brian.
+- Not in the log, still to try: the three NPC closes after the window, the combat close, and the party-frame marks moving with their settings (needs a party).

@@ -150,6 +150,7 @@ end
 local function Print(fmt, ...)
 	print(PREFIX_COLOR .. "Couchside|r " .. fmt:format(...))
 end
+ns.Print = Print
 
 -------------------------------------------------------------------------------
 -- Modules
@@ -272,6 +273,7 @@ end
 
 local function ShowHelp()
 	Print("%s", Version(ADDON_NAME))
+	print("  /cs - open or close the settings window")
 	print("  /cs help - show this list")
 	for _, name in ipairs(commandOrder) do
 		print(("  /cs %s %s"):format(name, commands[name].usage))
@@ -421,7 +423,11 @@ SlashCmdList.COUCHSIDE = function(input)
 		return
 	end
 
-	if name ~= "" and name ~= "help" then
+	if name == "" and ns.ToggleWindow then
+		ns.ToggleWindow()
+		return
+	end
+	if name ~= "help" then
 		Print("Unknown command \"%s\".", name)
 	end
 	ShowHelp()

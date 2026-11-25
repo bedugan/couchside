@@ -101,17 +101,43 @@ function ns.SecondPressAction()
 	return nil, nil, fallback .. "no class default", false
 end
 
--- The macro's own name for a name typed in any case (slash input arrives lowercased).
-local function FindMacro(typed)
+-- The macro names the character can choose: account macros, then character macros.
+local function MacroNames()
 	-- The macro UI that defines these limits loads on demand; 120 account and 18 character slots.
 	local total = (MAX_ACCOUNT_MACROS or 120) + (MAX_CHARACTER_MACROS or 18)
+	local names = {}
 	for index = 1, total do
 		local name = GetMacroInfo(index)
-		if name and name:lower() == typed then
+		if name then
+			table.insert(names, name)
+		end
+	end
+	return names
+end
+
+-- The macro's own name for a name typed in any case (slash input arrives lowercased).
+local function FindMacro(typed)
+	for _, name in ipairs(MacroNames()) do
+		if name:lower() == typed then
 			return name
 		end
 	end
 	return nil
+end
+
+-- Saves the action and updates the buttons; out of combat at once, otherwise when combat ends.
+local function SetAction(mode, name, spellID)
+	local config = Config()
+	config.mode = mode
+	if mode == "spell" then
+		config.spell, config.spellID = name, spellID
+	elseif mode == "macro" then
+		config.macro = name
+	end
+	ns.Debug("Second press set to %s%s.", mode, name and (" " .. name) or "")
+	if ns.ApplyPartyPress then
+		ns.ApplyPartyPress()
+	end
 end
 
 -- The known spells among ids, as "name (ID)", and every ID with what it resolves to, to check
@@ -157,12 +183,11 @@ local USAGE = "Usage: /cs controller secondpress [default | off | spell <name or
 
 ns.RegisterCommand("secondpress", "[default|off|spell <name or ID>|macro <name>] - what a second press casts; shows class candidates", function(arg)
 	local verb, rest = arg:match("^(%S*)%s*(.-)$")
-	local config = Config()
 	if verb == "" then
 		Report()
 		return
 	elseif verb == "default" or verb == "off" then
-		config.mode = verb
+		SetAction(verb)
 	elseif verb == "spell" and rest ~= "" then
 		local name, spellID = FindSpell(rest)
 		if not name then
@@ -170,25 +195,107 @@ ns.RegisterCommand("secondpress", "[default|off|spell <name or ID>|macro <name>]
 			Report()
 			return
 		end
-		config.mode, config.spell, config.spellID = "spell", name, spellID
+		SetAction("spell", name, spellID)
 	elseif verb == "macro" and rest ~= "" then
 		local name = FindMacro(rest)
 		if not name then
 			ns.Print("No macro named \"%s\".", rest)
 			return
 		end
-		config.mode, config.macro = "macro", name
+		SetAction("macro", name)
 	else
 		ns.Print(USAGE)
 		return
 	end
-	ns.Debug("Second press set to %s.", config.mode)
 	Report()
 	-- The buttons' attributes change only out of combat; PartyPress.lua waits if needed.
-	if ns.ApplyPartyPress then
-		ns.ApplyPartyPress()
-		if InCombatLockdown() then
-			ns.Print("Second press: the change applies when combat ends.")
-		end
+	if InCombatLockdown() then
+		ns.Print("Second press: the change applies when combat ends.")
 	end
 end)
+
+-------------------------------------------------------------------------------
+-- Settings window page
+-------------------------------------------------------------------------------
+
+local function SpellDescription(name)
+	if IsPetOnly(name) then
+		return ("A second press on your pet's button casts %s on your pet. On the other buttons a second press only targets."):format(name)
+	end
+	return ("A second press casts %s on the party member, or on you with your own button."):format(name)
+end
+
+-- The window's action list: the class default, each class action and dispel the character knows,
+-- a macro (A again moves to the next one), and nothing.
+local function Entries()
+	local config = Config()
+	local _, class = UnitClass("player")
+	local entries = {}
+	local default = ClassDefault()
+	table.insert(entries, {
+		text = "Class default: " .. (default or "none known"),
+		selected = config.mode == "default",
+		description = default and ("Your class's quick action: the first of its list you know, now %s. It follows you as you learn better spells. "):format(default) .. SpellDescription(default)
+			or "Your class has no default action, or you haven't learned it yet, so a second press only targets.",
+		onClick = function()
+			SetAction("default")
+		end,
+	})
+	local seen = { [default or ""] = true }
+	for _, ids in ipairs({ CLASS_DEFAULTS[class] or {}, CLASS_DISPELS[class] or {} }) do
+		for _, spellID in ipairs(ids) do
+			local name = Known(spellID) and SpellName(spellID)
+			if name and not seen[name] then
+				seen[name] = true
+				table.insert(entries, {
+					text = name,
+					selected = config.mode == "spell" and config.spell == name,
+					description = SpellDescription(name),
+					onClick = function()
+						SetAction("spell", name, spellID)
+					end,
+				})
+			end
+		end
+	end
+	local macros = MacroNames()
+	local macroSelected = config.mode == "macro"
+	table.insert(entries, {
+		text = #macros == 0 and "Macro: none yet" or ("Macro: " .. ((macroSelected and config.macro) or macros[1])),
+		selected = macroSelected,
+		description = #macros == 0 and "Make a macro in the game's Macros window, then choose it here."
+			or "A second press targets the member, then runs this macro: for a bandage, potion or anything else. A again moves to the next macro.",
+		onClick = function()
+			if #macros == 0 then
+				return
+			end
+			local index = 1
+			for position, name in ipairs(macros) do
+				if macroSelected and name == config.macro then
+					index = position % #macros + 1
+				end
+			end
+			SetAction("macro", macros[index])
+		end,
+	})
+	table.insert(entries, {
+		text = "Nothing",
+		selected = config.mode == "off",
+		description = "A second press only targets, as the first one does.",
+		onClick = function()
+			SetAction("off")
+		end,
+	})
+	return entries
+end
+
+Couchside.RegisterPanelPage({
+	module = "controller",
+	title = "Second press",
+	icon = "Interface\\Icons\\Spell_Holy_FlashHeal",
+	sections = { "Second press" },
+	build = function(page)
+		page:Header("Action")
+		page:List(8, Entries)
+	end,
+})

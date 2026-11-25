@@ -18,6 +18,7 @@ CHECKS = (
     "core-options-check.py",
     "second-press-check.py",
     "party-press-check.py",
+    "settings-window-check.py",
 )
 
 

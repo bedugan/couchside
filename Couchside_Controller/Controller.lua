@@ -36,13 +36,6 @@ Couchside.RegisterModule(ns, {
 					tooltip = "With the controller's Party Targeting option on, mark each party frame with the button that targets that member while you hold the friendly targeting button. The marks stay up all the time so you can read them before you press.",
 				},
 				{
-					key = "partySecondPress",
-					default = false,
-					scope = "character",
-					name = "Second press casts",
-					tooltip = "Experimental. While you hold the friendly targeting button, pressing a party member's button again casts your second-press action on them: your class heal unless you chose another spell or a macro with /cs controller secondpress.",
-				},
-				{
 					key = "partyHintPosition",
 					default = "auto",
 					scope = "character",
@@ -81,6 +74,19 @@ Couchside.RegisterModule(ns, {
 					format = "%d%%",
 					name = "Button size",
 					tooltip = "Size of the party targeting button marks.",
+				},
+			},
+		},
+		{
+			-- Its own tab in the settings window (SecondPress.lua), with the action list.
+			title = "Second press",
+			options = {
+				{
+					key = "partySecondPress",
+					default = false,
+					scope = "character",
+					name = "Second press casts",
+					tooltip = "Experimental. While you hold the friendly targeting button, pressing a party member's button again casts your second-press action on them: your class heal unless you chose another action on the Second press page.",
 				},
 			},
 		},
