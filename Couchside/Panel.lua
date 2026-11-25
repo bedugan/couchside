@@ -10,7 +10,8 @@
 -- * Blizzard's controller navigation takes the window through FrameControlsManager:FrameShown on
 --   show and FrameHidden on hide. Both refuse addon calls in combat, so the window opens only out
 --   of combat and closes itself when combat starts.
--- * B reaches the window's CloseButton. The window stays out of UISpecialFrames.
+-- * B reaches the window's CloseButton. The window stays out of UISpecialFrames; it takes Escape
+--   itself for keyboard and mouse players.
 -- * Only checkboxes, sliders with steppers and plain buttons. No Blizzard dropdown (its menu
 --   taints on close) and no LB/RB tab indicators (they taint the shared binding stack).
 -- * After a page change, navigation rescans the window and selects its first control.
@@ -340,6 +341,25 @@ local function Create()
 	window = New("Frame", UIParent, "ButtonFrameTemplate", NAME)
 	window:SetFrameStrata("DIALOG")
 	window:EnableMouse(true)
+	-- Escape closes it. Not through UISpecialFrames, whose CloseSpecialWindows would then run with
+	-- Couchside's taint (reported in ImprovedForever's Focus.lua): the window catches Escape while it
+	-- is shown and lets every other key through. Propagation can't change in combat, when the window
+	-- is never open. Only the keyboard: the controller keeps B through navigation.
+	window:EnableKeyboard(true)
+	window:SetScript("OnKeyDown", function(self, key)
+		if InCombatLockdown() then
+			return
+		end
+		local escape = key == "ESCAPE"
+		self:SetPropagateKeyboardInput(not escape)
+		if escape then
+			self:Hide()
+			Notify("escape")
+		end
+	end)
+	if window.EnableGamePadButton then
+		window:EnableGamePadButton(false)
+	end
 	local saved = CouchsideDB and CouchsideDB.windowPosition
 	if saved then
 		window:SetPoint(saved.point, UIParent, saved.point, saved.x, saved.y)
@@ -445,12 +465,8 @@ local function Create()
 	end)
 end
 
--- Opens or closes the window. Returns false when combat stops it opening.
-function ns.ToggleWindow()
-	if window and window:IsShown() then
-		window:Hide()
-		return true
-	end
+-- Opens the window. Returns false when combat stops it opening.
+function ns.OpenWindow()
 	if InCombatLockdown() then
 		ns.Print("Settings open out of combat: the controller's navigation refuses addon windows in combat.")
 		return false
@@ -460,4 +476,13 @@ function ns.ToggleWindow()
 	end
 	window:Show()
 	return true
+end
+
+-- Opens or closes the window (/cs).
+function ns.ToggleWindow()
+	if window and window:IsShown() then
+		window:Hide()
+		return true
+	end
+	return ns.OpenWindow()
 end

@@ -23,12 +23,11 @@ local function Log(fmt, ...)
 end
 
 local STEPS = {
-	{ key = "tab", text = "D-pad down to the word tabs under the window, A on Second press." },
-	{ key = "moved", text = "Drag the window by its title bar with the mouse." },
-	{ key = "hidden", text = "B to close. Chat says the window closed." },
+	{ key = "opened", text = "With the mouse: Options > AddOns > Couchside shows one button. Press it and this window opens." },
+	{ key = "hidden", text = "Close this window, then close Options. Chat names any addon the game blames." },
+	{ key = "escape", text = "Open with /cs, then press Escape on the keyboard. This window closes and the game menu stays shut." },
 	{ key = "npc", text = "Talk to an NPC and close their window with B, three times. Chat says PASS or FAIL each time." },
-	{ key = "combat", text = "Open with /cs, then pull a mob. The window closes itself." },
-	{ key = "placed", text = "/reload, then /cs. The window opens where you dragged it." },
+	{ text = "Open your bags (no search), then /cs. Close the bags with your bag button, then this window. Chat names any addon blamed." },
 	{ text = "/reload to save the log." },
 }
 local lines = {}
@@ -112,6 +111,7 @@ ns.OnWindowEvent(function(event, ...)
 		end
 		closed, forbidden = false, nil
 		Log("shown; controller navigation on the window: %s", navigation and "PASS" or "FAIL")
+		Done("opened")
 		local saved = CouchsideDB.windowPosition
 		if saved and not movedThisSession then
 			Log("opened at the saved position %s %d, %d", saved.point, saved.x, saved.y)
@@ -147,6 +147,9 @@ ns.OnWindowEvent(function(event, ...)
 		Log("moved to %s %d, %d; saved", tostring(point), x or 0, y or 0)
 		movedThisSession = true
 		Done("moved")
+	elseif event == "escape" then
+		Log("closed with Escape")
+		Done("escape")
 	elseif event == "combat" then
 		Log("closed itself for combat")
 		Done("combat")

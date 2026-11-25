@@ -1,7 +1,7 @@
 """Check Couchside's option kinds, saved-value validation and /cs option parsing in Lua 5.1.
 
-Loads the real Couchside/Core.lua with minimal stubs. The settings panel itself is covered by
-settings-layout-check.py; native behavior still requires an in-game check.
+Loads the real Couchside/Core.lua with minimal stubs. The settings window is covered by
+settings-window-check.py; native behavior still requires an in-game check.
 """
 from pathlib import Path
 

@@ -30,9 +30,9 @@ local function IsValid(option, value)
 end
 
 -- A page is the base or one module: its options, their saved values and their listeners.
--- Settings.lua gives each page its own settings page.
+-- Panel.lua gives each page its own tab in the settings window.
 --
--- An option's default decides its kind, and so its checkbox, dropdown or slider:
+-- An option's default decides its kind, and so its checkbox, value button or slider:
 --   boolean: { key, default = true, name, tooltip }
 --   choice:  { key, default = "auto", choices = { { value = "auto", label = "Automatic" }, ... }, name, tooltip }
 --   number:  { key, default = 100, min = 50, max = 200, step = 10, format = "%d%%", name, tooltip }
@@ -62,17 +62,16 @@ local function OptionsFrom(sections)
 	return options
 end
 
-local function CreatePage(title, variablePrefix, sections)
+local function CreatePage(title, sections)
 	return {
 		title = title,
-		variablePrefix = variablePrefix,
 		sections = sections,
 		options = OptionsFrom(sections),
 		listeners = {},
 	}
 end
 
-ns.base = CreatePage("Couchside", "COUCHSIDE_", {
+ns.base = CreatePage("Couchside", {
 	{
 		title = "Troubleshooting",
 		options = {
@@ -133,14 +132,10 @@ function ns.NotifyOptionChanged(page, key, value)
 	end
 end
 
--- Once the settings pages exist, changes go through them so commands and the panel stay in sync.
+-- The window reads the saved tables when it shows, so commands and the window stay in sync.
 function ns.SetOption(page, key, value)
-	if ns.settingsBuilt then
-		Settings.SetValue(page.variablePrefix .. key:upper(), value)
-	else
-		ns.OptionTable(page, page.options[key])[key] = value
-		ns.NotifyOptionChanged(page, key, value)
-	end
+	ns.OptionTable(page, page.options[key])[key] = value
+	ns.NotifyOptionChanged(page, key, value)
 end
 
 local function IsDebug()
@@ -164,7 +159,7 @@ Couchside = {}
 -- Each option in sections is { key, default, name, tooltip }.
 function Couchside.RegisterModule(moduleNS, spec)
 	assert(not modulesByKey[spec.key], "Couchside module registered twice: " .. spec.key)
-	local module = CreatePage(spec.title, "COUCHSIDE_" .. spec.key:upper() .. "_", spec.sections)
+	local module = CreatePage(spec.title, spec.sections)
 	module.key = spec.key
 	module.addon = spec.addon
 	module.commands = {}
@@ -236,7 +231,7 @@ function Couchside.RegisterModule(moduleNS, spec)
 			else
 				module.charDB[key] = nil
 			end
-			-- Blizzard's settings controls read these tables directly, so drop values they can't show.
+			-- Drop saved values the option no longer accepts, so the default shows instead.
 			if db[key] ~= nil and not IsValid(option, db[key]) then
 				db[key] = nil
 			end

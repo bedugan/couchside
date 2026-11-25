@@ -14,7 +14,6 @@ from lupa.lua51 import LuaRuntime
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = (
     "gathering-check.py",
-    "settings-layout-check.py",
     "core-options-check.py",
     "second-press-check.py",
     "party-press-check.py",

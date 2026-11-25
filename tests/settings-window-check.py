@@ -86,13 +86,15 @@ SmartNavigation={HandlePanelOpen=function() rescans=(rescans or 0)+1 end,SelectF
 setmetatable(SmartNavigation,{__index=function(t,k) if k=='activeInfo' then return navigationFrame and {frame=navigationFrame} end end})
 MinimalSliderWithSteppersMixin={Event={OnValueChanged=1},Label={Right=2}}
 base={};ctl={}
+Settings={RegisterCanvasLayoutCategory=function(frame,name) canvas={frame=frame,name=name} return canvas end,
+ RegisterAddOnCategory=function(category) registered=category end}
 '''
 
 
 def run(code):
     vm = LuaRuntime(register_eval=False, register_builtins=False)
     vm.execute(STUB)
-    for path, ns in (('Couchside/Core.lua', 'base'), ('Couchside/Panel.lua', 'base'), ('Couchside/WindowTest.lua', 'base'),
+    for path, ns in (('Couchside/Core.lua', 'base'), ('Couchside/Settings.lua', 'base'), ('Couchside/Panel.lua', 'base'), ('Couchside/WindowTest.lua', 'base'),
                      ('Couchside_Controller/Controller.lua', 'ctl'), ('Couchside_Controller/SecondPress.lua', 'ctl')):
         addon = path.split('/')[0]
         vm.execute(f'local text,addon=...;assert(loadstring(text))(addon,{ns})', (ROOT / path).read_text(), addon)
@@ -178,4 +180,24 @@ CouchsideDB={windowPosition={point='TOPLEFT',x=40,y=-80}}
 SlashCmdList.COUCHSIDE('')
 assert(CouchsideWindow.point[1]=='TOPLEFT' and CouchsideWindow.point[4]==40)
 assert(Logged('opened at the saved position TOPLEFT 40, -80'))
+''')
+check("Blizzard's AddOns page is one button that opens the window", '''
+Fire('PLAYER_LOGIN')
+assert(registered==canvas and canvas.name=='x')
+local button
+for _,f in ipairs(frames) do if f.parent==canvas.frame and f.template=='UIPanelButtonTemplate' then button=f end end
+assert(button.text=='Open Couchside settings')
+Click(button);assert(CouchsideWindow:IsShown())
+Click(button);assert(CouchsideWindow:IsShown())
+SlashCmdList.COUCHSIDE('settings');assert(CouchsideWindow:IsShown())
+''')
+check('Escape closes the window and other keys pass through', '''
+SlashCmdList.COUCHSIDE('')
+local propagate
+CouchsideWindow.SetPropagateKeyboardInput=function(_,v) propagate=v end
+CouchsideWindow.scripts.OnKeyDown(CouchsideWindow,'W')
+assert(propagate==true and CouchsideWindow:IsShown())
+CouchsideWindow.scripts.OnKeyDown(CouchsideWindow,'ESCAPE')
+assert(propagate==false and not CouchsideWindow:IsShown() and navigationFrame==nil)
+assert(Logged('closed with Escape'))
 ''')

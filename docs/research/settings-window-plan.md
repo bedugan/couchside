@@ -20,7 +20,8 @@ From [settings-panel-probe.md](settings-panel-probe.md), confirmed in game 2026-
 - Entry points: `/cs` opens the window; a key binding (`Bindings.xml`) toggles it; Blizzard's AddOns settings keeps one Couchside page with an "Open Couchside" button for mouse users. Whether that one-button page still triggers the settings-close bug needs a test.
 - `/cs option` stays as the text interface and for bug reports.
 - `PanelProbe.lua` is deleted (done); `WindowTest.lua` carries the window's test steps and is deleted once the window is confirmed.
-- Not yet built: the key binding, and trimming Blizzard's settings to one "Open Couchside" button.
+- Blizzard's AddOns settings keeps one Couchside page with an "Open Couchside settings" button (`Settings.lua`, a canvas page); the options' Blizzard settings rows are gone.
+- Not built: a key binding. Binding it needs Blizzard's key binding page, inside the settings panel whose close breaks the controller; a `/cs` macro on the bar does the same job.
 
 ## Tests
 
@@ -45,3 +46,12 @@ Run 2, 2026-11-25, solo. Word tabs along the bottom (`PanelTabButtonTemplate`, c
 - Not done: the combat close (deferred).
 - BagPad conflict (Brian's video IMG_0046): with BagPad's bags open and its search selected, opening this window moved Blizzard's gold cursor onto it, but A still opened BagPad's on-screen keyboard. BagPad reads pad presses itself through a top-strata input catcher (its `Input/Controller.lua`), outside Blizzard's navigation, so its search keeps them whichever window has the cursor.
 - In the same session BugGrabber logged BagPad's first ever `SetPreferredGamepadInteractTarget()` block: closing the bag frame (`HideUIPanel` from its close button, then SmartNavigation `DeactivateBinding` and `RemoveSet`). It was blamed on BagPad, not Couchside, but it happened with this window open, so whether the window contributed is open. The test that separates them: the same steps with Blizzard's character sheet in place of this window.
+
+After run 2, with BagPad's search selected and an NPC window open, Brian closed the NPC window: no forbidden action (BugGrabber stayed at 16). That doesn't yet place the earlier BagPad error; run 3 closes the bags with this window open.
+
+Run 3, 2026-11-25, on bigSmoke. Blizzard's AddOns page reduced to one button, and Escape to close:
+
+- Options > AddOns > Couchside showed the one-button page; its button opened the window. Closing Options afterwards: no forbidden action.
+- Escape closed the window four times (the window catches Escape with `OnKeyDown` and `SetPropagateKeyboardInput`, not `UISpecialFrames`). Three NPC closes afterwards: 3 of 3 PASS.
+- Bags open, then the window, then the bags closed with the bag button: no forbidden action. The earlier BagPad error didn't recur with the window open.
+- BugGrabber stayed at 16 for the whole run; the window test watches `ADDON_ACTION_FORBIDDEN` and `ADDON_ACTION_BLOCKED` throughout and logged neither.
