@@ -23,16 +23,12 @@ local function Log(fmt, ...)
 end
 
 local STEPS = {
-	{ key = "pad", text = "Move with the D-pad. The strip at the bottom describes each setting you reach." },
-	{ key = "boolean", text = "A on a checkbox to change it." },
-	{ key = "choice", text = "Controller tab: A on Button position. The marks on your party frames move." },
-	{ key = "number", text = "Left or right on Button size. The marks resize." },
-	{ key = "tab", text = "D-pad right to the tabs, A on Second press (the heal icon)." },
-	{ key = "pick", text = "A on an action. The tick moves to it." },
-	{ key = "hidden", text = "B to close. Chat says the window closed cleanly." },
+	{ key = "tab", text = "D-pad down to the word tabs under the window, A on Second press." },
+	{ key = "moved", text = "Drag the window by its title bar with the mouse." },
+	{ key = "hidden", text = "B to close. Chat says the window closed." },
 	{ key = "npc", text = "Talk to an NPC and close their window with B, three times. Chat says PASS or FAIL each time." },
-	{ text = "In a party, check a second press casts the action you chose." },
 	{ key = "combat", text = "Open with /cs, then pull a mob. The window closes itself." },
+	{ key = "placed", text = "/reload, then /cs. The window opens where you dragged it." },
 	{ text = "/reload to save the log." },
 }
 local lines = {}
@@ -106,7 +102,7 @@ watcher:SetScript("OnEvent", function(_, event, addon, func)
 	end
 end)
 
-local built = false
+local built, movedThisSession, padSeen = false, false, false
 ns.OnWindowEvent(function(event, ...)
 	if event == "shown" then
 		local navigation = ...
@@ -116,6 +112,11 @@ ns.OnWindowEvent(function(event, ...)
 		end
 		closed, forbidden = false, nil
 		Log("shown; controller navigation on the window: %s", navigation and "PASS" or "FAIL")
+		local saved = CouchsideDB.windowPosition
+		if saved and not movedThisSession then
+			Log("opened at the saved position %s %d, %d", saved.point, saved.x, saved.y)
+			Done("placed")
+		end
 	elseif event == "hidden" then
 		closed, forbidden, npcRuns, npcPasses = true, nil, 0, 0
 		Log("hidden")
@@ -135,13 +136,17 @@ ns.OnWindowEvent(function(event, ...)
 		end
 	elseif event == "pick" then
 		Log("picked %s", tostring(...))
-		Done("pick")
 	elseif event == "described" then
 		local byPad = ...
-		if byPad and not STEPS[1].done then
+		if byPad and not padSeen then
+			padSeen = true
 			Log("the D-pad selection updated the description: PASS")
-			Done("pad")
 		end
+	elseif event == "moved" then
+		local point, x, y = ...
+		Log("moved to %s %d, %d; saved", tostring(point), x or 0, y or 0)
+		movedThisSession = true
+		Done("moved")
 	elseif event == "combat" then
 		Log("closed itself for combat")
 		Done("combat")

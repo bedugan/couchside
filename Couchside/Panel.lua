@@ -1,7 +1,7 @@
 -- Couchside's own settings window, built for the controller interface: Blizzard's settings panel
 -- breaks the controller when it closes, so every option lives here too. /cs opens it.
 --
--- Pages are side tabs, like the character sheet: one per module, built from the same
+-- Pages are word tabs along the bottom: one per module, built from the same
 -- registrations as the settings pages (ns.modules, sections, options), then the base's options
 -- as General. A module can add a page with Couchside.RegisterPanelPage. Values go through
 -- ns.GetOption and ns.SetOption, so per-character and account-wide storage are unchanged.
@@ -14,6 +14,8 @@
 -- * Only checkboxes, sliders with steppers and plain buttons. No Blizzard dropdown (its menu
 --   taints on close) and no LB/RB tab indicators (they taint the shared binding stack).
 -- * After a page change, navigation rescans the window and selects its first control.
+--
+-- The mouse can drag the window; it opens where it was left (CouchsideDB.windowPosition).
 
 local _, ns = ...
 
@@ -46,7 +48,7 @@ local function Notify(event, ...)
 	end
 end
 
--- Adds a page after its module's own. spec = { module = "controller", title, icon,
+-- Adds a page after its module's own. spec = { module = "controller", title,
 -- sections = { "Second press" }, build = function(page) end }. The named sections move from the
 -- module's page to this one, above what build adds with page:Header and page:List.
 function Couchside.RegisterPanelPage(spec)
@@ -232,12 +234,12 @@ function Page:Refresh()
 	end
 end
 
-local function AddPage(title, icon)
+local function AddPage(title)
 	local frame = New("Frame", window)
 	frame:SetPoint("TOPLEFT", 12, -TOP)
 	frame:SetPoint("TOPRIGHT", -12, -TOP)
 	frame:Hide()
-	local page = setmetatable({ title = title, icon = icon, frame = frame, height = 0, refreshers = {} }, Page)
+	local page = setmetatable({ title = title, frame = frame, height = 0, refreshers = {} }, Page)
 	table.insert(pages, page)
 	return page
 end
@@ -254,9 +256,6 @@ local function AddSections(page, module, include)
 end
 
 local function BuildPages()
-	local function Icon(module)
-		return C_AddOns.GetAddOnMetadata(module.addon, "IconTexture") or "Interface\\Icons\\INV_Misc_QuestionMark"
-	end
 	for _, module in ipairs(ns.modules) do
 		local claimed, extras = {}, {}
 		for _, spec in ipairs(extraPages) do
@@ -272,12 +271,12 @@ local function BuildPages()
 			unclaimed = unclaimed + (claimed[section.title] and 0 or 1)
 		end
 		if unclaimed > 0 then
-			AddSections(AddPage(module.title, Icon(module)), module, function(title)
+			AddSections(AddPage(module.title), module, function(title)
 				return not claimed[title]
 			end)
 		end
 		for _, spec in ipairs(extras) do
-			local page = AddPage(spec.title, spec.icon)
+			local page = AddPage(spec.title)
 			local wanted = {}
 			for _, title in ipairs(spec.sections or {}) do
 				wanted[title] = true
@@ -288,7 +287,7 @@ local function BuildPages()
 			spec.build(page)
 		end
 	end
-	AddSections(AddPage("General", "Interface\\Icons\\Trade_Engineering"), ns.base, function()
+	AddSections(AddPage("General"), ns.base, function()
 		return true
 	end)
 end
@@ -320,7 +319,12 @@ end
 local function SelectPage(index, how)
 	current = index
 	for i, page in ipairs(pages) do
-		page.tab:SetChecked(i == index)
+		-- Blizzard's look for the chosen tab; it also disables that tab, so navigation skips it.
+		if i == index then
+			PanelTemplates_SelectTab(page.tab)
+		else
+			PanelTemplates_DeselectTab(page.tab)
+		end
 		page.frame:SetShown(i == index)
 	end
 	pages[index]:Refresh()
@@ -335,8 +339,26 @@ end
 local function Create()
 	window = New("Frame", UIParent, "ButtonFrameTemplate", NAME)
 	window:SetFrameStrata("DIALOG")
-	window:SetPoint("CENTER")
 	window:EnableMouse(true)
+	local saved = CouchsideDB and CouchsideDB.windowPosition
+	if saved then
+		window:SetPoint(saved.point, UIParent, saved.point, saved.x, saved.y)
+	else
+		window:SetPoint("CENTER")
+	end
+	-- Dragged by the title bar or any empty space. Saved in CouchsideDB rather than the game's layout
+	-- cache, which only places frames that exist at login.
+	window:SetMovable(true)
+	window:SetClampedToScreen(true)
+	window:RegisterForDrag("LeftButton")
+	window:SetScript("OnDragStart", window.StartMoving)
+	window:SetScript("OnDragStop", function(self)
+		self:StopMovingOrSizing()
+		self:SetUserPlaced(false)
+		local point, _, _, x, y = self:GetPoint(1)
+		CouchsideDB.windowPosition = { point = point, x = x, y = y }
+		Notify("moved", point, x, y)
+	end)
 	window:Hide()
 	ButtonFrameTemplate_HidePortrait(window)
 
@@ -363,13 +385,21 @@ local function Create()
 	for index, page in ipairs(pages) do
 		tallest = math.max(tallest, page.height)
 		page.frame:SetHeight(page.height)
-		local tab = New("CheckButton", window, "RightSideTabTemplate", NAME .. "Tab" .. index)
+		-- Created with its parent, unlike other controls: the template's OnShow reads the parent's tab
+		-- settings and errors without one. The window is only created out of combat, when
+		-- navigation's CreateFrame hook may rescan it. ProfPlanner builds its tabs the same way.
+		local tab = CreateFrame("Button", NAME .. "Tab" .. index, window, "PanelTabButtonTemplate")
 		tab:SetID(index)
-		tab:SetPoint("TOPLEFT", window, "TOPRIGHT", 0, -40 - (index - 1) * 48)
-		tab.tooltip = page.title
-		tab.Icon:SetTexture(page.icon)
+		tab:SetText(page.title)
+		PanelTemplates_TabResize(tab, 0)
+		if index == 1 then
+			tab:SetPoint("TOPLEFT", window, "BOTTOMLEFT", 12, 2)
+		else
+			tab:SetPoint("TOPLEFT", pages[index - 1].tab, "TOPRIGHT", 3, 0)
+		end
 		Describes(tab, ("Open the %s page."):format(page.title))
-		tab:HookScript("OnClick", function()
+		tab:SetScript("OnClick", function()
+			PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 			SelectPage(index, "tab")
 		end)
 		page.tab = tab

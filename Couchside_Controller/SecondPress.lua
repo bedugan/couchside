@@ -292,7 +292,6 @@ end
 Couchside.RegisterPanelPage({
 	module = "controller",
 	title = "Second press",
-	icon = "Interface\\Icons\\Spell_Holy_FlashHeal",
 	sections = { "Second press" },
 	build = function(page)
 		page:Header("Action")

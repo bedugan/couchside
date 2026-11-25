@@ -47,6 +47,8 @@ local function newframe(kind,template)
  function f:GetText() return self.text end
  function f:SetTitle(x) self.title=x end
  function f:GetStringHeight() return 14 end
+ function f:GetPoint() return 'TOPLEFT',nil,'TOPLEFT',40,-80 end
+ function f:SetPoint(...) self.point={...} end
  function f:RegisterEvent(e) events[e]=events[e] or {}; table.insert(events[e],self) end
  function f:CreateFontString() return newframe('FontString') end
  function f:CreateTexture() return newframe('Texture') end
@@ -70,6 +72,11 @@ function On(page,template) local list={} for _,f in ipairs(frames) do if f.paren
 function Logged(text) for _,line in ipairs(CouchsideDB.windowTest) do if line:find(text,1,true) then return true end end return false end
 UIParent={}
 ButtonFrameTemplate_HidePortrait=function() end
+PanelTemplates_SelectTab=function(tab) tab.selected=true end
+PanelTemplates_DeselectTab=function(tab) tab.selected=false end
+PanelTemplates_TabResize=function() end
+PlaySound=function() end
+SOUNDKIT={}
 navigationFrame=nil
 local mgr={}
 function mgr:FrameShown(f) navigationFrame=f end
@@ -102,7 +109,8 @@ SlashCmdList.COUCHSIDE('')
 local window=CouchsideWindow
 assert(window:IsShown() and navigationFrame==window)
 assert(window.title=='Couchside: Controller')
-assert(CouchsideWindowTab1.tooltip=='Controller' and CouchsideWindowTab2.tooltip=='Second press' and CouchsideWindowTab3.tooltip=='General')
+assert(CouchsideWindowTab1.text=='Controller' and CouchsideWindowTab2.text=='Second press' and CouchsideWindowTab3.text=='General')
+assert(CouchsideWindowTab1.selected and not CouchsideWindowTab2.selected and CouchsideWindowTab1.parent==window)
 assert(Logged('controller navigation on the window: PASS'))
 SlashCmdList.COUCHSIDE('');assert(not window:IsShown() and navigationFrame==nil and Logged('hidden'))
 ''')
@@ -158,4 +166,16 @@ check('/cs help still lists the commands', '''
 SlashCmdList.COUCHSIDE('help')
 local found=false for _,line in ipairs(printed) do if line:find('/cs - open or close the settings window',1,true) then found=true end end
 assert(found)
+''')
+check('dragging saves the position and the next window opens there', '''
+SlashCmdList.COUCHSIDE('')
+CouchsideWindow.scripts.OnDragStop(CouchsideWindow)
+assert(CouchsideDB.windowPosition.point=='TOPLEFT' and CouchsideDB.windowPosition.x==40)
+assert(Logged('moved to TOPLEFT 40, -80; saved'))
+''')
+check('a saved position places the window when it is built', '''
+CouchsideDB={windowPosition={point='TOPLEFT',x=40,y=-80}}
+SlashCmdList.COUCHSIDE('')
+assert(CouchsideWindow.point[1]=='TOPLEFT' and CouchsideWindow.point[4]==40)
+assert(Logged('opened at the saved position TOPLEFT 40, -80'))
 ''')

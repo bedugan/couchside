@@ -34,5 +34,14 @@ Run 1, 2026-11-25, solo (no party available). From `CouchsideDB.windowTest`; Bug
 - Controller navigation on the window on open: PASS, twice.
 - The D-pad selection updated the description strip: PASS. Selecting a button with the D-pad runs its `OnEnter`.
 - Saved and read back: `pageNumbers` (checkbox), `partyHintPosition` through all six values (cycler), `partyHintSize` (slider): every one PASS.
-- Tabs: all five pages reached by the D-pad and A. Second press: picked the class default (Flash of Light), and the second press cast it on Brian.
+- Tabs: all five pages reached by the D-pad and A.
+- Brian then asked for word tabs along the bottom (the icons said little) and a window the mouse can move. Run 2 uses Blizzard's `PanelTabButtonTemplate`, created with the window as parent as ProfPlanner does, and saves the dragged position. Second press: picked the class default (Flash of Light), and the second press cast it on Brian.
 - Not in the log, still to try: the three NPC closes after the window, the combat close, and the party-frame marks moving with their settings (needs a party).
+
+Run 2, 2026-11-25, solo. Word tabs along the bottom (`PanelTabButtonTemplate`, created with the window as parent) and mouse dragging:
+
+- Tabs reached and switched with the D-pad and A: PASS. Dragging saved the position, and after `/reload` the window opened there: PASS.
+- Three NPC window closes after the window closed: 3 of 3 PASS. So creating the tabs with their parent, out of combat, didn't taint.
+- Not done: the combat close (deferred).
+- BagPad conflict (Brian's video IMG_0046): with BagPad's bags open and its search selected, opening this window moved Blizzard's gold cursor onto it, but A still opened BagPad's on-screen keyboard. BagPad reads pad presses itself through a top-strata input catcher (its `Input/Controller.lua`), outside Blizzard's navigation, so its search keeps them whichever window has the cursor.
+- In the same session BugGrabber logged BagPad's first ever `SetPreferredGamepadInteractTarget()` block: closing the bag frame (`HideUIPanel` from its close button, then SmartNavigation `DeactivateBinding` and `RemoveSet`). It was blamed on BagPad, not Couchside, but it happened with this window open, so whether the window contributed is open. The test that separates them: the same steps with Blizzard's character sheet in place of this window.
