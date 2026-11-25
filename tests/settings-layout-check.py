@@ -18,7 +18,8 @@ ns={base={sections={{title='General',options={
   {key='place',name='Place',default='auto',tooltip='Place tooltip',
    choices={{value='auto',label='Automatic'},{value='left',label='Left'}}},
   {key='size',name='Size',default=100,min=50,max=200,step=10,format='%d%%',tooltip='Size tooltip'},
- }}},variablePrefix='GATHERING_',db={}},
+  {key='mine',name='Mine',default=false,scope='character',tooltip='Mine tooltip'},
+ }}},variablePrefix='GATHERING_',db={},charDB={}},
 }}
 ns.NotifyOptionChanged=function(page,key,value)
  notifications[#notifications+1]={page=page,key=key,value=value}
@@ -27,6 +28,11 @@ end
 ns.OptionKind=function(option)
  if option.choices then return 'choice' end
  return type(option.default)=='number' and 'number' or 'boolean'
+end
+-- Mirrors Core.lua's ns.OptionTable.
+ns.OptionTable=function(page,option)
+ if option.scope=='character' then return page.charDB end
+ return page.db
 end
 ns.Debug=function(...) debugMessages[#debugMessages+1]={...} end
 ns.RegisterCommand=function() end
@@ -134,7 +140,7 @@ def check(name, code):
 
 
 check('all Couchside checkbox rows widen their label and checkbox columns', '''
-assert(#initializers==2 and #pages==2 and pages[2]=='Gathering')
+assert(#initializers==3 and #pages==2 and pages[2]=='Gathering')
 for _,initializer in ipairs(initializers) do
  local row=newRow(700);initializer:InitFrame(row);assertWide(row)
  assert(row.initCount==1)
@@ -168,7 +174,7 @@ assert(#notifications==1 and notifications[1].page==ns.modules[1])
 assert(notifications[1].key=='tooltipDifficulty' and notifications[1].value==false)
 ''')
 check('choice and number options get a dropdown and a slider, not a checkbox', '''
-assert(#initializers==2 and #dropdowns==1 and #sliders==1)
+assert(#initializers==3 and #dropdowns==1 and #sliders==1)
 local place=dropdowns[1]
 assert(place.setting==settings.GATHERING_PLACE and place.setting.varType=='String')
 assert(place.setting.default=='auto' and place.tooltip=='Place tooltip')
@@ -180,4 +186,10 @@ assert(size.options.min==50 and size.options.max==200 and size.options.step==10)
 assert(size.options.formatter(120)=='120%')
 size.setting.callback(size.setting,150)
 assert(notifications[1].key=='size' and notifications[1].value==150)
+''')
+check('a character option is saved per character and says so', '''
+local setting=settings.GATHERING_MINE
+assert(setting.db==ns.modules[1].charDB and setting.db~=ns.modules[1].db)
+assert(initializers[3].tooltip=='Mine tooltip\\n\\nSaved for this character only.')
+assert(settings.GATHERING_TOOLTIPDIFFICULTY.db==ns.modules[1].db)
 ''')

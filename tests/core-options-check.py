@@ -22,12 +22,13 @@ Couchside.RegisterModule(moduleNS,{addon='Couchside_Test',key='test',title='Test
  {key='place',default='auto',name='Place',tooltip='Place tooltip',
   choices={{value='auto',label='Automatic'},{value='left',label='Left'}}},
  {key='size',default=100,min=50,max=205,step=10,format='%d%%',name='Size',tooltip='Size tooltip'},
+ {key='mine',default=false,scope='character',name='Mine',tooltip='Mine tooltip'},
 }}}})
 mod=moduleNS
 '''
 
 
-def runtime(saved):
+def runtime(saved, char='{}'):
     vm = LuaRuntime(register_eval=False, register_builtins=False)
     vm.execute(STUB)
     vm.execute('ns={}')
@@ -35,12 +36,13 @@ def runtime(saved):
                (ROOT / 'Couchside/Core.lua').read_text())
     vm.execute(MODULE)
     vm.execute('CouchsideDB={modules={test=' + saved + '}}')
+    vm.execute('CouchsideCharDB=' + char)
     vm.execute('loaded.Couchside();loaded.Couchside_Test()')
     return vm
 
 
-def check(name, saved, code):
-    runtime(saved).execute(code)
+def check(name, saved, code, char='{}'):
+    runtime(saved, char).execute(code)
     print('PASS', name)
 
 
@@ -71,4 +73,25 @@ check('uppercase choice values are refused at registration', '{}', '''
 local ok=pcall(Couchside.RegisterModule,{},{addon='Bad',key='bad',title='Bad',sections={{title='S',options={
  {key='c',default='A',name='C',tooltip='C',choices={{value='A',label='A'}}}}}}})
 assert(not ok)
+''')
+check('a character option is saved per character, not account-wide', '{}', '''
+assert(mod.IsEnabled('mine')==false)
+SlashCmdList.COUCHSIDE('option test.mine on')
+assert(mod.IsEnabled('mine')==true and CouchsideCharDB.modules.test.mine==true)
+assert(CouchsideDB.modules.test.mine==nil)
+assert(printed[#printed]:find('(this character)',1,true))
+''')
+check('an account value left from before an option became per character is dropped', "{mine=true}", '''
+assert(mod.IsEnabled('mine')==false and CouchsideCharDB.modules.test.mine==nil)
+assert(CouchsideDB.modules.test.mine==nil)
+''')
+check('a per-character value left from before an option became account-wide is dropped', '{}', '''
+assert(CouchsideCharDB.modules.test.flag==nil)
+''', char="{modules={test={flag=false}}}")
+check('a character that already chose keeps its choice', "{mine=true}", '''
+assert(mod.IsEnabled('mine')==false)
+''', char="{modules={test={mine=false}}}")
+check('modules get their own per-character data table', '{}', '''
+local data=mod.CharacterData();data.x=1
+assert(mod.CharacterData().x==1 and CouchsideCharDB.data.test.x==1)
 ''')

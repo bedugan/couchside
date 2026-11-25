@@ -37,12 +37,13 @@ local KEYS = {
 	{ dpad = "PAD3", face = "PADDLEFT", unit = "pet" },
 }
 
--- _onshow: bind only in a party (not a raid), where the bar targets fixed members.
+-- _onshow: bind solo or in a party, not in a raid, where the bar doesn't target fixed members.
+-- Solo, A and X still reach the player and pet; the party keys target no one.
 local SHOW_SNIPPET = [[
 	if not self:GetAttribute("couchside-on") then return end
-	if SecureCmdOptionParse("[group:raid] 0; [group:party] 1; 0") ~= "1" then
+	if SecureCmdOptionParse("[group:raid] 0; 1") ~= "1" then
 		if self:GetAttribute("couchside-log") then
-			self:CallMethod("CouchsideLog", "shown, not in a party: keys left to Blizzard")
+			self:CallMethod("CouchsideLog", "shown, in a raid: keys left to Blizzard")
 		end
 		return
 	end
@@ -148,21 +149,23 @@ local function Apply()
 		return
 	end
 	local swapped = C_CVar.GetCVarBool("GamepadSwapFriendlyTargetActions")
-	local kind, name = ns.SecondPressAction()
+	local kind, name, _, petOnly = ns.SecondPressAction()
 	if not casting then
 		kind = nil
 	end
 	for index, entry in ipairs(KEYS) do
 		watcher:SetAttribute("couchside-key" .. index, swapped and entry.face or entry.dpad)
+		-- A pet-only spell (Mend Pet, Health Funnel) leaves the other buttons targeting only.
+		local buttonKind = (petOnly and entry.unit ~= "pet") and nil or kind
 		local button = buttons[index]
-		button:SetAttribute("couchside-cast", kind)
-		button:SetAttribute("spell", kind == "spell" and name or nil)
-		button:SetAttribute("macro", kind == "macro" and name or nil)
+		button:SetAttribute("couchside-cast", buttonKind)
+		button:SetAttribute("spell", buttonKind == "spell" and name or nil)
+		button:SetAttribute("macro", buttonKind == "macro" and name or nil)
 	end
 	watcher:SetAttribute("couchside-log", probe)
 	watcher:SetAttribute("couchside-on", on)
 	ns.Debug("Party presses: keys %s; second press %s.", on and "taken while held" or "left to Blizzard",
-		kind and (kind .. " " .. name) or "targets only")
+		kind and (kind .. " " .. name .. (petOnly and " on the pet only" or "")) or "targets only")
 end
 ns.ApplyPartyPress = Apply
 

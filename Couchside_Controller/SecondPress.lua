@@ -1,9 +1,8 @@
 -- Second-press action configuration: what a second (and later) press of a party target button does
 -- while the friendly targeting button is held.
 --
--- Account-wide while the feature is tested (CouchsideControllerDB): the class default resolves per
--- character at run time, and a chosen spell the character doesn't know falls back to it. If the
--- feature is kept, the plan is per-character settings in the Couchside base for every module.
+-- Saved per character (ns.CharacterData), since the default and the spells depend on class. A
+-- chosen spell the character no longer knows falls back to the class default.
 --
 -- A spell is cast on the member; a macro runs against the current target, which the first press
 -- made that member. The class default is the first spell in CLASS_DEFAULTS the character knows.
@@ -15,13 +14,21 @@
 
 local _, ns = ...
 
--- Healing first; a class without a heal on others has no default.
+-- Each class's quick friendly action, best first: heals for healers, a decurse for mages, and pet
+-- care for warlocks and hunters. Classes without one have no default.
 local CLASS_DEFAULTS = {
 	PRIEST = { 2061, 2054, 2050 }, -- Flash Heal, Heal, Lesser Heal
 	DRUID = { 774, 5185 }, -- Rejuvenation, Healing Touch
 	SHAMAN = { 8004, 331 }, -- Lesser Healing Wave, Healing Wave
 	PALADIN = { 19750, 635 }, -- Flash of Light, Holy Light
+	MAGE = { 475 }, -- Remove Lesser Curse
+	WARLOCK = { 755 }, -- Health Funnel
+	HUNTER = { 136 }, -- Mend Pet
 }
+
+-- Spells that only target the player's pet: on the other buttons a second press only targets.
+-- Matched by name, since a spell chosen by name resolves to its highest rank's ID.
+local PET_ONLY = { 136, 755 } -- Mend Pet, Health Funnel
 
 -- Dispels, shown in the report as candidates to set by hand.
 local CLASS_DISPELS = {
@@ -61,27 +68,37 @@ local function FindSpell(typed)
 end
 
 local function Config()
-	CouchsideControllerDB = CouchsideControllerDB or {}
-	CouchsideControllerDB.secondPress = CouchsideControllerDB.secondPress or { mode = "default" }
-	return CouchsideControllerDB.secondPress
+	local data = ns.CharacterData()
+	data.secondPress = data.secondPress or { mode = "default" }
+	return data.secondPress
 end
 
--- What a second press does now: kind ("spell", "macro" or nil for nothing), its name, and why.
+local function IsPetOnly(name)
+	for _, spellID in ipairs(PET_ONLY) do
+		if SpellName(spellID) == name then
+			return true
+		end
+	end
+	return false
+end
+
+-- What a second press does now: kind ("spell", "macro" or nil for nothing), its name, why, and
+-- whether it applies to the pet's button only.
 function ns.SecondPressAction()
 	local config = Config()
 	if config.mode == "off" then
-		return nil, nil, "off"
+		return nil, nil, "off", false
 	elseif config.mode == "spell" and FindSpell(config.spellID or config.spell) then
-		return "spell", config.spell, "chosen spell"
+		return "spell", config.spell, "chosen spell", IsPetOnly(config.spell)
 	elseif config.mode == "macro" then
-		return "macro", config.macro, "chosen macro"
+		return "macro", config.macro, "chosen macro", false
 	end
 	local name = ClassDefault()
 	local fallback = config.mode == "spell" and (config.spell .. " unknown here, ") or ""
 	if name then
-		return "spell", name, fallback .. "class default"
+		return "spell", name, fallback .. "class default", IsPetOnly(name)
 	end
-	return nil, nil, fallback .. "no class default"
+	return nil, nil, fallback .. "no class default", false
 end
 
 -- The macro's own name for a name typed in any case (slash input arrives lowercased).
@@ -114,19 +131,19 @@ end
 -- Printed, and kept as CouchsideControllerReportDB.secondPress for /reload to save.
 local function Report()
 	local _, class = UnitClass("player")
-	local kind, name, why = ns.SecondPressAction()
+	local kind, name, why, petOnly = ns.SecondPressAction()
 	local heals, healChecks = SpellList(CLASS_DEFAULTS[class])
 	local dispels, dispelChecks = SpellList(CLASS_DISPELS[class])
 	local lines = {
-		("Second press: %s (%s)."):format(kind and (kind .. " " .. name) or "nothing", why),
-		("Heals you can choose: %s."):format(heals),
+		("Second press: %s (%s)."):format(kind and (kind .. " " .. name .. (petOnly and ", pet only" or "")) or "nothing", why),
+		("Class actions you can choose: %s."):format(heals),
 		("Dispels you can choose: %s."):format(dispels),
 	}
 	for _, line in ipairs(lines) do
 		ns.Print("%s", line)
 	end
 	-- The ID checks are saved, not printed: they are for verifying the table, not for choosing.
-	table.insert(lines, ("%s level %d. Heal IDs: %s. Dispel IDs: %s."):format(class, UnitLevel("player"),
+	table.insert(lines, ("%s level %d. Class action IDs: %s. Dispel IDs: %s."):format(class, UnitLevel("player"),
 		healChecks ~= "" and healChecks or "none", dispelChecks ~= "" and dispelChecks or "none"))
 	ns.Debug("%s", lines[#lines])
 	CouchsideControllerReportDB = CouchsideControllerReportDB or {}

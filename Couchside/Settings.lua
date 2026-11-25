@@ -38,10 +38,10 @@ local VAR_TYPES = {
 }
 
 local CONTROLS = {
-	boolean = function(pageCategory, setting, option)
-		WidenCheckboxColumn(Settings.CreateCheckbox(pageCategory, setting, option.tooltip))
+	boolean = function(pageCategory, setting, _, tooltip)
+		WidenCheckboxColumn(Settings.CreateCheckbox(pageCategory, setting, tooltip))
 	end,
-	choice = function(pageCategory, setting, option)
+	choice = function(pageCategory, setting, option, tooltip)
 		local function GetChoices()
 			local container = Settings.CreateControlTextContainer()
 			for _, choice in ipairs(option.choices) do
@@ -49,14 +49,14 @@ local CONTROLS = {
 			end
 			return container:GetData()
 		end
-		Settings.CreateDropdown(pageCategory, setting, GetChoices, option.tooltip)
+		Settings.CreateDropdown(pageCategory, setting, GetChoices, tooltip)
 	end,
-	number = function(pageCategory, setting, option)
+	number = function(pageCategory, setting, option, tooltip)
 		local sliderOptions = Settings.CreateSliderOptions(option.min, option.max, option.step)
 		sliderOptions:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function(value)
 			return (option.format or "%s"):format(value)
 		end)
-		Settings.CreateSlider(pageCategory, setting, sliderOptions, option.tooltip)
+		Settings.CreateSlider(pageCategory, setting, sliderOptions, tooltip)
 	end,
 }
 
@@ -66,11 +66,12 @@ local function AddOptions(pageCategory, layout, page)
 		for _, option in ipairs(section.options) do
 			local kind = ns.OptionKind(option)
 			local setting = Settings.RegisterAddOnSetting(pageCategory, page.variablePrefix .. option.key:upper(),
-				option.key, page.db, VAR_TYPES[kind], option.name, option.default)
+				option.key, ns.OptionTable(page, option), VAR_TYPES[kind], option.name, option.default)
 			setting:SetValueChangedCallback(function(_, value)
 				ns.NotifyOptionChanged(page, option.key, value)
 			end)
-			CONTROLS[kind](pageCategory, setting, option)
+			local tooltip = option.scope == "character" and (option.tooltip .. "\n\nSaved for this character only.") or option.tooltip
+			CONTROLS[kind](pageCategory, setting, option, tooltip)
 		end
 	end
 end

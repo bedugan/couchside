@@ -10,15 +10,17 @@ from lupa.lua51 import LuaRuntime
 ROOT = Path(__file__).resolve().parents[1]
 STUB = r'''
 printed={};cmds={}
-ns={RegisterCommand=function(name,_,run) cmds[name]=run end,
+charData={}
+ns={RegisterCommand=function(name,_,run) cmds[name]=run end, CharacterData=function() return charData end,
  Print=function(fmt,...) printed[#printed+1]=fmt:format(...) end, Debug=function() end}
 known={[331]=true}
-function UnitClass() return 'Shaman','SHAMAN' end
+function UnitClass() return class,class end
 function UnitLevel() return 20 end
 function UnitName() return 'Burn' end
 function date() return 'now' end
 C_SpellBook={IsSpellKnownOrInSpellBook=function(id) return known[id]==true end}
-local spells={[331]='Healing Wave',[8004]='Lesser Healing Wave',[526]='Cure Poison'}
+local spells={[331]='Healing Wave',[8004]='Lesser Healing Wave',[526]='Cure Poison',[136]='Mend Pet',[755]='Health Funnel'}
+class='SHAMAN'
 C_Spell={GetSpellInfo=function(x)
  for id,name in pairs(spells) do
   if x==id or (type(x)=='string' and x:lower()==name:lower()) then return {name=name,spellID=id} end
@@ -41,7 +43,7 @@ def check(name, code):
 check('the class default is the first known heal and only known spells are offered', '''
 cmds.secondpress('')
 assert(last()=='Second press: spell Healing Wave (class default).')
-assert(printed[#printed-1]=='Heals you can choose: Healing Wave (331).')
+assert(printed[#printed-1]=='Class actions you can choose: Healing Wave (331).')
 assert(printed[#printed]=='Dispels you can choose: none known yet.')
 known[8004]=true;cmds.secondpress('')
 assert(last()=='Second press: spell Lesser Healing Wave (class default).')
@@ -51,11 +53,11 @@ cmds.secondpress('spell lesser healing wave')
 assert(printed[1]:find('No known spell',1,true))
 cmds.secondpress('spell healing wave')
 assert(last()=='Second press: spell Healing Wave (chosen spell).')
-assert(CouchsideControllerDB.secondPress.spellID==331)
+assert(charData.secondPress.spellID==331)
 ''')
 check('a chosen spell unknown to this character falls back to the class default', '''
 known[8004]=true
-CouchsideControllerDB={secondPress={mode='spell',spell='Cure Poison',spellID=526}}
+charData.secondPress={mode='spell',spell='Cure Poison',spellID=526}
 cmds.secondpress('')
 assert(last()=='Second press: spell Lesser Healing Wave (Cure Poison unknown here, class default).')
 ''')
@@ -70,4 +72,17 @@ check('each character keeps its own saved report with the ID checks', '''
 cmds.secondpress('')
 local saved=CouchsideControllerReportDB.secondPress.Burn
 assert(#saved.lines==4 and saved.lines[4]:find('331 Healing Wave known',1,true))
+''')
+check('pet care is a class default for the pet only', '''
+class='HUNTER';known[136]=true
+cmds.secondpress('')
+assert(last()=='Second press: spell Mend Pet, pet only (class default).')
+assert(select(4,ns.SecondPressAction())==true)
+class='WARLOCK';known[755]=true;cmds.secondpress('')
+assert(last()=='Second press: spell Health Funnel, pet only (class default).')
+''')
+check('a chosen pet spell is pet only, a heal is not', '''
+known[136]=true
+cmds.secondpress('spell mend pet');assert(select(4,ns.SecondPressAction())==true)
+cmds.secondpress('spell healing wave');assert(select(4,ns.SecondPressAction())==false)
 ''')

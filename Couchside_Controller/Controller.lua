@@ -31,18 +31,21 @@ Couchside.RegisterModule(ns, {
 				{
 					key = "partyHints",
 					default = true,
+					scope = "character",
 					name = "Show party targeting buttons",
 					tooltip = "With the controller's Party Targeting option on, mark each party frame with the button that targets that member while you hold the friendly targeting button. The marks stay up all the time so you can read them before you press.",
 				},
 				{
 					key = "partySecondPress",
 					default = false,
+					scope = "character",
 					name = "Second press casts",
 					tooltip = "Experimental. While you hold the friendly targeting button, pressing a party member's button again casts your second-press action on them: your class heal unless you chose another spell or a macro with /cs controller secondpress.",
 				},
 				{
 					key = "partyHintPosition",
 					default = "auto",
+					scope = "character",
 					choices = {
 						{ value = "auto", label = "Automatic" },
 						{ value = "left", label = "Left" },
@@ -57,6 +60,8 @@ Couchside.RegisterModule(ns, {
 				{
 					key = "partyHintLabels",
 					default = "auto",
+					-- Account-wide: it describes the controller, which the game can't reliably detect (it reports
+					-- "Generic"), not the character.
 					choices = {
 						{ value = "auto", label = "Automatic" },
 						{ value = "xbox", label = "Xbox (A B X Y)" },
@@ -69,6 +74,7 @@ Couchside.RegisterModule(ns, {
 				{
 					key = "partyHintSize",
 					default = 100,
+					scope = "character",
 					min = 50,
 					max = 200,
 					step = 10,

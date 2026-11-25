@@ -41,7 +41,7 @@ Status: the page display has native acceptance. Automatic page switching was wit
 
 Status: Brian confirmed the D-pad up mark on party1 and the A mark on his own frame with Button labels set to Xbox, on raid-style vertical frames. Pending checks and the confirmed list are in [party targeting validation](docs/research/party-targeting-validation.md).
 
-**Second press casts** (default off, experimental) adds an action to party targeting. Hold the friendly targeting button and press a member's button: the first press targets them as usual, and each further press of that button in the same hold casts the second-press action on them. Releasing the button resets the count. It covers party1–4, you and your pet. A member who can't be helped (offline, out of sight or dead) gets no cast, since the game would cast it on you instead. The action is your class's first known heal (Paladin: Flash of Light, then Holy Light; Priest, Druid and Shaman have their own lists) or a spell or macro chosen with `/cs controller secondpress`. Only spells the character knows are offered. While held, the addon binds those keys to its own secure buttons from a secure frame on Blizzard's friendly targeting bar and returns them on release; nothing of Blizzard's is hooked. Action changes during combat apply when combat ends. Status: the press probe confirmed the key takeover and targeting in and out of combat, and Brian confirmed Flash of Light on the second press in and out of combat, on himself; a reachable party member is still to be tried. See [second-press notes](docs/research/second-press.md).
+**Second press casts** (default off, experimental) adds an action to party targeting. Hold the friendly targeting button and press a member's button: the first press targets them as usual, and each further press of that button in the same hold casts the second-press action on them. Releasing the button resets the count. It covers party1–4, you and your pet, solo or in a party (not in a raid); solo, only your button and your pet's do anything. The spell is cast on that unit directly, so a mouseover target can't catch it. A member who can't be helped (offline, out of sight or dead) gets no cast, since the game would cast it on you instead. The action is your class's quick friendly action, the first one known from its list (Paladin: Flash of Light, then Holy Light; Priest, Druid and Shaman heals; Mage: Remove Lesser Curse; Warlock: Health Funnel; Hunter: Mend Pet), or a spell or macro chosen with `/cs controller secondpress`. Pet-only spells (Health Funnel, Mend Pet) cast from the pet's button only; the other buttons just target. Only spells the character knows are offered. While held, the addon binds those keys to its own secure buttons from a secure frame on Blizzard's friendly targeting bar and returns them on release; nothing of Blizzard's is hooked. Action changes during combat apply when combat ends. Status: the press probe confirmed the key takeover and targeting in and out of combat, and Brian confirmed Flash of Light on the second press in and out of combat, on himself, and on a party member in range; Health Funnel on a warlock's pet from X. Solo use without a group is still to be tried. See [second-press notes](docs/research/second-press.md).
 
 **Fix the equipment set list** (default on) shows your sets on the character sheet with the controller interface on. Forever's controller layout anchors the list to `CharacterFrame.InsetRight`, which Forever's sheet doesn't have, leaving the list 0 wide (forever-bugs #494). The addon restores the list's XML anchors while it is hidden and out of combat, after login and after each controller/mouse switch; it hooks nothing. It acts only on that broken layout, so Retail and a fixed client are left alone. Reach the list with D-pad right from the gear column; A on a set opens Equip, Save, Bind and Delete. The name and icon window still needs the mouse. Turning the option off takes effect after `/reload`. Report: `/cs controller equipmentsets`.
 
@@ -71,7 +71,7 @@ The earlier Couchside Minimap module (scanned nearby names, letter stamps, autom
 
 ## Settings
 
-Defaults apply when no preference is saved. Module settings live account-wide in `CouchsideDB.modules`; debug is `CouchsideDB.debug`.
+Defaults apply when no preference is saved. Module settings live account-wide in `CouchsideDB.modules`; debug is `CouchsideDB.debug`. Settings that depend on the character are saved per character in `CouchsideCharDB.modules`, marked "(this character)" by `/cs option` and "Saved for this character only." in the setting's tooltip. When a setting moves between account-wide and per character, the value saved the old way is dropped and the default applies. Modules keep other per-character data, such as the second-press action, in `CouchsideCharDB.data`.
 
 An option is a checkbox, a dropdown of choices or a slider; its default decides which. `/cs option` sets all three. Brian confirmed the dropdown, slider and `/cs option` values in game.
 
@@ -88,11 +88,11 @@ Checkboxes use a wider column on every Couchside page so long option names have 
 | `quests.nearbyTurnIns` | on | List untracked turn-ins. |
 | `controller.pageNumbers` | off | Show action page numbers. |
 | `controller.pageNumbersExtraOnly` | off | Only show page 2 or 3; requires pageNumbers. |
-| `controller.partyHints` | on | Show party targeting buttons. |
-| `controller.partySecondPress` | off | Second press casts (experimental). |
-| `controller.partyHintPosition` | `auto` | Button position: `auto`, `left`, `right`, `top`, `bottom` or `inside`. |
+| `controller.partyHints` | on, per character | Show party targeting buttons. |
+| `controller.partySecondPress` | off, per character | Second press casts (experimental). |
+| `controller.partyHintPosition` | `auto`, per character | Button position: `auto`, `left`, `right`, `top`, `bottom` or `inside`. |
 | `controller.partyHintLabels` | `auto` | Face-button glyphs: `auto`, `xbox`, `playstation` or `nintendo`. |
-| `controller.partyHintSize` | 100% | Button size, 50–200%. |
+| `controller.partyHintSize` | 100%, per character | Button size, 50–200%. |
 | `gathering.tooltipDifficulty` | on | Show gathering difficulty in tooltips. |
 
 Disabling a display option also stops its feature-specific background work. Explicit report commands run when requested.
@@ -112,7 +112,7 @@ Disabling a display option also stops its feature-specific background work. Expl
 | `/cs controller actionpage [watch\|off]` | Report native page/strip state, watch changes or stop the watch. |
 | `/cs controller equipmentsets` | Report the character sheet's equipment set list layout. |
 | `/cs controller pressprobe [on\|off]` | Log every party target press, hold and release to chat and the saved file for a bug report. With Second press casts off it takes the keys but only targets. |
-| `/cs controller secondpress [default\|off\|spell <name or ID>\|macro <name>]` | Choose what a second press will cast (account-wide while tested; default: each character's first known class heal, also used when a chosen spell is unknown to that character), or show it with the class heals and dispels this character knows (trained, not just old enough for); every listed spell ID and what it resolves to is saved with the report. Decisions and deferred ideas: [second-press notes](docs/research/second-press.md). Used by Second press casts. |
+| `/cs controller secondpress [default\|off\|spell <name or ID>\|macro <name>]` | Choose what a second press will cast (per character; default: the character's first known class action, also used when a chosen spell is no longer known), or show it with the class actions and dispels this character knows (trained, not just old enough for); every listed spell ID and what it resolves to is saved with the report. Decisions and deferred ideas: [second-press notes](docs/research/second-press.md). Used by Second press casts. |
 | `/cs controller partytargets [label]` | Report Party Targeting CVars, group state, the button that targets each member and their party frame. Keeps the last eight runs for `/reload` to save. |
 
 ### Quest commands
@@ -138,7 +138,7 @@ Disabling a display option also stops its feature-specific background work. Expl
 
 ## Saved data and troubleshooting
 
-`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. `CouchsideControllerDB` keeps the second-press action. `CouchsideControllerReportDB` keeps the last eight `partytargets` reports the last 60 `pressprobe` events the last `secondpress` report per character, written to `SavedVariables/Couchside_Controller.lua` on `/reload`. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
+`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. `CouchsideCharDB` keeps per-character options and module data, such as the second-press action. `CouchsideControllerReportDB` keeps the last eight `partytargets` reports, the last 60 `pressprobe` events and the last `secondpress` report per character, written to `SavedVariables/Couchside_Controller.lua` on `/reload`. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
 
 For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, `controller equipmentsets`, `controller partytargets`, or Gathering's `tooltip` and `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
 
@@ -177,7 +177,7 @@ Run local Lua checks in an isolated environment with `lupa`, using `tests/run-ga
 
 | File | Role |
 | --- | --- |
-| `Couchside/Core.lua` | Module registration, commands, saved options (checkbox, choice, number) and chat/debug output. |
+| `Couchside/Core.lua` | Module registration, commands, saved options (checkbox, choice, number; account or per character), per-character module data and chat/debug output. |
 | `Couchside/Settings.lua` | Build base/module settings at login as checkboxes, dropdowns and sliders; omit empty diagnostic-only pages. |
 | `Couchside_Quests/Quests.lua` | Register options and shared quest colors/descriptions. |
 | `Couchside_Quests/QuestTracking.lua` | Zone decisions, reports, keep/auto overrides and watch test. |
@@ -203,12 +203,12 @@ Run local Lua checks in an isolated environment with `lupa`, using `tests/run-ga
 | `Couchside_Gathering/ResourceCatalog.lua` | Curated node names and Classic reference bands. |
 | `Couchside_Gathering/Tooltip.lua` | Tooltip difficulty line and `/cs gathering tooltip` report. |
 | `Couchside_Gathering/ResourceDifficulty.lua` | Current skill capture and conservative difficulty evaluation. |
-| `Couchside/Couchside.toc` | Load order, declared interfaces and dependencies; account-wide options. |
+| `Couchside/Couchside.toc` | Load order, declared interfaces and dependencies; account-wide and per-character options. |
 | `Couchside_Quests/Couchside_Quests.toc` | Load order, declared interfaces and dependencies; per-character quest state/reports. |
-| `Couchside_Controller/Couchside_Controller.toc` | Load order, declared interfaces and dependencies; second-press action and saved reports. |
+| `Couchside_Controller/Couchside_Controller.toc` | Load order, declared interfaces and dependencies; saved reports. |
 | `Couchside_Gathering/Couchside_Gathering.toc` | Load order, declared interfaces and base dependency. |
 
-Module registration supplies `IsEnabled`, `GetOption`, `OnOptionChanged`, `OnReady`, `RegisterCommand`, `Print` and `Debug`. Options come from the module's registered sections. Check [Blizzard's UI source](https://github.com/Gethe/wow-ui-source) before using new game APIs, add a read-only report first and retain it after native validation. Offline catalog tools are described in the [client-table research](docs/research/client-table-export-2026-10-12.md).
+Module registration supplies `IsEnabled`, `GetOption`, `CharacterData`, `OnOptionChanged`, `OnReady`, `RegisterCommand`, `Print` and `Debug`. Options come from the module's registered sections. Check [Blizzard's UI source](https://github.com/Gethe/wow-ui-source) before using new game APIs, add a read-only report first and retain it after native validation. Offline catalog tools are described in the [client-table research](docs/research/client-table-export-2026-10-12.md).
 
 ## License
 
