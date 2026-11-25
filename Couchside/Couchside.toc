@@ -9,3 +9,4 @@
 
 Core.lua
 Settings.lua
+PanelProbe.lua

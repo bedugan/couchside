@@ -109,6 +109,7 @@ Disabling a display option also stops its feature-specific background work. Expl
 | `/cs settings` | Open settings. Prefer `/cs option` in Forever gamepad UI. |
 | `/cs option [module.name] [value]` | List, inspect or change module options; a wrong value prints the accepted ones. |
 | `/cs debug [on\|off]` | Inspect/change persistent debug output. |
+| `/cs panelprobe [off]` | Open or close a throwaway test window for the planned Couchside settings panel: controls, side tabs and controller navigation. Turns on the game's taint log and checks the next NPC window close (PASS or FAIL); `off` turns the taint log off. Logs each step to chat and `CouchsideDB.panelProbe`. |
 | `/cs controller actionpage [watch\|off]` | Report native page/strip state, watch changes or stop the watch. |
 | `/cs controller equipmentsets` | Report the character sheet's equipment set list layout. |
 | `/cs controller pressprobe [on\|off]` | Log every party target press, hold and release to chat and the saved file for a bug report. With Second press casts off it takes the keys but only targets. |
@@ -138,7 +139,7 @@ Disabling a display option also stops its feature-specific background work. Expl
 
 ## Saved data and troubleshooting
 
-`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. `CouchsideCharDB` keeps per-character options and module data, such as the second-press action. `CouchsideControllerReportDB` keeps the last eight `partytargets` reports, the last 60 `pressprobe` events and the last `secondpress` report per character, written to `SavedVariables/Couchside_Controller.lua` on `/reload`. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
+`CouchsideQuestsTrackingDB` keeps per-character watch restoration and overrides; `CouchsideQuestsRoleDB` keeps eight role reports. `/reload` or logout writes SavedVariables. `CouchsideDB.panelProbe` keeps the last 40 panel probe lines. `CouchsideCharDB` keeps per-character options and module data, such as the second-press action. `CouchsideControllerReportDB` keeps the last eight `partytargets` reports, the last 60 `pressprobe` events and the last `secondpress` report per character, written to `SavedVariables/Couchside_Controller.lua` on `/reload`. Gathering saves nothing beyond its option. Old `CouchsideMinimapDB` and `CouchsideGatheringScanDB` files in `WTF` are no longer read and can be deleted.
 
 For a problem, enable `/cs debug on`, reproduce it, then use the relevant report: `quests tracking`, `controller actionpage`, `controller equipmentsets`, `controller partytargets`, or Gathering's `tooltip` and `skills`. Include the client build, command used and visible result. If hover or controls become abnormal, `/reload` before further testing.
 
@@ -153,6 +154,7 @@ These are confirmed observations in the sampled clients, not guarantees for ever
 - A dungeon tag can lack a destination. A quest's log group was readable while collapsed, but its header sort key is not a map ID. Watch add/remove passed the sampled round trip; POI `inProgress` did not mean incomplete.
 - Tested Forever dungeons lacked map coordinates/facing while speed and movement/turning/looking events remained readable. Direct fallback display coverage is still pending.
 - Closing settings in the tested Forever gamepad UI froze macOS and SteamOS clients. In the current client it no longer freezes, but the controller interface stops working until `/reload`: hiding a panel makes the controller UI call the protected `SetPreferredGamepadInteractTarget()` on a path addon code has already run on, so the game blocks it and blames that addon. BugGrabber logged the same error for Auctionator, BlessingsUponYou and Couchside, so it is a client bug, not one addon's. `/cs option` avoids that close path.
+- An addon window can join Forever's controller navigation: calling `GamepadMode.FrameControlsManager:FrameShown(self)` on show and `FrameHidden(self)` on hide gave D-pad movement, A to press and B to close (through the window's `CloseButton`), and later windows closed cleanly. Two Blizzard pieces made from addon code broke later window closes the same way the settings panel does: a dropdown's menu, and `GamepadTabIndicatorsTemplate` (LB/RB tabs), which puts addon code in the game's shared input binding stack. Details: [settings panel probe](docs/research/settings-panel-probe.md).
 - Blizzard's party targeting prompt under raid-style party frames shows LB even with swapped target modifiers, where RB is the friendly targeting button: it hard-codes `GAMEPAD_SHOULDER_LEFT` (`RaidTargetDPAD.lua`, `GroupTargeting.lua`). Brian saw LB with RB as his friendly targeting button.
 - A spell cast at a party member who can't be targeted (Brian's offline party1) lands on the player instead.
 - Forever reports Brian's controller's `labelStyle` as `Generic`, so `GetBindingText("PAD1")` returns the generic glyph `1`. The A/B/X/Y, shape and Nintendo glyph atlases exist and draw when chosen directly.
@@ -179,6 +181,7 @@ Run local Lua checks in an isolated environment with `lupa`, using `tests/run-ga
 | --- | --- |
 | `Couchside/Core.lua` | Module registration, commands, saved options (checkbox, choice, number; account or per character), per-character module data and chat/debug output. |
 | `Couchside/Settings.lua` | Build base/module settings at login as checkboxes, dropdowns and sliders; omit empty diagnostic-only pages. |
+| `Couchside/PanelProbe.lua` | Throwaway test window checking an addon window against the controller interface before the settings panel is built. |
 | `Couchside_Quests/Quests.lua` | Register options and shared quest colors/descriptions. |
 | `Couchside_Quests/QuestTracking.lua` | Zone decisions, reports, keep/auto overrides and watch test. |
 | `Couchside_Quests/QuestRoleProbe.lua` | Bounded read-only role reports and optional data request. |
