@@ -1,0 +1,156 @@
+<!doctype html>
+<!-- Throwaway: three ways to choose the second-press action, ?variant=panel|slot|wheel. Not game code. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Second Press Picker</title>
+<style>
+:root{color-scheme:dark;--bg:#0f1d2a;--panel:#16293a;--line:#3b6178;--text:#eef3f6;--muted:#a9c3d2;--accent:#ffc94d;--a:#5cc05c;--x:#3d8fe0;--good:#4de3c1;--warn:#ff8a5c;--gold:#e8c46a;font-family:system-ui,sans-serif;line-height:1.5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}
+main{max-width:1060px;margin:auto;padding:24px 16px 140px}
+h1{font-family:Georgia,serif;font-weight:normal;font-size:clamp(24px,4vw,34px);margin:6px 0 8px}
+p{max-width:840px}.small{font-size:14px;color:var(--muted)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+button{font:14px system-ui;cursor:pointer;border:1px solid #5d8aa0;background:#203c50;color:var(--text);border-radius:6px;padding:8px 12px}
+button[aria-pressed=true]{background:#aee3e6;color:#0d2a33;border-color:#d6f3f5}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.stage{display:grid;grid-template-columns:1fr 300px;gap:18px}
+@media(max-width:820px){.stage{grid-template-columns:1fr}}
+.world{position:relative;min-height:440px;border:2px solid #8a7047;border-radius:8px;overflow:hidden;background:linear-gradient(130deg,#2c2a44,#23324a 55%,#1c2a3c);padding:18px}
+.world:after{content:"Not a game screenshot";position:absolute;right:10px;bottom:8px;font-size:11px;color:#ffffff55}
+.state{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;align-self:start;font-size:14px}
+.state h2{font-size:15px;margin:0 0 8px;color:var(--accent)}
+.state dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:0}.state dt{color:var(--muted)}.state dd{margin:0}
+.explain{border-left:4px solid var(--accent);background:#1d3448;padding:12px 16px;margin-top:16px;border-radius:0 8px 8px 0}
+.explain h2{font-size:18px;margin:0 0 6px}.explain li{margin:4px 0}
+/* WoW-ish window */
+.win{background:#120f0b;border:2px solid var(--gold);border-radius:6px;box-shadow:0 6px 30px #000c;max-width:560px}
+.win header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:linear-gradient(#3a2c18,#22190d);border-bottom:1px solid #7a6236;font:600 14px Georgia,serif;color:var(--gold)}
+.win .body{padding:10px}
+.glyph{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;font:800 11px system-ui;color:#fff;border:2px solid #0008;vertical-align:middle}
+.g-a{background:var(--a)}.g-b{background:#d9443a}.g-x{background:var(--x)}.g-y{background:#e0b630;color:#222}
+.rb{display:inline-grid;place-items:center;min-width:28px;height:18px;padding:0 4px;border-radius:5px;background:#1b1f26;border:1.5px solid #cfd8e3;font:800 10px system-ui;color:#fff;vertical-align:middle}
+.icon{width:34px;height:34px;border-radius:4px;border:1px solid #000;display:grid;place-items:center;font:700 11px system-ui;color:#fff;text-shadow:0 1px 2px #000;flex:none}
+.sec{font:600 12px system-ui;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 4px}
+.row{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:4px;border:1px solid transparent;cursor:pointer}
+.row:hover{background:#2a2216}
+.row.focus{border-color:var(--accent);background:#30261a}
+.row .sub{font-size:12px;color:var(--muted)}
+.row .check{margin-left:auto;color:var(--good);font-weight:800}
+.tag{font-size:11px;padding:1px 6px;border-radius:9px;background:#24415a;color:#bfe3ff;margin-left:6px}
+.tag.pet{background:#2c4a1e;color:#c9f5a5}.tag.warn{background:#4a2a1e;color:#ffc6a8}
+.hint{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;border-top:1px solid #3a2f1e;padding-top:8px}
+.preview{font-size:13px;margin-top:8px;padding:8px;border-radius:4px;background:#1c1710;border:1px solid #3a2f1e}
+.preview div{margin:2px 0}
+/* slot */
+.slots{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.slot{width:64px;height:64px;border:2px dashed var(--gold);border-radius:6px;display:grid;place-items:center;text-align:center;font-size:11px;color:var(--muted)}
+.slot.filled{border-style:solid}
+.slot .icon{width:58px;height:58px;font-size:12px}
+.book{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.book .cell{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;text-align:center;cursor:grab;padding:4px;border-radius:4px}
+.book .cell:hover{background:#2a2216}
+.book .cell.off{opacity:.35;cursor:not-allowed}
+/* wheel */
+.frames{position:absolute;left:24px;top:60px;display:flex;flex-direction:column;gap:4px}
+.frame{width:140px;height:40px;border:1px solid #111;padding:3px 6px;font:600 11px system-ui;color:#fff;text-shadow:0 1px 1px #000;position:relative}
+.frame .glyph{position:absolute;right:calc(100% + 4px);top:9px}
+.wheel{position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-150px 0 0 -110px;border-radius:50%;background:radial-gradient(circle,#0008 0 32%,#120f0bdd 33% 100%);border:2px solid var(--gold)}
+.wheel .center{position:absolute;inset:34%;display:grid;place-items:center;text-align:center;font-size:12px;color:var(--muted);padding:4px}
+.wedge{position:absolute;width:86px;margin-left:-43px;margin-top:-30px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;text-align:center;cursor:pointer;border-radius:6px;padding:3px;border:1px solid transparent}
+.wedge.focus{border-color:var(--accent);background:#30261acc}
+.wedge.current .icon{outline:2px solid var(--good);outline-offset:1px}
+.hidden{display:none}
+.switcher{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;padding:10px 14px;background:#f2f6f8;color:#0d2a33;border-radius:999px;box-shadow:0 5px 25px #000a;max-width:calc(100vw - 32px)}
+.switcher button{background:#0d2a33;color:#fff;border:none;border-radius:999px;padding:6px 12px}
+.switcher strong{min-width:210px;text-align:center;font-size:14px}
+</style></head><body><main>
+<p class="small">Throwaway prototype. Choosing what a second press casts. Mock data, not the game.</p>
+<h1 id="title"></h1>
+<p id="lede"></p>
+<div class="toolbar"><span class="small">Character:</span><span id="chars"></span><span class="small" style="margin-left:12px">State:</span><button id="combat" aria-pressed="false">In combat</button></div>
+<div class="stage"><div class="world" id="world"></div>
+<aside class="state"><h2>Saved for this character</h2><dl id="state"></dl><p class="small" id="note"></p></aside></div>
+<section class="explain" id="explain"></section>
+</main>
+<div class="switcher" role="group" aria-label="Variant"><button id="prev" aria-label="Previous variant">←</button><strong id="vlabel"></strong><button id="next" aria-label="Next variant">→</button></div>
+<script>
+const CHARS={
+ paladin:{label:"Paladin 33",actions:[["Flash of Light",19750,"#e8d46a"],["Holy Light",635,"#f0c040"]],dispels:[["Purify",1152,"#c8b0f0"]],unknown:[["Cleanse",4987]],pet:false},
+ warlock:{label:"Warlock 20",actions:[["Health Funnel",755,"#7a3fb0",true]],dispels:[],unknown:[],pet:true},
+ warrior:{label:"Warrior 25",actions:[],dispels:[],unknown:[],pet:false}};
+const MACROS=[["Bandage","#a07a50"],["Heal Me","#5c9ad0"]];
+const VARIANTS=[
+ {key:"panel",name:"Own panel (list)",title:"A: Couchside's own picker panel",
+  lede:"A small window from <code>/cs controller secondpress</code> or a button on the settings page. It lists only what this character can use, grouped, and moves with the D-pad. A chooses, B closes.",
+  explain:["Works the same with mouse or controller, since it's a plain list.","Shows what each button will do before you leave, including pet-only spells.","Replaces typing spell names; the slash command stays for bug reports.","Open question: does the controller's UI cursor reach addon frames on Forever? Needs a report command first."]},
+ {key:"slot",name:"Drop slot",title:"B: Drag onto a slot, like an action button",
+  lede:"One slot, like an action bar button. Drag a spell from the spellbook, a macro, or an item such as a bandage onto it. Right-click clears it back to the class default.",
+  explain:["Takes anything you can put on an action bar, so items (bandages) come free.","Familiar to anyone who has set up bars with a mouse.","Weak on a controller: dragging needs the cursor, and Forever's controller spellbook may not support picking up onto an addon slot.","Needs a check that unknown or pet-only picks are explained, since the slot accepts anything."]},
+ {key:"wheel",name:"Wheel on the party frames",title:"C: Set it from a wheel, without leaving the game",
+  lede:"Hold <span class='rb'>RB</span> and click the right stick to open a wheel over the party frames. Tilt to an action and press A. Out of combat only; the wheel says so in combat.",
+  explain:["Couch-native: no window, no cursor, no typing.","The same wheel can later become the cast-time wheel of several actions.","Least discoverable; needs a hint on the badge and a free button to open it.","Most new work: a secure open/close on a stick click, and Blizzard's wheel art may not be reusable."]}];
+const params=new URLSearchParams(location.search);
+let vi=Math.max(0,VARIANTS.findIndex(v=>v.key===params.get("variant")));
+let ch="paladin",combat=false,focus=0;
+const saved={paladin:{mode:"default"},warlock:{mode:"default"},warrior:{mode:"default"}};
+function options(){const c=CHARS[ch],o=[];
+ const def=c.actions[0];o.push({sec:"Default",name:"Class default",sub:def?def[0]:"none for this class",mode:"default",color:"#556",pet:def&&def[3]});
+ c.actions.forEach(a=>o.push({sec:"Class actions",name:a[0],sub:"ID "+a[1],mode:"spell",color:a[2],pet:a[3]}));
+ c.dispels.forEach(a=>o.push({sec:"Dispels",name:a[0],sub:"ID "+a[1],mode:"spell",color:a[2]}));
+ MACROS.forEach(m=>o.push({sec:"Macros",name:m[0],sub:"runs on the targeted member",mode:"macro",color:m[1]}));
+ o.push({sec:"Off",name:"Nothing",sub:"second presses only target",mode:"off",color:"#333"});return o}
+function current(){const s=saved[ch];return s.mode==="default"||s.mode==="off"?options().find(o=>o.mode===s.mode):options().find(o=>o.mode===s.mode&&o.name===s.name)}
+function resolved(){const s=saved[ch],c=CHARS[ch];if(s.mode==="off")return null;if(s.mode==="default"){const d=c.actions[0];return d?{name:d[0],pet:d[3],kind:"spell"}:null}const o=current();return{name:o.name,pet:o.pet,kind:s.mode}}
+function choose(o){if(combat){note("In combat: saved, applies when combat ends.");}else note("Applied.");saved[ch]=o.mode==="default"||o.mode==="off"?{mode:o.mode}:{mode:o.mode,name:o.name};render()}
+let noteText="";function note(t){noteText=t}
+function icon(o,size){return `<span class="icon" style="background:${o.color}${size?";width:"+size+"px;height:"+size+"px":""}">${o.name.split(" ").map(w=>w[0]).join("").slice(0,3)}</span>`}
+function previewHTML(){const r=resolved(),c=CHARS[ch];if(!r)return `<div>Every second press only targets.</div>`;
+ const self=r.pet?"target only":`${r.kind} ${r.name}`,pet=c.pet||r.pet?`${r.kind} ${r.name}`:"no pet";
+ return `<div><span class="glyph g-a">A</span> <span class="glyph g-a">A</span> you: ${self}</div><div>D-pad twice, party: ${r.pet?"target only":r.kind+" "+r.name}</div><div><span class="glyph g-x">X</span> <span class="glyph g-x">X</span> pet: ${pet}</div>`}
+function panel(){const o=options();let html="",sec="";o.forEach((x,i)=>{if(x.sec!==sec){sec=x.sec;html+=`<div class="sec">${sec}</div>`}
+ const cur=current()===x;html+=`<div class="row ${i===focus?"focus":""}" data-i="${i}">${icon(x)}<div><div>${x.name}${x.pet?'<span class="tag pet">pet only</span>':""}</div><div class="sub">${x.sub}</div></div>${cur?'<span class="check">✓</span>':""}</div>`});
+ return `<div class="win"><header><span>Second press</span><span class="small">${CHARS[ch].label}</span></header><div class="body">${html}
+ ${CHARS[ch].unknown.length?`<div class="sub small" style="margin-top:6px">Not known yet: ${CHARS[ch].unknown.map(u=>u[0]).join(", ")}</div>`:""}
+ <div class="preview">${previewHTML()}</div>${combat?'<div class="preview" style="color:var(--warn)">In combat: a change applies when combat ends.</div>':""}
+ <div class="hint"><span>D-pad move</span><span><span class="glyph g-a">A</span> choose</span><span><span class="glyph g-b">B</span> close</span></div></div></div>`}
+function slot(){const o=options().filter(x=>x.mode==="spell"||x.mode==="macro");const r=resolved();const cur=current();
+ const filled=cur&&(cur.mode==="spell"||cur.mode==="macro");
+ const extra=[{name:"Linen Bandage",sub:"item",mode:"item",color:"#b89a70"},{name:"Minor Healing Potion",sub:"item, you only",mode:"item",color:"#c03030"},...CHARS[ch].unknown.map(u=>({name:u[0],sub:"not known",mode:"x",color:"#555",off:true}))];
+ const all=[...o,...extra];
+ return `<div class="win"><header><span>Second press</span><span class="small">${CHARS[ch].label}</span></header><div class="body"><div class="slots">
+ <div class="slot ${filled?"filled":""}" id="theSlot">${filled?icon(cur,58):(r?`<span>Default<br>${r.name}</span>`:"<span>Drop a spell, macro or item</span>")}</div>
+ <div style="flex:1;min-width:200px"><div>${filled?cur.name:r?"Class default: "+r.name:"Nothing set"}${r&&r.pet?'<span class="tag pet">pet only</span>':""}</div><div class="small">Right-click the slot to clear. <button id="clear" style="padding:3px 8px;font-size:12px">Clear</button> <button id="off" style="padding:3px 8px;font-size:12px">Off</button></div><div class="preview">${previewHTML()}</div></div></div>
+ <div class="sec">Your spellbook, macros and bags (click to "drop")</div><div class="book">${all.map((x,i)=>`<div class="cell ${x.off?"off":""}" data-j="${i}">${icon(x)}<span>${x.name}</span><span class="sub small">${x.sub}</span></div>`).join("")}</div>
+ ${combat?'<div class="preview" style="color:var(--warn)">In combat: the slot is locked until combat ends.</div>':""}</div></div>`;}
+function wheel(){const o=options();const n=o.length,R=112;
+ const wedges=o.map((x,i)=>{const a=-Math.PI/2+i*2*Math.PI/n;const left=150+R*Math.cos(a),top=150+R*Math.sin(a);
+  return `<div class="wedge ${i===focus?"focus":""} ${current()===x?"current":""}" data-i="${i}" style="left:${left}px;top:${top}px">${icon(x,30)}<span>${x.name}</span></div>`}).join("");
+ const f=o[focus];
+ return `<div class="frames"><div class="small" style="color:#ffd75e;text-align:center"><span class="rb">RB</span> held</div>
+ ${["Burnadette","Barry","","",""].map((n,i)=>n?`<div class="frame" style="background:${i?"#3a7bd5":"#f58cba"}"><span class="glyph ${i?"":"g-a"}" style="${i?"background:#444":""}">${i?"↑":"A"}</span>${n}</div>`:"").join("")}</div>
+ <div class="wheel">${wedges}<div class="center">${combat?'<span style="color:var(--warn)">In combat: can\'t change now</span>':`<span><b style="color:var(--text)">${f.name}</b><br>${f.sub}${f.pet?"<br>pet only":""}</span>`}</div></div>
+ <div style="position:absolute;right:16px;bottom:30px;font-size:12px;color:var(--muted)">Tilt <b>right stick</b> to pick · <span class="glyph g-a">A</span> set · release <span class="rb">RB</span> to close<br><span class="small">Arrow keys move the highlight here; Enter sets.</span></div>`}
+function render(){const v=VARIANTS[vi];document.getElementById("title").textContent=v.title;document.getElementById("lede").innerHTML=v.lede;
+ document.getElementById("vlabel").textContent=`${v.key} (${v.name})  ${vi+1}/${VARIANTS.length}`;
+ document.getElementById("chars").innerHTML=Object.entries(CHARS).map(([k,c])=>`<button data-ch="${k}" aria-pressed="${k===ch}">${c.label}</button>`).join(" ");
+ document.getElementById("combat").setAttribute("aria-pressed",combat);
+ const w=document.getElementById("world");w.innerHTML=v.key==="panel"?panel():v.key==="slot"?slot():wheel();
+ const s=saved[ch],r=resolved();
+ document.getElementById("state").innerHTML=`<dt>mode</dt><dd>${s.mode}</dd><dt>name</dt><dd>${s.name||"—"}</dd><dt>casts</dt><dd>${r?r.kind+" "+r.name+(r.pet?" (pet only)":""):"nothing"}</dd><dt>combat</dt><dd>${combat?"yes, buttons locked":"no"}</dd>`;
+ document.getElementById("note").textContent=noteText;
+ document.getElementById("explain").innerHTML=`<h2>What this variant trades</h2><ul>${v.explain.map(e=>`<li>${e}</li>`).join("")}</ul>`;
+ w.querySelectorAll("[data-i]").forEach(el=>el.onclick=()=>{focus=+el.dataset.i;if(!(v.key==="wheel"&&combat))choose(options()[focus]);else render()});
+ w.querySelectorAll("[data-j]").forEach(el=>el.onclick=()=>{if(combat){note("Locked in combat.");return render()}const all=[...options().filter(x=>x.mode==="spell"||x.mode==="macro")];const j=+el.dataset.j;
+  if(j<all.length)choose(all[j]);else{note(el.classList.contains("off")?"Refused: not a spell this character knows.":"Items would need a new 'item' kind (not built).");render()}});
+ const c=document.getElementById("clear");if(c)c.onclick=()=>choose(options()[0]);const off=document.getElementById("off");if(off)off.onclick=()=>choose(options().at(-1));
+ const slotEl=document.getElementById("theSlot");if(slotEl)slotEl.oncontextmenu=e=>{e.preventDefault();choose(options()[0])};
+ document.querySelectorAll("[data-ch]").forEach(b=>b.onclick=()=>{ch=b.dataset.ch;focus=0;noteText="";render()});}
+function go(d){vi=(vi+d+VARIANTS.length)%VARIANTS.length;focus=0;noteText="";const u=new URL(location);u.searchParams.set("variant",VARIANTS[vi].key);history.replaceState(null,"",u);render()}
+document.getElementById("prev").onclick=()=>go(-1);document.getElementById("next").onclick=()=>go(1);
+document.getElementById("combat").onclick=()=>{combat=!combat;noteText="";render()};
+document.addEventListener("keydown",e=>{if(e.target.closest("input,textarea,[contenteditable]"))return;
+ const v=VARIANTS[vi].key,n=options().length;
+ if(e.key==="ArrowLeft"&&!(v==="wheel"))return go(-1);if(e.key==="ArrowRight"&&!(v==="wheel"))return go(1);
+ if(v!=="slot"&&(e.key==="ArrowDown"||e.key==="ArrowRight")){focus=(focus+1)%n;e.preventDefault();render()}
+ else if(v!=="slot"&&(e.key==="ArrowUp"||e.key==="ArrowLeft")){focus=(focus-1+n)%n;e.preventDefault();render()}
+ else if(e.key==="Enter"&&v!=="slot"){if(!(v==="wheel"&&combat))choose(options()[focus])}});
+render();
+</script></body></html>

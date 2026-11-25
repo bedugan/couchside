@@ -33,11 +33,12 @@ Status: experimental, behind **Second press casts** (`controller.partySecondPres
 - In a party, a second press cast a heal on an online party member.
 - Warlock (Anyu, level 14): the class default Health Funnel (755) is known, and a second press of X cast it on the pet.
 - Per-character settings: each character keeps its own Party targeting settings and second-press action.
+- A chosen macro (`/use` a bandage, on Anyu) ran on the second press.
 - In combat (log 19:57): holding bound the keys, up targeted party1, A targeted the player, repeat presses of A cast Flash of Light on the player, and releasing returned the keys.
 
 ## Open questions for casting
 
 - Does a chosen spell cast?
-- Does a macro run against the member the first press targeted?
+- Does a macro run against a party member the first press targeted? (Confirmed only that a macro runs.)
 - Does targeting still feel identical, and do the hint marks and `RB hold` badge behave the same?
 - The other classes' spell IDs.
