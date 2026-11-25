@@ -8,6 +8,7 @@ Status: experimental, behind **Second press casts** (`controller.partySecondPres
 - The action applies to all six buttons: party1–4, self (bottom face button) and pet (left face button).
 - The action is a spell (cast on that member) or a macro (run against the current target, which the first press made that member).
 - The default depends on class and is the first class heal the character knows from the spellbook, which covers both level and untrained spells. Only known spells are offered or accepted.
+- The count resets on release even when the pressed member is already the target, so a new hold always needs two presses to cast. Protected code can't tell whether a unit is the target: `UnitIsUnit` isn't in the restricted environment, macro conditions can't compare units, and handles to unprotected frames are invalid in combat (`RestrictedFrames.lua`). Remembering the last member across releases was offered and declined: a single press could then cast when only a retarget was meant.
 - While testing, the setting is account-wide; a chosen spell a character doesn't know falls back to that character's class default.
 
 ## Deferred: decide if the feature is kept
